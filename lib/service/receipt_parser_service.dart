@@ -215,20 +215,32 @@ class ReceiptParserService {
     return null;
   }
 
-  static DateTime? _buildDate(String? yearText, String? monthText, String? dayText) {
-    final year = int.tryParse(yearText ?? '');
-    final month = int.tryParse(monthText ?? '');
-    final day = int.tryParse(dayText ?? '');
+  static DateTime? _buildDate(
+  String? yearText,
+  String? monthText,
+  String? dayText,
+) {
+  final year = int.tryParse(yearText ?? '');
+  final month = int.tryParse(monthText ?? '');
+  final day = int.tryParse(dayText ?? '');
 
-    if (year == null || month == null || day == null) return null;
-    if (month < 1 || month > 12) return null;
-    if (day < 1 || day > 31) return null;
+  if (year == null || month == null || day == null) return null;
+  if (month < 1 || month > 12) return null;
+  if (day < 1 || day > 31) return null;
 
-    return DateTime(year, month, day);
+  final date = DateTime(year, month, day);
+
+  if (date.year != year ||
+      date.month != month ||
+      date.day != day) {
+    return null;
   }
 
+  return date;
+}
+
   static double? _extractAmount(String line) {
-    final amountRegex = RegExp(r'-?\$?\s*(\d+\.\d{2})');
+    final amountRegex = RegExp(r'-?\$?\s*((?:\d+)?\.\d{2})');
     final matches = amountRegex.allMatches(line).toList();
 
     if (matches.isEmpty) return null;

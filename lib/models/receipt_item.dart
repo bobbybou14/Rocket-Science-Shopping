@@ -40,7 +40,7 @@ class ReceiptItem {
           double.tryParse(map['confidence_score'].toString()) ?? 0,
       createdAt: map['created_at'] == null
           ? null
-          : DateTime.tryParse(map['created_at']),
+          : DateTime.tryParse(map['created_at'].toString()),
     );
   }
 

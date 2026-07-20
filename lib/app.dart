@@ -1,54 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'core/theme/app_theme.dart';
-import 'models/cart_item.dart';
+import 'providers/cart_provider.dart';
 import 'screens/admin_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/product_catalog_screen.dart';
 import 'screens/receipt_upload_screen.dart';
 import 'screens/scan_screen.dart';
+import 'screens/store_selection_screen.dart';
+import 'service/shopping_session_service.dart';
 
-class SmartCartCanadaApp extends StatefulWidget {
+class SmartCartCanadaApp extends StatelessWidget {
   const SmartCartCanadaApp({super.key});
 
   @override
-  State<SmartCartCanadaApp> createState() => _SmartCartCanadaAppState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<CartProvider>(
+      create: (_) => CartProvider(),
+      child: const _SmartCartApp(),
+    );
+  }
 }
 
-class _SmartCartCanadaAppState extends State<SmartCartCanadaApp> {
+class _SmartCartApp extends StatefulWidget {
+  const _SmartCartApp();
+
+  @override
+  State<_SmartCartApp> createState() => _SmartCartAppState();
+}
+
+class _SmartCartAppState extends State<_SmartCartApp> {
   int selectedIndex = 0;
 
-  final List<CartItem> cart = [];
+  void handleStoreSelected() {
+    setState(() {});
+  }
 
-  void addToCart(CartItem item) {
-    setState(() {
-      final existingIndex =
-          cart.indexWhere((cartItem) => cartItem.barcode == item.barcode);
+  Widget buildScanScreen() {
+    if (!ShoppingSessionService.hasActiveSession) {
+      return StoreSelectionScreen(
+        onStoreSelected: handleStoreSelected,
+      );
+    }
 
-      if (existingIndex >= 0) {
-        cart[existingIndex].quantity++;
-      } else {
-        cart.add(item);
-      }
-
-      selectedIndex = 3;
-    });
+    return const ScanScreen();
   }
 
   @override
   Widget build(BuildContext context) {
-    final screens = [
+    final screens = <Widget>[
       const DashboardScreen(),
-      ScanScreen(
-        onItemScanned: addToCart,
-      ),
-      ProductCatalogScreen(
-        onAddToCart: addToCart,
-      ),
-      CartScreen(
-        cart: cart,
-      ),
+      buildScanScreen(),
+      const ProductCatalogScreen(),
+      const CartScreen(),
       const ReceiptUploadScreen(),
       const AdminScreen(),
     ];
@@ -58,7 +64,10 @@ class _SmartCartCanadaAppState extends State<SmartCartCanadaApp> {
       title: 'SmartCart Canada',
       theme: AppTheme.lightTheme,
       home: Scaffold(
-        body: screens[selectedIndex],
+        body: IndexedStack(
+          index: selectedIndex,
+          children: screens,
+        ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: selectedIndex,
           type: BottomNavigationBarType.fixed,

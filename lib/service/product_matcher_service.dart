@@ -111,16 +111,16 @@ class ProductMatcherService {
   }
 
   static List<String> _tokens(String value) {
-    return value
-        .toUpperCase()
-        .replaceAll(RegExp(r'[^A-Z0-9 ]'), ' ')
-        .split(' ')
-        .where((token) => token.trim().isNotEmpty)
-        .map(_normalizeToken)
-        .where((token) => token.length >= 2)
-        .toSet()
-        .toList();
-  }
+  return value
+      .trim()
+      .toUpperCase()
+      .replaceAll(RegExp(r'[^A-Z0-9 ]'), ' ')
+      .split(RegExp(r'\s+'))
+      .map(_normalizeToken)
+      .where((token) => token.length >= 2)
+      .toSet()
+      .toList();
+}
 
   static String _normalizeToken(String token) {
     final normalized = token.trim().toUpperCase();

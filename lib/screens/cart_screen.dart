@@ -1,88 +1,88 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../core/theme/app_colors.dart';
-import '../models/cart_item.dart';
+import '../widgets/cart/cart_search_bar.dart';
+import '../widgets/cart/cart_item_card.dart';
+import '../widgets/cart/cart_totals.dart';
+import '../widgets/cart/cart_summary_header.dart';
+import '../widgets/cart/empty_cart.dart';
+import '../providers/cart_provider.dart';
 import '../service/basket_comparison_service.dart';
 import 'basket_comparison_screen.dart';
-import 'shopping_optimizer_screen.dart';
 
 class CartScreen extends StatefulWidget {
-  final List<CartItem> cart;
+  const CartScreen({super.key});
 
-  const CartScreen({
-    super.key,
-    required this.cart,
-  });
+  static const Color smartCartRed = Color(0xFFD6001C);
 
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
-  double get subtotal {
-    return widget.cart.fold<double>(
-      0,
-      (total, item) => total + item.subtotal,
-    );
-  }
+  final TextEditingController _searchController =
+      TextEditingController();
 
-  double get hst {
-    return widget.cart.fold<double>(
-      0,
-      (total, item) => total + item.tax,
-    );
-  }
+  String _searchText = '';
 
-  double get total => subtotal + hst;
-
-  void increaseQuantity(CartItem item) {
-    setState(() {
-      item.quantity++;
-    });
-  }
-
-  void decreaseQuantity(CartItem item) {
-    setState(() {
-      if (item.quantity > 1) {
-        item.quantity--;
-      } else {
-        widget.cart.remove(item);
-      }
-    });
-  }
-
-  void removeItem(CartItem item) {
-    setState(() {
-      widget.cart.remove(item);
-    });
-  }
-
-  void clearCart() {
-    setState(() {
-      widget.cart.clear();
-    });
-  }
-
-  void openOptimizer() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ShoppingOptimizerScreen(
-          cart: widget.cart,
-        ),
-      ),
-    );
-  }
-
-  void openBasketComparison() {
-    final basketItems = widget.cart.map(
-      (item) {
-        return BasketItemRequest(
-          product: item.product,
-          quantity: item.quantity.toDouble(),
+  Future<void> _confirmClearCart(
+    BuildContext context,
+    CartProvider cart,
+  ) async {
+    final shouldClear = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Clear cart?'),
+          content: const Text(
+            'This will remove every item from your cart.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, false);
+              },
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, true);
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: CartScreen.smartCartRed,
+              ),
+              child: const Text('Clear Cart'),
+            ),
+          ],
         );
       },
-    ).toList();
+    );
+
+    if (shouldClear == true) {
+      cart.clear();
+
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cart cleared.'),
+        ),
+      );
+    }
+  }
+
+  void _openBasketComparison(
+    BuildContext context,
+    CartProvider cart,
+  ) {
+    final basketItems = cart.items
+        .map(
+          (item) => BasketItemRequest(
+            product: item.product,
+            quantity: item.quantity.toDouble(),
+          ),
+        )
+        .toList();
 
     Navigator.push(
       context,
@@ -94,274 +94,132 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget productImage(CartItem item) {
-    if (item.imageUrl.isEmpty) {
-      return const Icon(
-        Icons.shopping_bag,
-        size: 42,
-        color: AppColors.primary,
-      );
-    }
-
-    return Image.network(
-      item.imageUrl,
-      width: 55,
-      height: 55,
-      fit: BoxFit.cover,
-      errorBuilder: (_, _, _) {
-        return const Icon(
-          Icons.shopping_bag,
-          size: 42,
-          color: AppColors.primary,
-        );
-      },
-    );
+  @override
+  Widget build(BuildContext context) {
+    final cart = context.watch<CartProvider>();
+final filteredItems = cart.items.where((item) {
+  if (_searchText.isEmpty) {
+    return true;
   }
 
-  Widget emptyCart() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(28),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.shopping_cart_outlined,
-              size: 90,
-              color: AppColors.primary,
-            ),
-            const SizedBox(height: 18),
-            const Text(
-              'Your cart is empty',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Add products from the scanner or product catalog '
-              'to begin building your grocery basket.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  final search = _searchText;
 
-  Widget cartItemCard(CartItem item) {
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 6,
+  return item.product.name.toLowerCase().contains(search) ||
+      item.product.brand.toLowerCase().contains(search) ||
+      item.product.barcode.toLowerCase().contains(search) ||
+      item.product.size.toLowerCase().contains(search);
+}).toList();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Shopping Cart'),
+        backgroundColor: CartScreen.smartCartRed,
+        foregroundColor: Colors.white,
+        actions: [
+          if (cart.isNotEmpty)
+            IconButton(
+              tooltip: 'Clear cart',
+              onPressed: () {
+                _confirmClearCart(context, cart);
+              },
+              icon: const Icon(Icons.delete_sweep),
+            ),
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: productImage(item),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.brand.isEmpty
-                        ? item.name
-                        : '${item.brand} ${item.name}',
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${item.size.isEmpty ? "" : "${item.size} • "}'
-                    '\$${item.price.toStringAsFixed(2)} each',
-                  ),
-                  Text(
-                    item.taxable
-                        ? 'Ontario HST applies'
-                        : 'No HST',
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Line total: '
-                    '\$${item.total.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Column(
-              mainAxisSize: MainAxisSize.min,
+      body: cart.isEmpty
+          ? const EmptyCart()
+          : Column(
               children: [
-                IconButton(
-                  onPressed: () =>
-                      increaseQuantity(item),
-                  icon: const Icon(
-                    Icons.add_circle_outline,
+  CartSummaryHeader(cart: cart),
+
+  CartSearchBar(
+  controller: _searchController,
+  onChanged: (value) {
+    setState(() {
+      _searchText = value.toLowerCase().trim();
+    });
+  },
+),
+
+  Expanded(
+  child: filteredItems.isEmpty
+      ? const Center(
+          child: Text(
+            'No matching items',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        )
+      : ListView.separated(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: filteredItems.length,
+                    separatorBuilder: (_, __) {
+                      return const SizedBox(height: 12);
+                    },
+                    itemBuilder: (context, index) {
+                      final item = filteredItems[index];
+
+                      return Dismissible(
+  key: ValueKey(item.product.barcode),
+  direction: DismissDirection.endToStart,
+  background: Container(
+    alignment: Alignment.centerRight,
+    padding: const EdgeInsets.only(right: 24),
+    color: Colors.red,
+    child: const Icon(
+      Icons.delete,
+      color: Colors.white,
+      size: 32,
+    ),
+  ),
+  onDismissed: (_) {
+    cart.removeItem(item);
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Text('${item.product.name} removed'),
+    action: SnackBarAction(
+      label: 'Undo',
+      onPressed: () {
+        cart.restoreItem(item);
+      },
+    ),
+  ),
+);
+  },
+  child: CartItemCard(
+    item: item,
+    onIncrease: () {
+      cart.increaseQuantity(item);
+    },
+    onDecrease: () {
+      cart.decreaseQuantity(item);
+    },
+    onRemove: () {
+      cart.removeItem(item);
+    },
+  ),
+);
+                    },
                   ),
-                  tooltip: 'Increase quantity',
                 ),
-                Text(
-                  '${item.quantity}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () =>
-                      decreaseQuantity(item),
-                  icon: const Icon(
-                    Icons.remove_circle_outline,
-                  ),
-                  tooltip: 'Decrease quantity',
-                ),
-                IconButton(
-                  onPressed: () => removeItem(item),
-                  icon: const Icon(
-                    Icons.delete_outline,
-                  ),
-                  tooltip: 'Remove item',
+                CartTotals(
+                  cart: cart,
+                  onCompareStores: () {
+                    _openBasketComparison(context, cart);
+                  },
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget cartSummary() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(
-          top: BorderSide(
-            color: AppColors.divider,
-          ),
-        ),
-      ),
-      child: SafeArea(
-        top: false,
-        child: Column(
-          children: [
-            _totalRow('Subtotal', subtotal),
-            _totalRow('Ontario HST', hst),
-            const Divider(),
-            _totalRow(
-              'Estimated Total',
-              total,
-              bold: true,
-            ),
-            const SizedBox(height: 14),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: openBasketComparison,
-                icon: const Icon(Icons.compare_arrows),
-                label: const Text('Compare My Cart'),
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: openOptimizer,
-                icon: const Icon(Icons.auto_graph),
-                label: const Text('Optimize Cart'),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Shopping Cart'),
-        actions: [
-          if (widget.cart.isNotEmpty)
-            IconButton(
-              onPressed: clearCart,
-              icon: const Icon(Icons.delete_sweep),
-              tooltip: 'Clear Cart',
-            ),
-        ],
-      ),
-      body: widget.cart.isEmpty
-          ? emptyCart()
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.only(
-                      top: 6,
-                      bottom: 6,
-                    ),
-                    itemCount: widget.cart.length,
-                    itemBuilder: (context, index) {
-                      return cartItemCard(
-                        widget.cart[index],
-                      );
-                    },
-                  ),
-                ),
-                cartSummary(),
-              ],
-            ),
-    );
-  }
-
-  Widget _totalRow(
-    String label,
-    double amount, {
-    bool bold = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 4,
-      ),
-      child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: bold
-                  ? FontWeight.bold
-                  : FontWeight.normal,
-            ),
-          ),
-          Text(
-            '\$${amount.toStringAsFixed(2)}',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: bold
-                  ? FontWeight.bold
-                  : FontWeight.normal,
-            ),
-          ),
-        ],
-      ),
-    );
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 }

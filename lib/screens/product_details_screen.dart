@@ -224,20 +224,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void addToCart() {
     if (widget.onAddToCart == null) return;
 
-    if (prices.isEmpty || lowestPrice <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'A valid price is required before adding this product to the cart.',
-          ),
-        ),
-      );
-      return;
-    }
+    final hasValidPrice =
+        prices.isNotEmpty && lowestPrice > 0;
 
     final item = CartItem(
       product: widget.product,
-      price: lowestPrice,
+      price: hasValidPrice
+          ? lowestPrice
+          : 0.0,
     );
 
     widget.onAddToCart!(item);
@@ -245,7 +239,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          '${widget.product.name} added to cart.',
+          hasValidPrice
+              ? '${widget.product.name} added to cart.'
+              : '${widget.product.name} added to cart (price unavailable).',
         ),
       ),
     );

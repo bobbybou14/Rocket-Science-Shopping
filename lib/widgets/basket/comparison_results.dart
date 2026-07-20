@@ -93,7 +93,7 @@ class ComparisonResults extends StatelessWidget {
               result.potentialSavings > 0
                   ? 'Potential savings compared with the highest complete basket: '
                       '\$${result.potentialSavings.toStringAsFixed(2)}'
-                  : 'Add more complete store price data to calculate potential savings.',
+                  : 'No savings difference is available between complete baskets.'
             ),
           ],
         ),

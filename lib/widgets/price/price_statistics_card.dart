@@ -41,17 +41,29 @@ class PriceStatisticsCard extends StatelessWidget {
   }
 
   Color _trendColor() {
-    switch (summary.trend.toLowerCase()) {
-      case 'rising':
-        return Colors.red;
-      case 'falling':
-        return AppColors.success;
-      case 'stable':
-        return AppColors.warning;
-      default:
-        return Colors.grey;
-    }
+  switch (summary.trend.toLowerCase()) {
+    case 'rising':
+      return Colors.red;
+    case 'falling':
+      return AppColors.success;
+    case 'stable':
+      return AppColors.warning;
+    default:
+      return Colors.grey;
   }
+}
+
+Color _changeColor() {
+  if (summary.priceChange > 0) {
+    return Colors.red;
+  }
+
+  if (summary.priceChange < 0) {
+    return AppColors.success;
+  }
+
+  return AppColors.warning;
+}
 
   Widget _priceTile({
     required String label,
@@ -237,7 +249,7 @@ class PriceStatisticsCard extends StatelessWidget {
               value:
                   '$changePrefix${_formatMoney(summary.priceChange)} '
                   '($percentPrefix${summary.percentageChange.toStringAsFixed(1)}%)',
-              valueColor: _trendColor(),
+              valueColor: _changeColor(),
             ),
             _detailRow(
               icon: Icons.store,

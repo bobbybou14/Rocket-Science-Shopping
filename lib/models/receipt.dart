@@ -42,7 +42,7 @@ class Receipt {
       city: map['city'] ?? '',
       purchaseDate: map['purchase_date'] == null
           ? null
-          : DateTime.tryParse(map['purchase_date']),
+          : DateTime.tryParse(map['purchase_date'].toString()),
       subtotal: double.tryParse(map['subtotal'].toString()) ?? 0,
       tax: double.tryParse(map['tax'].toString()) ?? 0,
       total: double.tryParse(map['total'].toString()) ?? 0,
@@ -53,7 +53,7 @@ class Receipt {
       notes: map['notes'] ?? '',
       createdAt: map['created_at'] == null
           ? null
-          : DateTime.tryParse(map['created_at']),
+          : DateTime.tryParse(map['created_at'].toString()),
     );
   }
 

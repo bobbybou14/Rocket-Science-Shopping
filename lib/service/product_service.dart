@@ -7,6 +7,7 @@ class ProductService {
   static final SupabaseClient _supabase = Supabase.instance.client;
 
   static Future<List<Product>> getProducts() async {
+  try {
     final response = await _supabase
         .from('products')
         .select()
@@ -15,9 +16,13 @@ class ProductService {
     return response
         .map<Product>((item) => Product.fromMap(item))
         .toList();
+  } catch (_) {
+    return [];
   }
+}
 
   static Future<CartItem?> findByBarcode(String barcode) async {
+  try {
     final response = await _supabase
         .from('products')
         .select()
@@ -40,12 +45,16 @@ class ProductService {
     double price = 0;
 
     if (priceResponse.isNotEmpty) {
-      price = (priceResponse.first['price'] as num).toDouble();
+      price =
+          (priceResponse.first['price'] as num).toDouble();
     }
 
     return CartItem(
       product: product,
       price: price,
     );
-  }
+  } catch (_) {
+    return null;
+   }
+ }
 }

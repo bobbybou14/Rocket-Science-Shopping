@@ -32,24 +32,49 @@ class _HomeScreenState extends State<HomeScreen> {
     loadDashboardInsights();
   }
 
-  @override
-  void didUpdateWidget(HomeScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
+ @override
+void didUpdateWidget(HomeScreen oldWidget) {
+  super.didUpdateWidget(oldWidget);
+
+  if (oldWidget.cart != widget.cart) {
     loadDashboardInsights();
   }
+}
 
   Future<void> loadDashboardInsights() async {
-    final savings = await DashboardService.potentialSavings(widget.cart);
-    final store = await DashboardService.bestStore(widget.cart);
+  setState(() {
+    loadingInsights = true;
+  });
+
+  try {
+    final results = await Future.wait([
+      DashboardService.potentialSavings(widget.cart),
+      DashboardService.bestStore(widget.cart),
+    ]);
 
     if (!mounted) return;
 
     setState(() {
-      potentialSavings = savings;
-      bestStore = store;
+      potentialSavings = results[0] as double;
+      bestStore = results[1] as String;
       loadingInsights = false;
     });
+  } catch (error) {
+    if (!mounted) return;
+
+    setState(() {
+      loadingInsights = false;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Unable to load dashboard insights: $error',
+        ),
+      ),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {

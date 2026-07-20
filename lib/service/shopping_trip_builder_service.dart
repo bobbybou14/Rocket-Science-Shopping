@@ -14,11 +14,11 @@ class ShoppingTripBuilderService {
     final items = intelligenceResult.productMatches.map((match) {
       final matchedProduct = match.product;
       final quantity = match.receiptItem.quantity <= 0
-          ? 1.0
-          : match.receiptItem.quantity;
+    ? 1.0
+    : match.receiptItem.quantity;
 
-      final lineTotal = match.receiptItem.price;
-      final unitPrice = quantity == 0 ? lineTotal : lineTotal / quantity;
+final lineTotal = match.receiptItem.price;
+final unitPrice = lineTotal / quantity;
 
       return ShoppingTripItem(
         id: '',

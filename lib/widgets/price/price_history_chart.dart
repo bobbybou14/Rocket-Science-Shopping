@@ -238,16 +238,26 @@ class _PriceHistoryChartPainter extends CustomPainter {
       axisPaint,
     );
 
+    final firstDate = entries.first.createdAt;
+    final lastDate = entries.last.createdAt;
+
+    final totalMilliseconds =
+        lastDate.difference(firstDate).inMilliseconds;
+
     final points = <Offset>[];
 
-    for (int index = 0; index < entries.length; index++) {
-      final x = entries.length == 1
-          ? leftPadding
-          : leftPadding +
-              (chartWidth * index / (entries.length - 1));
+    for (final entry in entries) {
+      final elapsedMilliseconds =
+          entry.createdAt.difference(firstDate).inMilliseconds;
+
+      final timeProgress = totalMilliseconds == 0
+          ? 0.0
+          : elapsedMilliseconds / totalMilliseconds;
+
+      final x = leftPadding + chartWidth * timeProgress;
 
       final normalizedPrice =
-          (entries[index].price - minPrice) / priceRange;
+          (entry.price - minPrice) / priceRange;
 
       final y = topPadding +
           chartHeight -

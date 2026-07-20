@@ -7,6 +7,7 @@ class PriceService {
 
   /// Returns all prices for a product, sorted lowest to highest.
   static Future<List<Price>> getPricesForProduct(String barcode) async {
+  try {
     final response = await _client
         .from('prices')
         .select()
@@ -16,12 +17,21 @@ class PriceService {
     return response
         .map<Price>((price) => Price.fromMap(price))
         .toList();
+  } catch (_) {
+    return [];
   }
+}
 
   /// Saves a new price.
-  static Future<void> savePrice(Price price) async {
-    await _client.from('prices').insert(price.toMap());
+static Future<void> savePrice(Price price) async {
+  try {
+    await _client
+        .from('prices')
+        .insert(price.toMap());
+  } catch (_) {
+    return;
   }
+}
 
   /// Returns the cheapest known price.
   static Future<Price?> getLowestPrice(String barcode) async {

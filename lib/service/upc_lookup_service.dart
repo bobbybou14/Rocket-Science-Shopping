@@ -5,7 +5,8 @@ import '../models/cart_item.dart';
 import '../models/product.dart';
 
 class UpcLookupService {
-  static Future<CartItem?> lookup(String barcode) async {
+static Future<CartItem?> lookup(String barcode) async {
+  try {
     final url = Uri.parse(
       'https://world.openfoodfacts.org/api/v2/product/$barcode.json',
     );
@@ -37,5 +38,8 @@ class UpcLookupService {
       product: product,
       price: 0.00,
     );
+  } catch (_) {
+    return null;
+   }
   }
 }

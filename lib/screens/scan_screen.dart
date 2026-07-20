@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:provider/provider.dart';
 
 import '../models/cart_item.dart';
+import '../providers/cart_provider.dart';
 import '../service/product_service.dart';
+import '../service/shopping_session_service.dart';
 import '../service/supabase_product_service.dart';
 import '../service/upc_lookup_service.dart';
 
 class ScanScreen extends StatefulWidget {
-  final void Function(CartItem item) onItemScanned;
-
-  const ScanScreen({
-    super.key,
-    required this.onItemScanned,
-  });
+  const ScanScreen({super.key});
 
   @override
   State<ScanScreen> createState() => _ScanScreenState();
@@ -21,42 +20,119 @@ class ScanScreen extends StatefulWidget {
 class _ScanScreenState extends State<ScanScreen> {
   static const Color smartCartRed = Color(0xFFD6001C);
 
-  final TextEditingController barcodeController = TextEditingController();
+  final TextEditingController barcodeController =
+      TextEditingController();
+
+   final MobileScannerController scannerController =
+      MobileScannerController();
 
   CartItem? scannedItem;
-  String message = 'Point your camera at a barcode or type one below.';
+
+  String message =
+      'Point your camera at a barcode or type one below.';
+
   bool hasScanned = false;
   bool isLoading = false;
 
+  String? lastBarcode;
+  DateTime? lastScanTime;
+
+  bool isDuplicateScan(String barcode) {
+    final previousTime = lastScanTime;
+
+    if (lastBarcode != barcode || previousTime == null) {
+      return false;
+    }
+
+    return DateTime.now()
+            .difference(previousTime)
+            .inMilliseconds <
+        1500;
+  }
+
   Future<void> lookupBarcode(String barcode) async {
-    if (barcode.trim().isEmpty) return;
+    final cleanBarcode = barcode.trim();
+
+    if (cleanBarcode.isEmpty ||
+        isLoading ||
+        isDuplicateScan(cleanBarcode)) {
+      return;
+    }
+
+    lastBarcode = cleanBarcode;
+    lastScanTime = DateTime.now();
+    scannerController.stop();
 
     setState(() {
       hasScanned = true;
       isLoading = true;
       scannedItem = null;
-      message = 'Looking up product...\n\nBarcode:\n$barcode';
+      message =
+          'Looking up product...\n\nBarcode:\n$cleanBarcode';
     });
 
-    CartItem? product = await SupabaseProductService.findByBarcode(barcode);
+    CartItem? product =
+        await SupabaseProductService.findByBarcode(
+      cleanBarcode,
+    );
 
-    product ??= await ProductService.findByBarcode(barcode);
+    product ??= await ProductService.findByBarcode(
+      cleanBarcode,
+    );
 
     if (product == null) {
-      product = await UpcLookupService.lookup(barcode);
+      product = await UpcLookupService.lookup(
+        cleanBarcode,
+      );
 
       if (product != null) {
-        await SupabaseProductService.saveProduct(product.product);
+        await SupabaseProductService.saveProduct(
+          product.product,
+        );
       }
     }
 
     if (!mounted) return;
 
+    if (product == null) {
+      setState(() {
+        scannedItem = null;
+        isLoading = false;
+        message =
+            'Product not found.\n\nBarcode:\n$cleanBarcode';
+      });
+
+      return;
+    }
+
+    context.read<CartProvider>().addItem(product);
+
+    HapticFeedback.mediumImpact();
+
     setState(() {
       scannedItem = product;
       isLoading = false;
-      message = product == null ? 'Product not found.\n\nBarcode:\n$barcode' : '';
+      message = '';
     });
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          duration: const Duration(milliseconds: 900),
+          content: Text(
+            '${product.name} added to cart',
+          ),
+        ),
+      );
+
+    await Future.delayed(
+      const Duration(milliseconds: 750),
+    );
+
+    if (!mounted) return;
+
+    resetScanner();
   }
 
   void resetScanner() {
@@ -64,119 +140,312 @@ class _ScanScreenState extends State<ScanScreen> {
       hasScanned = false;
       scannedItem = null;
       isLoading = false;
-      message = 'Point your camera at a barcode or type one below.';
+      message =
+          'Point your camera at a barcode or type one below.';
       barcodeController.clear();
     });
+    scannerController.start();
   }
 
-  @override
-  void dispose() {
-    barcodeController.dispose();
-    super.dispose();
-  }
+ @override
+ void dispose() {
+   barcodeController.dispose();
+   scannerController.dispose();
+   super.dispose();
+}
 
   @override
   Widget build(BuildContext context) {
+    final cart = context.watch<CartProvider>();
+    final storeName =
+        ShoppingSessionService.currentStoreName;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Scan Grocery Item'),
+        title: const Text('Live Shopping'),
         backgroundColor: smartCartRed,
         foregroundColor: Colors.white,
       ),
       body: Column(
         children: [
-          Expanded(
-            flex: 3,
-            child: MobileScanner(
-              onDetect: (capture) {
-                final barcode = capture.barcodes.first.rawValue;
-                if (barcode != null && !hasScanned) {
-                  barcodeController.text = barcode;
-                  lookupBarcode(barcode);
-                }
-              },
-            ),
+          _shoppingSummary(
+            storeName: storeName,
+            itemCount: cart.itemCount,
+            total: cart.total,
           ),
           Expanded(
             flex: 4,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                MobileScanner(
+                  controller: scannerController,
+                  onDetect: (capture) {
+                    if (hasScanned ||
+                        capture.barcodes.isEmpty) {
+                      return;
+                    }
+
+                    final barcode =
+                        capture.barcodes.first.rawValue;
+
+                    if (barcode == null ||
+                        barcode.isEmpty) {
+                      return;
+                    }
+
+                    barcodeController.text = barcode;
+                    lookupBarcode(barcode);
+                  },
+                ),
+                Center(
+                  child: Container(
+                    width: 270,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 3,
+                      ),
+                      borderRadius:
+                          BorderRadius.circular(16),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 20,
+                  right: 20,
+                  bottom: 16,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(
+                        alpha: 0.65,
+                      ),
+                      borderRadius:
+                          BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      'Place the barcode inside the frame',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 3,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(18),
               child: Column(
                 children: [
                   TextField(
                     controller: barcodeController,
                     keyboardType: TextInputType.number,
+                    onSubmitted: lookupBarcode,
                     decoration: const InputDecoration(
-                      labelText: 'Enter barcode manually',
+                      labelText:
+                          'Enter barcode manually',
+                      prefixIcon: Icon(Icons.numbers),
                       border: OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
+                    child: FilledButton.icon(
                       onPressed: isLoading
                           ? null
-                          : () => lookupBarcode(barcodeController.text.trim()),
-                      style: ElevatedButton.styleFrom(
+                          : () => lookupBarcode(
+                                barcodeController.text
+                                    .trim(),
+                              ),
+                      style: FilledButton.styleFrom(
                         backgroundColor: smartCartRed,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding:
+                            const EdgeInsets.symmetric(
+                          vertical: 14,
+                        ),
                       ),
-                      child: const Text('Lookup Barcode'),
+                      icon: const Icon(Icons.search),
+                      label: const Text(
+                        'Lookup Barcode',
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 18),
                   if (isLoading)
-                    const CircularProgressIndicator()
-                  else if (scannedItem == null)
-                    Text(
-                      message,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 20),
+                    const Column(
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 12),
+                        Text(
+                          'Finding product...',
+                          style: TextStyle(fontSize: 17),
+                        ),
+                      ],
                     )
+                  else if (scannedItem != null)
+                    _successfulScan(scannedItem!)
                   else
                     Column(
                       children: [
                         Text(
-                          scannedItem!.name,
+                          message,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        Text(
-                          scannedItem!.price == 0
-                              ? 'Price not available yet'
-                              : '\$${scannedItem!.price.toStringAsFixed(2)}',
-                          style: const TextStyle(fontSize: 22),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          scannedItem!.taxable
-                              ? 'Ontario HST Applies'
-                              : 'No HST',
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () {
-                            widget.onItemScanned(scannedItem!);
-                            resetScanner();
-                          },
-                          child: const Text('Add to Cart'),
-                        ),
-                        const SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: resetScanner,
-                          child: const Text('Scan Another Item'),
-                        ),
+                        if (hasScanned) ...[
+                          const SizedBox(height: 14),
+                          OutlinedButton.icon(
+                            onPressed: resetScanner,
+                            icon: const Icon(
+                              Icons.refresh,
+                            ),
+                            label: const Text(
+                              'Scan Another Item',
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _shoppingSummary({
+    required String storeName,
+    required int itemCount,
+    required double total,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 12,
+      ),
+      color: Colors.white,
+      child: Row(
+        children: [
+          const Icon(
+            Icons.storefront,
+            color: smartCartRed,
+            size: 30,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+              children: [
+                Text(
+                  storeName.isEmpty
+                      ? 'Current Store'
+                      : storeName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '$itemCount '
+                  '${itemCount == 1 ? "item" : "items"}',
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.end,
+            children: [
+              const Text(
+                'Estimated Total',
+                style: TextStyle(
+                  color: Colors.grey,
+                ),
+              ),
+              Text(
+                '\$${total.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: smartCartRed,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _successfulScan(CartItem item) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.green.shade50,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: Colors.green.shade300,
+        ),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.check_circle,
+            size: 42,
+            color: Colors.green.shade700,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            item.name,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 21,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            item.price == 0
+                ? 'Price not available yet'
+                : '\$${item.price.toStringAsFixed(2)}',
+            style: const TextStyle(
+              fontSize: 18,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            item.taxable
+                ? 'Ontario HST applies'
+                : 'No HST',
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Added to cart — ready for next scan',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Colors.green,
             ),
           ),
         ],

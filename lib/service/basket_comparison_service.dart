@@ -91,6 +91,11 @@ class BasketComparisonService {
 
     for (final store in stores) {
       final storeId = store['id']?.toString() ?? '';
+      
+      if (storeId.isEmpty) {
+        continue;
+      }
+      
       final storeName = store['name']?.toString() ?? 'Unknown Store';
       final city = store['city']?.toString() ?? '';
       final province = store['province']?.toString() ?? '';

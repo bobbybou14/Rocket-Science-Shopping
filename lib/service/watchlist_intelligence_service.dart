@@ -125,17 +125,20 @@ class WatchlistIntelligenceService {
     required Product product,
     required PriceHistorySummary summary,
   }) {
-    if (!summary.hasData) {
-      return WatchlistInsight(
-        favorite: favorite,
-        product: product,
-        summary: summary,
-        headline: 'More price data needed',
-        message:
-            'Add a price or scan a receipt containing this product to begin tracking changes.',
-        type: WatchlistInsightType.notEnoughData,
-      );
-    }
+    if (!summary.hasData || summary.priceCount < 2) {
+  return WatchlistInsight(
+    favorite: favorite,
+    product: product,
+    summary: summary,
+    headline: 'More price data needed',
+    message: summary.hasData
+        ? 'Add another price or scan another receipt containing this product '
+            'to begin tracking changes.'
+        : 'Add a price or scan a receipt containing this product '
+            'to begin tracking changes.',
+    type: WatchlistInsightType.notEnoughData,
+  );
+}
 
     final isAtLowestPrice =
         (summary.currentPrice - summary.lowestPrice).abs() < 0.01;
