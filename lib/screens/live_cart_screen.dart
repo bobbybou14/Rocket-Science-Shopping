@@ -91,7 +91,7 @@ class _LiveCartScreenState extends State<LiveCartScreen> {
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: items.length,
-                    separatorBuilder: (_, __) =>
+                    separatorBuilder: (_, _) =>
                         const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       return _CartItemCard(

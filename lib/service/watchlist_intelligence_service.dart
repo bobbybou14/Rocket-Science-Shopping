@@ -1,4 +1,3 @@
-import '../models/price_history.dart';
 import '../models/product.dart';
 import 'favorites_service.dart';
 import 'price_history_service.dart';

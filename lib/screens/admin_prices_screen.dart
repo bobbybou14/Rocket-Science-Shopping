@@ -113,7 +113,7 @@ class _AdminPricesScreenState extends State<AdminPricesScreen> {
               child: Column(
                 children: [
                   DropdownButtonFormField<Product>(
-                    value: selectedProduct,
+                    initialValue: selectedProduct,
                     decoration: const InputDecoration(
                       labelText: 'Product',
                       border: OutlineInputBorder(),
@@ -132,7 +132,7 @@ class _AdminPricesScreenState extends State<AdminPricesScreen> {
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<Store>(
-                    value: selectedStore,
+                    initialValue: selectedStore,
                     decoration: const InputDecoration(
                       labelText: 'Store',
                       border: OutlineInputBorder(),

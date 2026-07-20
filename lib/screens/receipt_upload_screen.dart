@@ -262,7 +262,7 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
                 ),
                 const SizedBox(height: 25),
                 DropdownButtonFormField<Store>(
-                  value: selectedStore,
+                  initialValue: selectedStore,
                   decoration: const InputDecoration(
                     labelText: 'Store',
                     border: OutlineInputBorder(),

@@ -248,7 +248,7 @@ class _ProductCatalogScreenState
                     ),
                     scrollDirection: Axis.horizontal,
                     itemCount: categories.length,
-                    separatorBuilder: (_, __) {
+                    separatorBuilder: (_, _) {
                       return const SizedBox(width: 8);
                     },
                     itemBuilder: (context, index) {
@@ -307,7 +307,7 @@ class _ProductCatalogScreenState
                 sliver: SliverList.separated(
                   itemCount:
                       filteredProducts.length,
-                  separatorBuilder: (_, __) {
+                  separatorBuilder: (_, _) {
                     return const SizedBox(
                       height: 10,
                     );
@@ -433,7 +433,7 @@ class _ProductCard extends StatelessWidget {
                     : Image.network(
                         imageUrl,
                         fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) {
+                        errorBuilder: (_, _, _) {
                           return Icon(
                             Icons
                                 .shopping_bag_outlined,

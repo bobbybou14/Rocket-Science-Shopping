@@ -154,7 +154,7 @@ final filteredItems = cart.items.where((item) {
       : ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: filteredItems.length,
-                    separatorBuilder: (_, __) {
+                    separatorBuilder: (_, _) {
                       return const SizedBox(height: 12);
                     },
                     itemBuilder: (context, index) {

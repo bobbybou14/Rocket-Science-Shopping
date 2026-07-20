@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
-import '../models/price_history.dart';
 import '../models/product.dart';
 import '../service/price_history_service.dart';
 import '../widgets/price/price_history_chart.dart';

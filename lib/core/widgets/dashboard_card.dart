@@ -30,7 +30,7 @@ class DashboardCard extends StatelessWidget {
         onTap: onTap,
         contentPadding: const EdgeInsets.all(18),
         leading: CircleAvatar(
-          backgroundColor: AppColors.primary.withOpacity(0.12),
+          backgroundColor: AppColors.primary.withValues(),
           child: Icon(
             icon,
             color: AppColors.primary,

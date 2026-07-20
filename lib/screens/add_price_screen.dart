@@ -117,7 +117,7 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
                       labelText: 'Store',
                       border: OutlineInputBorder(),
                     ),
-                    value: selectedStore,
+                    initialValue: selectedStore,
                     items: stores.map((store) {
                       return DropdownMenuItem(
                         value: store,

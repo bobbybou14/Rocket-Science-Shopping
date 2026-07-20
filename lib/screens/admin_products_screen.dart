@@ -135,7 +135,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
             SwitchListTile(
               title: const Text('Ontario HST applies'),
               value: taxable,
-              activeColor: smartCartRed,
+              activeThumbColor: smartCartRed,
               onChanged: (value) {
                 setState(() {
                   taxable = value;

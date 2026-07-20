@@ -21,68 +21,66 @@ class StoreRecommendation {
 class ShoppingOptimizerService {
   /// Calculates the total cost of the current cart at every store.
   static Future<List<StoreRecommendation>> optimize(
-  List<CartItem> cart,
-) async {
-  if (cart.isEmpty) {
-    return [];
-  }
+    List<CartItem> cart,
+  ) async {
+    if (cart.isEmpty) {
+      return [];
+    }
 
-  final Map<String, double> storeTotals = {};
-  final Map<String, int> storeItemCounts = {};
+    final Map<String, double> storeTotals = {};
+    final Map<String, int> storeItemCounts = {};
 
-  for (final item in cart) {
-    final List<Price> prices =
-        await PriceService.getPricesForProduct(
-      item.barcode,
-    );
+    for (final item in cart) {
+      final List<Price> prices =
+          await PriceService.getPricesForProduct(
+        item.barcode,
+      );
 
-    final Map<String, Price> lowestPriceByStore = {};
+      final Map<String, Price> lowestPriceByStore = {};
 
-    for (final price in prices) {
-      final existingPrice =
-          lowestPriceByStore[price.store];
+      for (final price in prices) {
+        final existingPrice = lowestPriceByStore[price.store];
 
-      if (existingPrice == null ||
-          price.price < existingPrice.price) {
-        lowestPriceByStore[price.store] = price;
+        if (existingPrice == null ||
+            price.price < existingPrice.price) {
+          lowestPriceByStore[price.store] = price;
+        }
+      }
+
+      for (final price in lowestPriceByStore.values) {
+        final itemTotal = price.price * item.quantity;
+
+        storeTotals.update(
+          price.store,
+          (value) => value + itemTotal,
+          ifAbsent: () => itemTotal,
+        );
+
+        storeItemCounts.update(
+          price.store,
+          (value) => value + 1,
+          ifAbsent: () => 1,
+        );
       }
     }
 
-    for (final price in lowestPriceByStore.values) {
-      final itemTotal =
-          price.price * item.quantity;
+    final recommendations = <StoreRecommendation>[];
 
-      storeTotals.update(
-        price.store,
-        (value) => value + itemTotal,
-        ifAbsent: () => itemTotal,
-      );
-
-      storeItemCounts.update(
-        price.store,
-        (value) => value + 1,
-        ifAbsent: () => 1,
+    for (final entry in storeTotals.entries) {
+      recommendations.add(
+        StoreRecommendation(
+          store: entry.key,
+          total: entry.value,
+          itemsFound: storeItemCounts[entry.key] ?? 0,
+          totalItems: cart.length,
+        ),
       );
     }
-  }
 
-  final recommendations = <StoreRecommendation>[];
-
-  for (final entry in storeTotals.entries) {
-    recommendations.add(
-      StoreRecommendation(
-        store: entry.key,
-        total: entry.value,
-        itemsFound:
-            storeItemCounts[entry.key] ?? 0,
-        totalItems: cart.length,
-      ),
+    recommendations.sort(
+      (a, b) => a.total.compareTo(b.total),
     );
+
+    return recommendations;
   }
-
-  recommendations.sort(
-    (a, b) => a.total.compareTo(b.total),
-  );
-
-  return recommendations;
 }
