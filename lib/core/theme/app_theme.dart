@@ -24,28 +24,19 @@ class AppTheme {
       color: Colors.white,
       elevation: 3,
       margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 16),
-        textStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
     ),
   );
 }

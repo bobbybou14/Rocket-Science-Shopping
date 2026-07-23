@@ -8,8 +8,7 @@ class LiveCartScreen extends StatefulWidget {
   const LiveCartScreen({super.key});
 
   @override
-  State<LiveCartScreen> createState() =>
-      _LiveCartScreenState();
+  State<LiveCartScreen> createState() => _LiveCartScreenState();
 }
 
 class _LiveCartScreenState extends State<LiveCartScreen> {
@@ -18,7 +17,8 @@ class _LiveCartScreenState extends State<LiveCartScreen> {
   }
 
   Future<void> clearCart() async {
-    final shouldClear = await showDialog<bool>(
+    final shouldClear =
+        await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Clear Cart'),
@@ -27,13 +27,11 @@ class _LiveCartScreenState extends State<LiveCartScreen> {
             ),
             actions: [
               TextButton(
-                onPressed: () =>
-                    Navigator.pop(context, false),
+                onPressed: () => Navigator.pop(context, false),
                 child: const Text('Cancel'),
               ),
               FilledButton(
-                onPressed: () =>
-                    Navigator.pop(context, true),
+                onPressed: () => Navigator.pop(context, true),
                 child: const Text('Clear'),
               ),
             ],
@@ -66,11 +64,7 @@ class _LiveCartScreenState extends State<LiveCartScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Barcode scanner coming next.',
-              ),
-            ),
+            const SnackBar(content: Text('Barcode scanner coming next.')),
           );
         },
         icon: const Icon(Icons.qr_code_scanner),
@@ -82,17 +76,14 @@ class _LiveCartScreenState extends State<LiveCartScreen> {
               children: [
                 _CartSummary(
                   total: LiveCartService.totalCost,
-                  itemCount:
-                      LiveCartService.itemCount,
-                  uniqueItems:
-                      LiveCartService.uniqueItemCount,
+                  itemCount: LiveCartService.itemCount,
+                  uniqueItems: LiveCartService.uniqueItemCount,
                 ),
                 Expanded(
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: items.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(height: 12),
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       return _CartItemCard(
                         item: items[index],
@@ -131,9 +122,7 @@ class _CartSummary extends StatelessWidget {
         children: [
           const Text(
             'Estimated Checkout',
-            style: TextStyle(
-              color: Colors.white70,
-            ),
+            style: TextStyle(color: Colors.white70),
           ),
           const SizedBox(height: 8),
           Text(
@@ -148,16 +137,10 @@ class _CartSummary extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _SummaryTile(
-                  value: '$itemCount',
-                  label: 'Items',
-                ),
+                child: _SummaryTile(value: '$itemCount', label: 'Items'),
               ),
               Expanded(
-                child: _SummaryTile(
-                  value: '$uniqueItems',
-                  label: 'Products',
-                ),
+                child: _SummaryTile(value: '$uniqueItems', label: 'Products'),
               ),
             ],
           ),
@@ -171,10 +154,7 @@ class _SummaryTile extends StatelessWidget {
   final String value;
   final String label;
 
-  const _SummaryTile({
-    required this.value,
-    required this.label,
-  });
+  const _SummaryTile({required this.value, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -188,12 +168,7 @@ class _SummaryTile extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white70,
-          ),
-        ),
+        Text(label, style: const TextStyle(color: Colors.white70)),
       ],
     );
   }
@@ -203,10 +178,7 @@ class _CartItemCard extends StatelessWidget {
   final LiveCartItem item;
   final VoidCallback onChanged;
 
-  const _CartItemCard({
-    required this.item,
-    required this.onChanged,
-  });
+  const _CartItemCard({required this.item, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -214,15 +186,11 @@ class _CartItemCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               item.productName,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 17,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
             ),
             const SizedBox(height: 4),
             Text(item.storeName),
@@ -238,13 +206,9 @@ class _CartItemCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(
-                    Icons.remove_circle_outline,
-                  ),
+                  icon: const Icon(Icons.remove_circle_outline),
                   onPressed: () {
-                    LiveCartService.decreaseQuantity(
-                      item.barcode,
-                    );
+                    LiveCartService.decreaseQuantity(item.barcode);
                     onChanged();
                   },
                 ),
@@ -256,24 +220,16 @@ class _CartItemCard extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(
-                    Icons.add_circle_outline,
-                  ),
+                  icon: const Icon(Icons.add_circle_outline),
                   onPressed: () {
-                    LiveCartService.increaseQuantity(
-                      item.barcode,
-                    );
+                    LiveCartService.increaseQuantity(item.barcode);
                     onChanged();
                   },
                 ),
                 IconButton(
-                  icon: const Icon(
-                    Icons.delete_outline,
-                  ),
+                  icon: const Icon(Icons.delete_outline),
                   onPressed: () {
-                    LiveCartService.removeProduct(
-                      item.barcode,
-                    );
+                    LiveCartService.removeProduct(item.barcode);
                     onChanged();
                   },
                 ),
@@ -284,9 +240,7 @@ class _CartItemCard extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: Text(
                 'Subtotal: \$${item.totalPrice.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -303,11 +257,9 @@ class _EmptyCart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 30),
+        padding: const EdgeInsets.symmetric(horizontal: 30),
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.shopping_cart_outlined,
@@ -317,10 +269,7 @@ class _EmptyCart extends StatelessWidget {
             const SizedBox(height: 24),
             const Text(
               'Your Cart is Empty',
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             const Text(

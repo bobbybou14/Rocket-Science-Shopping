@@ -6,10 +6,7 @@ import '../../models/price_history.dart';
 class PriceStatisticsCard extends StatelessWidget {
   final PriceHistorySummary summary;
 
-  const PriceStatisticsCard({
-    super.key,
-    required this.summary,
-  });
+  const PriceStatisticsCard({super.key, required this.summary});
 
   String _formatMoney(double value) {
     return '\$${value.toStringAsFixed(2)}';
@@ -41,29 +38,29 @@ class PriceStatisticsCard extends StatelessWidget {
   }
 
   Color _trendColor() {
-  switch (summary.trend.toLowerCase()) {
-    case 'rising':
+    switch (summary.trend.toLowerCase()) {
+      case 'rising':
+        return Colors.red;
+      case 'falling':
+        return AppColors.success;
+      case 'stable':
+        return AppColors.warning;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Color _changeColor() {
+    if (summary.priceChange > 0) {
       return Colors.red;
-    case 'falling':
+    }
+
+    if (summary.priceChange < 0) {
       return AppColors.success;
-    case 'stable':
-      return AppColors.warning;
-    default:
-      return Colors.grey;
-  }
-}
+    }
 
-Color _changeColor() {
-  if (summary.priceChange > 0) {
-    return Colors.red;
+    return AppColors.warning;
   }
-
-  if (summary.priceChange < 0) {
-    return AppColors.success;
-  }
-
-  return AppColors.warning;
-}
 
   Widget _priceTile({
     required String label,
@@ -79,27 +76,18 @@ Color _changeColor() {
         ),
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: AppColors.primary,
-              size: 26,
-            ),
+            Icon(icon, color: AppColors.primary, size: 26),
             const SizedBox(height: 8),
             Text(
               _formatMoney(value),
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             Text(
               label,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 13,
-              ),
+              style: const TextStyle(fontSize: 13),
             ),
           ],
         ),
@@ -117,20 +105,9 @@ Color _changeColor() {
       padding: const EdgeInsets.symmetric(vertical: 7),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 22,
-            color: valueColor ?? AppColors.primary,
-          ),
+          Icon(icon, size: 22, color: valueColor ?? AppColors.primary),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 16,
-              ),
-            ),
-          ),
+          Expanded(child: Text(label, style: const TextStyle(fontSize: 16))),
           const SizedBox(width: 12),
           Flexible(
             child: Text(
@@ -151,25 +128,15 @@ Color _changeColor() {
   Widget _emptyState() {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 22,
-          vertical: 30,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 30),
         child: Column(
           children: [
-            const Icon(
-              Icons.show_chart,
-              size: 54,
-              color: AppColors.primary,
-            ),
+            const Icon(Icons.show_chart, size: 54, color: AppColors.primary),
             const SizedBox(height: 14),
             const Text(
               'No Price Intelligence Yet',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 21,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -199,10 +166,7 @@ Color _changeColor() {
           children: [
             const Text(
               'Price Intelligence',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Row(

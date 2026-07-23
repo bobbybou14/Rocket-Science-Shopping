@@ -19,9 +19,7 @@ class PriceSparkline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sortedEntries = [...entries]
-      ..sort(
-        (a, b) => a.createdAt.compareTo(b.createdAt),
-      );
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
     if (sortedEntries.length < 2) {
       return SizedBox(
@@ -30,10 +28,7 @@ class PriceSparkline extends StatelessWidget {
         child: const Center(
           child: Text(
             'Not enough price data',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey),
           ),
         ),
       );
@@ -80,9 +75,7 @@ class _PriceSparklinePainter extends CustomPainter {
       return;
     }
 
-    final prices = entries
-        .map((entry) => entry.price)
-        .toList();
+    final prices = entries.map((entry) => entry.price).toList();
 
     final minimumPrice = prices.reduce(math.min);
     final maximumPrice = prices.reduce(math.max);
@@ -92,11 +85,9 @@ class _PriceSparklinePainter extends CustomPainter {
     const horizontalPadding = 4.0;
     const verticalPadding = 5.0;
 
-    final chartWidth =
-        size.width - (horizontalPadding * 2);
+    final chartWidth = size.width - (horizontalPadding * 2);
 
-    final chartHeight =
-        size.height - (verticalPadding * 2);
+    final chartHeight = size.height - (verticalPadding * 2);
 
     final linePaint = Paint()
       ..color = lineColor
@@ -113,14 +104,7 @@ class _PriceSparklinePainter extends CustomPainter {
           lineColor.withValues(alpha: 0.22),
           lineColor.withValues(alpha: 0.02),
         ],
-      ).createShader(
-        Rect.fromLTWH(
-          0,
-          0,
-          size.width,
-          size.height,
-        ),
-      )
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..style = PaintingStyle.fill;
 
     final pointPaint = Paint()
@@ -129,60 +113,33 @@ class _PriceSparklinePainter extends CustomPainter {
 
     final points = <Offset>[];
 
-    for (int index = 0;
-        index < entries.length;
-        index++) {
-      final x = horizontalPadding +
-          (chartWidth *
-              index /
-              (entries.length - 1));
+    for (int index = 0; index < entries.length; index++) {
+      final x = horizontalPadding + (chartWidth * index / (entries.length - 1));
 
       final normalizedPrice = priceRange == 0
           ? 0.5
-          : (entries[index].price - minimumPrice) /
-              priceRange;
+          : (entries[index].price - minimumPrice) / priceRange;
 
-      final y = verticalPadding +
-          chartHeight -
-          (normalizedPrice * chartHeight);
+      final y = verticalPadding + chartHeight - (normalizedPrice * chartHeight);
 
       points.add(Offset(x, y));
     }
 
-    final linePath = Path()
-      ..moveTo(
-        points.first.dx,
-        points.first.dy,
-      );
+    final linePath = Path()..moveTo(points.first.dx, points.first.dy);
 
-    for (int index = 1;
-        index < points.length;
-        index++) {
-      linePath.lineTo(
-        points[index].dx,
-        points[index].dy,
-      );
+    for (int index = 1; index < points.length; index++) {
+      linePath.lineTo(points[index].dx, points[index].dy);
     }
 
     final fillPath = Path.from(linePath)
-      ..lineTo(
-        points.last.dx,
-        size.height - verticalPadding,
-      )
-      ..lineTo(
-        points.first.dx,
-        size.height - verticalPadding,
-      )
+      ..lineTo(points.last.dx, size.height - verticalPadding)
+      ..lineTo(points.first.dx, size.height - verticalPadding)
       ..close();
 
     canvas.drawPath(fillPath, fillPaint);
     canvas.drawPath(linePath, linePaint);
 
-    canvas.drawCircle(
-      points.last,
-      3.5,
-      pointPaint,
-    );
+    canvas.drawCircle(points.last, 3.5, pointPaint);
 
     canvas.drawCircle(
       points.last,
@@ -194,10 +151,7 @@ class _PriceSparklinePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(
-    covariant _PriceSparklinePainter oldDelegate,
-  ) {
-    return oldDelegate.entries != entries ||
-        oldDelegate.lineColor != lineColor;
+  bool shouldRepaint(covariant _PriceSparklinePainter oldDelegate) {
+    return oldDelegate.entries != entries || oldDelegate.lineColor != lineColor;
   }
 }

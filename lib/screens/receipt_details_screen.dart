@@ -7,10 +7,7 @@ import 'receipt_items_screen.dart';
 class ReceiptDetailsScreen extends StatelessWidget {
   final Receipt receipt;
 
-  const ReceiptDetailsScreen({
-    super.key,
-    required this.receipt,
-  });
+  const ReceiptDetailsScreen({super.key, required this.receipt});
 
   String formatDate(DateTime? date) {
     if (date == null) return 'Unknown date';
@@ -25,9 +22,7 @@ class ReceiptDetailsScreen extends StatelessWidget {
   void openReceiptItems(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => ReceiptItemsScreen(receipt: receipt),
-      ),
+      MaterialPageRoute(builder: (_) => ReceiptItemsScreen(receipt: receipt)),
     );
   }
 
@@ -39,10 +34,7 @@ class ReceiptDetailsScreen extends StatelessWidget {
     return Card(
       child: ListTile(
         leading: Icon(icon, color: AppColors.primary),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(value),
       ),
     );
@@ -64,9 +56,7 @@ class ReceiptDetailsScreen extends StatelessWidget {
             Text(
               'Personal data redacted: ${receipt.personalDataRedacted ? "Yes" : "No"}',
             ),
-            Text(
-              'Raw image stored: ${receipt.rawImageStored ? "Yes" : "No"}',
-            ),
+            Text('Raw image stored: ${receipt.rawImageStored ? "Yes" : "No"}'),
           ],
         ),
       ),
@@ -89,8 +79,9 @@ class ReceiptDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final storeName =
-        receipt.storeName.isEmpty ? 'Unknown Store' : receipt.storeName;
+    final storeName = receipt.storeName.isEmpty
+        ? 'Unknown Store'
+        : receipt.storeName;
 
     final location = [
       receipt.city,
@@ -98,17 +89,11 @@ class ReceiptDetailsScreen extends StatelessWidget {
     ].where((item) => item.isNotEmpty).join(', ');
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Receipt Details'),
-      ),
+      appBar: AppBar(title: const Text('Receipt Details')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Icon(
-            Icons.receipt_long,
-            size: 90,
-            color: AppColors.primary,
-          ),
+          const Icon(Icons.receipt_long, size: 90, color: AppColors.primary),
           const SizedBox(height: 20),
           Text(
             storeName,
@@ -122,11 +107,7 @@ class ReceiptDetailsScreen extends StatelessWidget {
               style: const TextStyle(fontSize: 18),
             ),
           const SizedBox(height: 25),
-          infoCard(
-            icon: Icons.store,
-            title: 'Store',
-            value: storeName,
-          ),
+          infoCard(icon: Icons.store, title: 'Store', value: storeName),
           infoCard(
             icon: Icons.location_on,
             title: 'Location',
@@ -147,11 +128,7 @@ class ReceiptDetailsScreen extends StatelessWidget {
           statusCard(),
           privacyCard(),
           if (receipt.notes.isNotEmpty)
-            infoCard(
-              icon: Icons.notes,
-              title: 'Notes',
-              value: receipt.notes,
-            ),
+            infoCard(icon: Icons.notes, title: 'Notes', value: receipt.notes),
           const SizedBox(height: 20),
           FilledButton.icon(
             onPressed: () => openReceiptItems(context),
@@ -162,9 +139,7 @@ class ReceiptDetailsScreen extends StatelessWidget {
           OutlinedButton.icon(
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Delete receipt coming soon.'),
-                ),
+                const SnackBar(content: Text('Delete receipt coming soon.')),
               );
             },
             icon: const Icon(Icons.delete_outline),

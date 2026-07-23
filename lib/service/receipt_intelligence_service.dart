@@ -18,7 +18,9 @@ class ReceiptIntelligenceResult {
 }
 
 class ReceiptIntelligenceService {
-  static Future<ReceiptIntelligenceResult> processRawText(String rawText) async {
+  static Future<ReceiptIntelligenceResult> processRawText(
+    String rawText,
+  ) async {
     final parsedReceipt = ReceiptParserService.parse(rawText);
     final List<Product> products = await ProductService.getProducts();
 

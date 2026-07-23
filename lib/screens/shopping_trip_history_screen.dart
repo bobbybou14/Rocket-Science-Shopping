@@ -12,8 +12,7 @@ class ShoppingTripHistoryScreen extends StatefulWidget {
       _ShoppingTripHistoryScreenState();
 }
 
-class _ShoppingTripHistoryScreenState
-    extends State<ShoppingTripHistoryScreen> {
+class _ShoppingTripHistoryScreenState extends State<ShoppingTripHistoryScreen> {
   List<ShoppingTrip> trips = [];
   bool isLoading = true;
   String? errorMessage;
@@ -53,9 +52,7 @@ class _ShoppingTripHistoryScreenState
     final wasDeleted = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (_) => ShoppingTripDetailsScreen(
-          shoppingTripId: trip.id,
-        ),
+        builder: (_) => ShoppingTripDetailsScreen(shoppingTripId: trip.id),
       ),
     );
 
@@ -90,15 +87,10 @@ class _ShoppingTripHistoryScreenState
       margin: const EdgeInsets.only(bottom: 14),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
-        leading: const CircleAvatar(
-          child: Icon(Icons.shopping_bag),
-        ),
+        leading: const CircleAvatar(child: Icon(Icons.shopping_bag)),
         title: Text(
           displayStoreName(trip),
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
           '${formatDate(trip.purchaseDate)}'
@@ -111,10 +103,7 @@ class _ShoppingTripHistoryScreenState
           children: [
             Text(
               '\$${trip.total.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(width: 6),
             const Icon(Icons.chevron_right),
@@ -127,9 +116,7 @@ class _ShoppingTripHistoryScreenState
 
   Widget bodyContent() {
     if (isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (errorMessage != null) {
@@ -139,15 +126,9 @@ class _ShoppingTripHistoryScreenState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.error_outline,
-                size: 60,
-              ),
+              const Icon(Icons.error_outline, size: 60),
               const SizedBox(height: 16),
-              Text(
-                errorMessage!,
-                textAlign: TextAlign.center,
-              ),
+              Text(errorMessage!, textAlign: TextAlign.center),
               const SizedBox(height: 16),
               FilledButton.icon(
                 onPressed: loadTrips,
@@ -167,18 +148,12 @@ class _ShoppingTripHistoryScreenState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.shopping_bag_outlined,
-                size: 80,
-              ),
+              Icon(Icons.shopping_bag_outlined, size: 80),
               SizedBox(height: 16),
               Text(
                 'No shopping trips saved yet.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
               Text(

@@ -20,19 +20,13 @@ class EmptyCart extends StatelessWidget {
             const Text(
               'Your cart is empty',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Text(
               'Scan a product or add one from the product catalog.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 17,
-                color: Colors.grey.shade700,
-              ),
+              style: TextStyle(fontSize: 17, color: Colors.grey.shade700),
             ),
           ],
         ),

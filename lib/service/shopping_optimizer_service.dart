@@ -20,9 +20,7 @@ class StoreRecommendation {
 
 class ShoppingOptimizerService {
   /// Calculates the total cost of the current cart at every store.
-  static Future<List<StoreRecommendation>> optimize(
-    List<CartItem> cart,
-  ) async {
+  static Future<List<StoreRecommendation>> optimize(List<CartItem> cart) async {
     if (cart.isEmpty) {
       return [];
     }
@@ -31,8 +29,7 @@ class ShoppingOptimizerService {
     final Map<String, int> storeItemCounts = {};
 
     for (final item in cart) {
-      final List<Price> prices =
-          await PriceService.getPricesForProduct(
+      final List<Price> prices = await PriceService.getPricesForProduct(
         item.barcode,
       );
 
@@ -41,8 +38,7 @@ class ShoppingOptimizerService {
       for (final price in prices) {
         final existingPrice = lowestPriceByStore[price.store];
 
-        if (existingPrice == null ||
-            price.price < existingPrice.price) {
+        if (existingPrice == null || price.price < existingPrice.price) {
           lowestPriceByStore[price.store] = price;
         }
       }
@@ -77,9 +73,7 @@ class ShoppingOptimizerService {
       );
     }
 
-    recommendations.sort(
-      (a, b) => a.total.compareTo(b.total),
-    );
+    recommendations.sort((a, b) => a.total.compareTo(b.total));
 
     return recommendations;
   }

@@ -46,9 +46,7 @@ class CartItemCard extends StatelessWidget {
           title: const Text('Edit Price'),
           content: TextField(
             controller: controller,
-            keyboardType: const TextInputType.numberWithOptions(
-              decimal: true,
-            ),
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: const InputDecoration(
               labelText: 'Price',
               prefixText: '\$',
@@ -63,9 +61,7 @@ class CartItemCard extends StatelessWidget {
             ),
             FilledButton(
               onPressed: () {
-                final price = double.tryParse(
-                  controller.text.trim(),
-                );
+                final price = double.tryParse(controller.text.trim());
 
                 if (price != null && price >= 0) {
                   Navigator.pop(dialogContext, price);
@@ -83,17 +79,12 @@ class CartItemCard extends StatelessWidget {
     if (!context.mounted) return;
 
     if (newPrice != null) {
-      context.read<CartProvider>().updatePrice(
-            item,
-            newPrice,
-          );
+      context.read<CartProvider>().updatePrice(item, newPrice);
     }
   }
 
   Future<void> _editQuantity(BuildContext context) async {
-    final controller = TextEditingController(
-      text: item.quantity.toString(),
-    );
+    final controller = TextEditingController(text: item.quantity.toString());
 
     final newQuantity = await showDialog<int>(
       context: context,
@@ -103,9 +94,7 @@ class CartItemCard extends StatelessWidget {
           content: TextField(
             controller: controller,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Quantity',
-            ),
+            decoration: const InputDecoration(labelText: 'Quantity'),
           ),
           actions: [
             TextButton(
@@ -116,15 +105,10 @@ class CartItemCard extends StatelessWidget {
             ),
             FilledButton(
               onPressed: () {
-                final quantity = int.tryParse(
-                  controller.text.trim(),
-                );
+                final quantity = int.tryParse(controller.text.trim());
 
                 if (quantity != null && quantity >= 0) {
-                  Navigator.pop(
-                    dialogContext,
-                    quantity,
-                  );
+                  Navigator.pop(dialogContext, quantity);
                 }
               },
               child: const Text('Save'),
@@ -139,10 +123,7 @@ class CartItemCard extends StatelessWidget {
     if (!context.mounted) return;
 
     if (newQuantity != null) {
-      context.read<CartProvider>().setQuantity(
-            item,
-            newQuantity,
-          );
+      context.read<CartProvider>().setQuantity(item, newQuantity);
     }
   }
 
@@ -172,10 +153,7 @@ class CartItemCard extends StatelessWidget {
                   const SizedBox(height: 5),
                   Text(
                     'Barcode: ${item.product.barcode}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   ),
                   const SizedBox(height: 7),
                   InkWell(
@@ -192,13 +170,8 @@ class CartItemCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    item.product.taxable
-                        ? 'HST applies'
-                        : 'No HST',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.shade700,
-                    ),
+                    item.product.taxable ? 'HST applies' : 'No HST',
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                   ),
                   const SizedBox(height: 12),
                   Row(
@@ -209,9 +182,7 @@ class CartItemCard extends StatelessWidget {
                         onPressed: onDecrease,
                       ),
                       Container(
-                        constraints: const BoxConstraints(
-                          minWidth: 44,
-                        ),
+                        constraints: const BoxConstraints(minWidth: 44),
                         alignment: Alignment.center,
                         child: InkWell(
                           onTap: () {
@@ -222,8 +193,7 @@ class CartItemCard extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              decoration:
-                                  TextDecoration.underline,
+                              decoration: TextDecoration.underline,
                             ),
                           ),
                         ),
@@ -238,9 +208,7 @@ class CartItemCard extends StatelessWidget {
                         tooltip: 'Remove item',
                         onPressed: onRemove,
                         color: smartCartRed,
-                        icon: const Icon(
-                          Icons.delete_outline,
-                        ),
+                        icon: const Icon(Icons.delete_outline),
                       ),
                     ],
                   ),
@@ -266,9 +234,7 @@ class CartItemCard extends StatelessWidget {
 class _ProductImage extends StatelessWidget {
   final CartItem item;
 
-  const _ProductImage({
-    required this.item,
-  });
+  const _ProductImage({required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -323,10 +289,7 @@ class _QuantityButton extends StatelessWidget {
         tooltip: tooltip,
         padding: EdgeInsets.zero,
         onPressed: onPressed,
-        icon: Icon(
-          icon,
-          size: 19,
-        ),
+        icon: Icon(icon, size: 19),
       ),
     );
   }

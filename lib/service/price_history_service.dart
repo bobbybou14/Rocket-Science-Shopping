@@ -7,9 +7,7 @@ export '../models/price_history.dart';
 class PriceHistoryService {
   static final SupabaseClient _supabase = Supabase.instance.client;
 
-  static Future<PriceHistorySummary> getPriceHistory(
-    String barcode,
-  ) async {
+  static Future<PriceHistorySummary> getPriceHistory(String barcode) async {
     final cleanedBarcode = barcode.trim();
 
     if (cleanedBarcode.isEmpty) {
@@ -22,38 +20,28 @@ class PriceHistoryService {
         .eq('barcode', cleanedBarcode)
         .order('created_at', ascending: true);
 
-    final entries = List<Map<String, dynamic>>.from(response)
-        .map(PriceHistoryEntry.fromMap)
-        .where((entry) => entry.price > 0)
-        .toList();
+    final entries = List<Map<String, dynamic>>.from(
+      response,
+    ).map(PriceHistoryEntry.fromMap).where((entry) => entry.price > 0).toList();
 
     if (entries.isEmpty) {
       return const PriceHistorySummary.empty();
     }
 
-    final prices = entries
-        .map((entry) => entry.price)
-        .toList();
+    final prices = entries.map((entry) => entry.price).toList();
 
     final currentEntry = entries.last;
     final currentPrice = currentEntry.price;
 
-    final lowestEntry = entries.reduce(
-      (current, next) {
-        return next.price < current.price ? next : current;
-      },
-    );
+    final lowestEntry = entries.reduce((current, next) {
+      return next.price < current.price ? next : current;
+    });
 
-    final highestEntry = entries.reduce(
-      (current, next) {
-        return next.price > current.price ? next : current;
-      },
-    );
+    final highestEntry = entries.reduce((current, next) {
+      return next.price > current.price ? next : current;
+    });
 
-    final totalPrice = prices.fold<double>(
-      0,
-      (total, price) => total + price,
-    );
+    final totalPrice = prices.fold<double>(0, (total, price) => total + price);
 
     final averagePrice = totalPrice / prices.length;
 
@@ -76,9 +64,7 @@ class PriceHistoryService {
     );
   }
 
-  static double _calculatePriceChange(
-    List<PriceHistoryEntry> entries,
-  ) {
+  static double _calculatePriceChange(List<PriceHistoryEntry> entries) {
     if (entries.length < 2) {
       return 0;
     }
@@ -89,9 +75,7 @@ class PriceHistoryService {
     return currentPrice - previousPrice;
   }
 
-  static double _calculatePercentageChange(
-    List<PriceHistoryEntry> entries,
-  ) {
+  static double _calculatePercentageChange(List<PriceHistoryEntry> entries) {
     if (entries.length < 2) {
       return 0;
     }

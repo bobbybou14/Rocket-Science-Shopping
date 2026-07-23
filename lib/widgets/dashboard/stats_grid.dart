@@ -29,31 +29,31 @@ class StatsGrid extends StatelessWidget {
           mainAxisSpacing: 12,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: isNarrow ? 1.0 : 1.25,
+          childAspectRatio: isNarrow ? 0.95 : 1.18,
           children: [
             _StatTile(
-              icon: Icons.shopping_bag,
+              icon: Icons.shopping_bag_outlined,
               label: 'Shopping Trips',
               value: tripCount.toString(),
               supportingText: 'This month',
             ),
             _StatTile(
-              icon: Icons.store,
+              icon: Icons.store_outlined,
               label: 'Stores Visited',
               value: storeCount.toString(),
               supportingText: 'This month',
             ),
             _StatTile(
-              icon: Icons.attach_money,
+              icon: Icons.payments_outlined,
               label: 'Amount Spent',
               value: '\$${amountSpent.toStringAsFixed(2)}',
-              supportingText: 'Groceries',
+              supportingText: 'On groceries',
             ),
             _StatTile(
-              icon: Icons.receipt_long,
+              icon: Icons.receipt_long_outlined,
               label: 'Average Trip',
               value: '\$${averageTripCost.toStringAsFixed(2)}',
-              supportingText: 'Per trip',
+              supportingText: 'Per shopping trip',
             ),
           ],
         );
@@ -77,60 +77,66 @@ class _StatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 12,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 42,
-              height: 42,
+              width: 46,
+              height: 46,
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.10),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(15),
               ),
-              child: Icon(
-                icon,
-                color: AppColors.primary,
-                size: 24,
-              ),
+              child: Icon(icon, color: AppColors.primary, size: 25),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
                 value,
+                maxLines: 1,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 21,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
+                  letterSpacing: -0.3,
                 ),
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              label,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                height: 1.2,
               ),
             ),
             const SizedBox(height: 3),
-            Flexible(
-              child: Text(
-                label,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 2),
             Text(
               supportingText,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall,
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
             ),
           ],
         ),

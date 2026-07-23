@@ -6,18 +6,14 @@ import '../service/shopping_trip_service.dart';
 class ShoppingTripDetailsScreen extends StatefulWidget {
   final String shoppingTripId;
 
-  const ShoppingTripDetailsScreen({
-    super.key,
-    required this.shoppingTripId,
-  });
+  const ShoppingTripDetailsScreen({super.key, required this.shoppingTripId});
 
   @override
   State<ShoppingTripDetailsScreen> createState() =>
       _ShoppingTripDetailsScreenState();
 }
 
-class _ShoppingTripDetailsScreenState
-    extends State<ShoppingTripDetailsScreen> {
+class _ShoppingTripDetailsScreenState extends State<ShoppingTripDetailsScreen> {
   ShoppingTrip? trip;
   bool isLoading = true;
   bool isDeleting = false;
@@ -90,9 +86,7 @@ class _ShoppingTripDetailsScreenState
     });
 
     try {
-      await ShoppingTripService.deleteShoppingTrip(
-        widget.shoppingTripId,
-      );
+      await ShoppingTripService.deleteShoppingTrip(widget.shoppingTripId);
 
       if (!mounted) return;
 
@@ -105,9 +99,7 @@ class _ShoppingTripDetailsScreenState
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Unable to delete shopping trip: $error'),
-        ),
+        SnackBar(content: Text('Unable to delete shopping trip: $error')),
       );
     }
   }
@@ -141,17 +133,11 @@ class _ShoppingTripDetailsScreenState
           children: [
             Text(
               trip.storeName.isEmpty ? 'Unknown Store' : trip.storeName,
-              style: const TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
             if (location.isNotEmpty) ...[
               const SizedBox(height: 4),
-              Text(
-                location,
-                style: const TextStyle(fontSize: 17),
-              ),
+              Text(location, style: const TextStyle(fontSize: 17)),
             ],
             const SizedBox(height: 14),
             Text('Purchase date: ${formatDate(trip.purchaseDate)}'),
@@ -162,10 +148,7 @@ class _ShoppingTripDetailsScreenState
             Text('Tax: \$${trip.tax.toStringAsFixed(2)}'),
             Text(
               'Total: \$${trip.total.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -192,9 +175,7 @@ class _ShoppingTripDetailsScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(
-              item.requiresReview
-                  ? Icons.warning_amber
-                  : Icons.check_circle,
+              item.requiresReview ? Icons.warning_amber : Icons.check_circle,
               color: confidenceColour(item.confidenceScore),
               size: 30,
             ),
@@ -213,15 +194,9 @@ class _ShoppingTripDetailsScreenState
                   const SizedBox(height: 4),
                   Text(matchedName),
                   const SizedBox(height: 4),
-                  Text(
-                    'Quantity: ${item.quantity.toStringAsFixed(3)}',
-                  ),
-                  Text(
-                    'Unit price: \$${item.unitPrice.toStringAsFixed(2)}',
-                  ),
-                  Text(
-                    'Line total: \$${item.lineTotal.toStringAsFixed(2)}',
-                  ),
+                  Text('Quantity: ${item.quantity.toStringAsFixed(3)}'),
+                  Text('Unit price: \$${item.unitPrice.toStringAsFixed(2)}'),
+                  Text('Line total: \$${item.lineTotal.toStringAsFixed(2)}'),
                   Text(
                     'Confidence: ${item.confidenceScore.toStringAsFixed(0)}%',
                     style: TextStyle(
@@ -229,11 +204,7 @@ class _ShoppingTripDetailsScreenState
                       color: confidenceColour(item.confidenceScore),
                     ),
                   ),
-                  Text(
-                    item.requiresReview
-                        ? 'Review required'
-                        : 'Verified',
-                  ),
+                  Text(item.requiresReview ? 'Review required' : 'Verified'),
                 ],
               ),
             ),
@@ -245,9 +216,7 @@ class _ShoppingTripDetailsScreenState
 
   Widget bodyContent() {
     if (isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (errorMessage != null) {
@@ -257,15 +226,9 @@ class _ShoppingTripDetailsScreenState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.error_outline,
-                size: 60,
-              ),
+              const Icon(Icons.error_outline, size: 60),
               const SizedBox(height: 16),
-              Text(
-                errorMessage!,
-                textAlign: TextAlign.center,
-              ),
+              Text(errorMessage!, textAlign: TextAlign.center),
               const SizedBox(height: 16),
               FilledButton.icon(
                 onPressed: loadTrip,
@@ -281,9 +244,7 @@ class _ShoppingTripDetailsScreenState
     final currentTrip = trip;
 
     if (currentTrip == null) {
-      return const Center(
-        child: Text('Shopping trip not found.'),
-      );
+      return const Center(child: Text('Shopping trip not found.'));
     }
 
     return ListView(
@@ -293,10 +254,7 @@ class _ShoppingTripDetailsScreenState
         const SizedBox(height: 16),
         Text(
           'Items (${currentTrip.items.length})',
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         if (currentTrip.items.isEmpty)
@@ -315,14 +273,10 @@ class _ShoppingTripDetailsScreenState
               ? const SizedBox(
                   width: 18,
                   height: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                  ),
+                  child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.delete_outline),
-          label: Text(
-            isDeleting ? 'Deleting...' : 'Delete Shopping Trip',
-          ),
+          label: Text(isDeleting ? 'Deleting...' : 'Delete Shopping Trip'),
         ),
       ],
     );

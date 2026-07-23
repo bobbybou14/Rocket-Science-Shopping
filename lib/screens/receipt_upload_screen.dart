@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../models/shopping_trip.dart';
 import '../core/theme/app_colors.dart';
 import '../models/receipt.dart';
 import '../models/store.dart';
@@ -10,6 +11,7 @@ import '../service/receipt_processor_service.dart';
 import '../service/receipt_service.dart';
 import '../service/store_service.dart';
 import 'receipt_history_screen.dart';
+import 'receipt_review_screen.dart';
 
 class ReceiptUploadScreen extends StatefulWidget {
   const ReceiptUploadScreen({super.key});
@@ -109,12 +111,36 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
           processingStatus: 'pending',
           personalDataRedacted: true,
           rawImageStored: false,
-          notes: 'Receipt image selected. OCR processing not yet implemented.',
+          notes: 'Receipt image selected for OCR processing.',
         ),
       );
 
-      final result =
-          await ReceiptProcessorService.processReceipt(savedReceipt);
+      final draft = await ReceiptProcessorService.prepareReceipt(
+        receipt: savedReceipt,
+        imagePath: _receiptImage!.path,
+        storeId: selectedStore!.id,
+        storeName: selectedStore!.name,
+        city: selectedStore!.city,
+        province: selectedStore!.province,
+      );
+
+      if (!mounted) return;
+
+      final reviewedTrip = await Navigator.push<ShoppingTrip>(
+        context,
+        MaterialPageRoute(builder: (_) => ReceiptReviewScreen(draft: draft)),
+      );
+
+      if (!mounted) return;
+
+      if (reviewedTrip == null) {
+        setState(() {
+          isSaving = false;
+          processingMessage = 'Receipt review was cancelled.';
+        });
+
+        return;
+      }
 
       if (!mounted) return;
 
@@ -124,13 +150,11 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
         selectedStore = null;
         purchaseDate = DateTime.now();
         isSaving = false;
-        processingMessage = result.message;
+        processingMessage = 'Receipt review completed.';
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result.message),
-        ),
+        const SnackBar(content: Text('Receipt review completed.')),
       );
     } catch (error) {
       if (!mounted) return;
@@ -140,20 +164,16 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
         processingMessage = null;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Receipt save failed: $error'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Receipt save failed: $error')));
     }
   }
 
   void openReceiptHistory() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => const ReceiptHistoryScreen(),
-      ),
+      MaterialPageRoute(builder: (_) => const ReceiptHistoryScreen()),
     );
   }
 
@@ -175,11 +195,7 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
           border: Border.all(color: Colors.grey.shade400),
         ),
         child: const Center(
-          child: Icon(
-            Icons.receipt_long,
-            size: 120,
-            color: AppColors.primary,
-          ),
+          child: Icon(Icons.receipt_long, size: 120, color: AppColors.primary),
         ),
       );
     }
@@ -203,10 +219,7 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Text(
-          processingMessage!,
-          style: const TextStyle(fontSize: 16),
-        ),
+        child: Text(processingMessage!, style: const TextStyle(fontSize: 16)),
       ),
     );
   }
@@ -250,10 +263,7 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
               children: [
                 const Text(
                   'Receipt Upload',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 const Text(
@@ -291,15 +301,17 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
                 preview(),
                 const SizedBox(height: 30),
                 ElevatedButton.icon(
-                  onPressed:
-                      isSaving ? null : () => pickImage(ImageSource.camera),
+                  onPressed: isSaving
+                      ? null
+                      : () => pickImage(ImageSource.camera),
                   icon: const Icon(Icons.photo_camera),
                   label: const Text('Take Photo'),
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton.icon(
-                  onPressed:
-                      isSaving ? null : () => pickImage(ImageSource.gallery),
+                  onPressed: isSaving
+                      ? null
+                      : () => pickImage(ImageSource.gallery),
                   icon: const Icon(Icons.photo_library),
                   label: const Text('Choose From Device'),
                 ),

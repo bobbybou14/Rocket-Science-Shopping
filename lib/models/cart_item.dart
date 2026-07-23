@@ -5,11 +5,7 @@ class CartItem {
   int quantity;
   double price;
 
-  CartItem({
-    required this.product,
-    required this.price,
-    this.quantity = 1,
-  });
+  CartItem({required this.product, required this.price, this.quantity = 1});
 
   String get barcode => product.barcode;
   String get name => product.name;

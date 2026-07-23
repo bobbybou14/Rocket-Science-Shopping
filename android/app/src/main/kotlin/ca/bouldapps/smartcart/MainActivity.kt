@@ -1,4 +1,4 @@
-package com.example.smartcart_canada
+package ca.bouldapps.smartcart
 
 import io.flutter.embedding.android.FlutterActivity
 

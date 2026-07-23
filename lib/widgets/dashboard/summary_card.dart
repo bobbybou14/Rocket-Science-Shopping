@@ -28,6 +28,18 @@ class SummaryCard extends StatelessWidget {
     return 'Good evening';
   }
 
+  String activityMessage() {
+    if (tripCount == 0) {
+      return 'Start by uploading your first grocery receipt.';
+    }
+
+    if (tripCount == 1) {
+      return 'Your first grocery trip is now part of your savings history.';
+    }
+
+    return 'Here is your grocery activity for this month.';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -50,16 +62,16 @@ class SummaryCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 54,
-                height: 54,
+                width: 56,
+                height: 56,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.16),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(18),
                 ),
                 child: const Icon(
                   Icons.shopping_cart,
                   color: Colors.white,
-                  size: 30,
+                  size: 31,
                 ),
               ),
               const SizedBox(width: 14),
@@ -68,18 +80,20 @@ class SummaryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'SmartCart',
+                      'SmartCart Canada',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 28,
+                        fontSize: 25,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    SizedBox(height: 2),
                     Text(
-                      'Made for Canadian grocery shopping',
+                      'Shop Smarter. Spend Less.',
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 15,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -97,11 +111,12 @@ class SummaryCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          const Text(
-            'Here is your grocery activity for this month.',
-            style: TextStyle(
+          Text(
+            activityMessage(),
+            style: const TextStyle(
               color: Colors.white70,
               fontSize: 16,
+              height: 1.35,
             ),
           ),
           const SizedBox(height: 24),
@@ -111,6 +126,7 @@ class SummaryCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,6 +136,7 @@ class SummaryCard extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: 15,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -127,8 +144,9 @@ class SummaryCard extends StatelessWidget {
                   '\$${amountSpent.toStringAsFixed(2)}',
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 34,
+                    fontSize: 36,
                     fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -137,11 +155,11 @@ class SummaryCard extends StatelessWidget {
                   runSpacing: 10,
                   children: [
                     _summaryChip(
-                      icon: Icons.shopping_bag,
+                      icon: Icons.shopping_bag_outlined,
                       label: '$tripCount trip${tripCount == 1 ? '' : 's'}',
                     ),
                     _summaryChip(
-                      icon: Icons.store,
+                      icon: Icons.store_outlined,
                       label: '$storeCount store${storeCount == 1 ? '' : 's'}',
                     ),
                   ],
@@ -149,20 +167,31 @@ class SummaryCard extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 18),
+          const Row(
+            children: [
+              Icon(Icons.auto_awesome, color: Colors.white70, size: 18),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Your grocery companion from planning to checkout.',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _summaryChip({
-    required IconData icon,
-    required String label,
-  }) {
+  Widget _summaryChip({required IconData icon, required String label}) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(20),
@@ -170,11 +199,7 @@ class SummaryCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            color: Colors.white,
-            size: 18,
-          ),
+          Icon(icon, color: Colors.white, size: 18),
           const SizedBox(width: 6),
           Text(
             label,

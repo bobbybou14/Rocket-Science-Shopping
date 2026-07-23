@@ -25,8 +25,7 @@ class ShoppingSession {
     );
   }
 
-  Duration get duration =>
-      DateTime.now().difference(startedAt);
+  Duration get duration => DateTime.now().difference(startedAt);
 
   String get durationText {
     final hours = duration.inHours;
@@ -39,13 +38,8 @@ class ShoppingSession {
     return '${duration.inMinutes} min';
   }
 
-  factory ShoppingSession.newSession({
-    required String storeName,
-  }) {
-    return ShoppingSession(
-      storeName: storeName,
-      startedAt: DateTime.now(),
-    );
+  factory ShoppingSession.newSession({required String storeName}) {
+    return ShoppingSession(storeName: storeName, startedAt: DateTime.now());
   }
 
   Map<String, dynamic> toMap() {
@@ -57,14 +51,10 @@ class ShoppingSession {
     };
   }
 
-  factory ShoppingSession.fromMap(
-    Map<String, dynamic> map,
-  ) {
+  factory ShoppingSession.fromMap(Map<String, dynamic> map) {
     return ShoppingSession(
       storeName: map['store_name'] ?? '',
-      startedAt: DateTime.parse(
-        map['started_at'],
-      ),
+      startedAt: DateTime.parse(map['started_at']),
       currency: map['currency'] ?? 'CAD',
       active: map['active'] ?? true,
     );

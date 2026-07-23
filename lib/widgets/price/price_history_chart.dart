@@ -8,35 +8,22 @@ import '../../models/price_history.dart';
 class PriceHistoryChart extends StatelessWidget {
   final List<PriceHistoryEntry> entries;
 
-  const PriceHistoryChart({
-    super.key,
-    required this.entries,
-  });
+  const PriceHistoryChart({super.key, required this.entries});
 
   @override
   Widget build(BuildContext context) {
     if (entries.length < 2) {
       return Card(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 22,
-            vertical: 30,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 30),
           child: Column(
             children: const [
-              Icon(
-                Icons.show_chart,
-                size: 54,
-                color: AppColors.primary,
-              ),
+              Icon(Icons.show_chart, size: 54, color: AppColors.primary),
               SizedBox(height: 14),
               Text(
                 'Not Enough Data for a Chart',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 21,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
               Text(
@@ -50,9 +37,7 @@ class PriceHistoryChart extends StatelessWidget {
     }
 
     final sortedEntries = [...entries]
-      ..sort(
-        (a, b) => a.createdAt.compareTo(b.createdAt),
-      );
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
     return Card(
       child: Padding(
@@ -62,17 +47,11 @@ class PriceHistoryChart extends StatelessWidget {
           children: [
             const Row(
               children: [
-                Icon(
-                  Icons.show_chart,
-                  color: AppColors.primary,
-                ),
+                Icon(Icons.show_chart, color: AppColors.primary),
                 SizedBox(width: 10),
                 Text(
                   'Price Trend',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -86,9 +65,7 @@ class PriceHistoryChart extends StatelessWidget {
             SizedBox(
               height: 230,
               child: CustomPaint(
-                painter: _PriceHistoryChartPainter(
-                  entries: sortedEntries,
-                ),
+                painter: _PriceHistoryChartPainter(entries: sortedEntries),
                 child: const SizedBox.expand(),
               ),
             ),
@@ -116,10 +93,7 @@ class PriceHistoryChart extends StatelessWidget {
     );
   }
 
-  Widget _legendItem({
-    required String label,
-    required double value,
-  }) {
+  Widget _legendItem({required String label, required double value}) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -128,17 +102,11 @@ class PriceHistoryChart extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 13),
-          ),
+          Text(label, style: const TextStyle(fontSize: 13)),
           const SizedBox(height: 4),
           Text(
             '\$${value.toStringAsFixed(2)}',
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -149,9 +117,7 @@ class PriceHistoryChart extends StatelessWidget {
 class _PriceHistoryChartPainter extends CustomPainter {
   final List<PriceHistoryEntry> entries;
 
-  const _PriceHistoryChartPainter({
-    required this.entries,
-  });
+  const _PriceHistoryChartPainter({required this.entries});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -162,10 +128,8 @@ class _PriceHistoryChartPainter extends CustomPainter {
     const topPadding = 16.0;
     const bottomPadding = 34.0;
 
-    final chartWidth =
-        math.max(1.0, size.width - leftPadding - rightPadding);
-    final chartHeight =
-        math.max(1.0, size.height - topPadding - bottomPadding);
+    final chartWidth = math.max(1.0, size.width - leftPadding - rightPadding);
+    final chartHeight = math.max(1.0, size.height - topPadding - bottomPadding);
 
     final prices = entries.map((entry) => entry.price).toList();
 
@@ -201,8 +165,7 @@ class _PriceHistoryChartPainter extends CustomPainter {
     const horizontalLines = 4;
 
     for (int index = 0; index <= horizontalLines; index++) {
-      final y =
-          topPadding + (chartHeight / horizontalLines) * index;
+      final y = topPadding + (chartHeight / horizontalLines) * index;
 
       canvas.drawLine(
         Offset(leftPadding, y),
@@ -210,17 +173,13 @@ class _PriceHistoryChartPainter extends CustomPainter {
         gridPaint,
       );
 
-      final priceValue =
-          maxPrice - (priceRange / horizontalLines) * index;
+      final priceValue = maxPrice - (priceRange / horizontalLines) * index;
 
       _drawText(
         canvas,
         '\$${priceValue.toStringAsFixed(2)}',
         Offset(0, y - 8),
-        const TextStyle(
-          fontSize: 11,
-          color: Colors.grey,
-        ),
+        const TextStyle(fontSize: 11, color: Colors.grey),
         maxWidth: leftPadding - 6,
         textAlign: TextAlign.right,
       );
@@ -241,14 +200,14 @@ class _PriceHistoryChartPainter extends CustomPainter {
     final firstDate = entries.first.createdAt;
     final lastDate = entries.last.createdAt;
 
-    final totalMilliseconds =
-        lastDate.difference(firstDate).inMilliseconds;
+    final totalMilliseconds = lastDate.difference(firstDate).inMilliseconds;
 
     final points = <Offset>[];
 
     for (final entry in entries) {
-      final elapsedMilliseconds =
-          entry.createdAt.difference(firstDate).inMilliseconds;
+      final elapsedMilliseconds = entry.createdAt
+          .difference(firstDate)
+          .inMilliseconds;
 
       final timeProgress = totalMilliseconds == 0
           ? 0.0
@@ -256,18 +215,14 @@ class _PriceHistoryChartPainter extends CustomPainter {
 
       final x = leftPadding + chartWidth * timeProgress;
 
-      final normalizedPrice =
-          (entry.price - minPrice) / priceRange;
+      final normalizedPrice = (entry.price - minPrice) / priceRange;
 
-      final y = topPadding +
-          chartHeight -
-          (normalizedPrice * chartHeight);
+      final y = topPadding + chartHeight - (normalizedPrice * chartHeight);
 
       points.add(Offset(x, y));
     }
 
-    final path = Path()
-      ..moveTo(points.first.dx, points.first.dy);
+    final path = Path()..moveTo(points.first.dx, points.first.dy);
 
     for (int index = 1; index < points.length; index++) {
       path.lineTo(points[index].dx, points[index].dy);
@@ -290,10 +245,7 @@ class _PriceHistoryChartPainter extends CustomPainter {
       canvas,
       _formatDate(entries.first.createdAt),
       Offset(leftPadding, topPadding + chartHeight + 8),
-      const TextStyle(
-        fontSize: 11,
-        color: Colors.grey,
-      ),
+      const TextStyle(fontSize: 11, color: Colors.grey),
       maxWidth: chartWidth / 2,
       textAlign: TextAlign.left,
     );
@@ -301,14 +253,8 @@ class _PriceHistoryChartPainter extends CustomPainter {
     _drawText(
       canvas,
       _formatDate(entries.last.createdAt),
-      Offset(
-        leftPadding + chartWidth / 2,
-        topPadding + chartHeight + 8,
-      ),
-      const TextStyle(
-        fontSize: 11,
-        color: Colors.grey,
-      ),
+      Offset(leftPadding + chartWidth / 2, topPadding + chartHeight + 8),
+      const TextStyle(fontSize: 11, color: Colors.grey),
       maxWidth: chartWidth / 2,
       textAlign: TextAlign.right,
     );
@@ -330,10 +276,7 @@ class _PriceHistoryChartPainter extends CustomPainter {
     TextAlign textAlign = TextAlign.left,
   }) {
     final painter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: style,
-      ),
+      text: TextSpan(text: text, style: style),
       textDirection: TextDirection.ltr,
       textAlign: textAlign,
     );
@@ -343,9 +286,7 @@ class _PriceHistoryChartPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(
-    covariant _PriceHistoryChartPainter oldDelegate,
-  ) {
+  bool shouldRepaint(covariant _PriceHistoryChartPainter oldDelegate) {
     return oldDelegate.entries != entries;
   }
 }

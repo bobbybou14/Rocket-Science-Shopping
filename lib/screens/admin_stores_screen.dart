@@ -30,9 +30,7 @@ class _AdminStoresScreenState extends State<AdminStoresScreen> {
         provinceController.text.trim().isEmpty ||
         cityController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please complete all fields.'),
-        ),
+        const SnackBar(content: Text('Please complete all fields.')),
       );
       return;
     }
@@ -56,17 +54,12 @@ class _AdminStoresScreenState extends State<AdminStoresScreen> {
 
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Store saved successfully!'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Store saved successfully!')));
   }
 
-  Widget buildField(
-    String label,
-    TextEditingController controller,
-  ) {
+  Widget buildField(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextField(
@@ -102,9 +95,7 @@ class _AdminStoresScreenState extends State<AdminStoresScreen> {
               child: ElevatedButton.icon(
                 onPressed: isSaving ? null : saveStore,
                 icon: const Icon(Icons.save),
-                label: Text(
-                  isSaving ? 'Saving...' : 'Save Store',
-                ),
+                label: Text(isSaving ? 'Saving...' : 'Save Store'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: smartCartRed,
                   foregroundColor: Colors.white,

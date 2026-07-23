@@ -7,10 +7,7 @@ import '../../models/price_history.dart';
 class PriceHistoryList extends StatelessWidget {
   final List<PriceHistoryEntry> entries;
 
-  const PriceHistoryList({
-    super.key,
-    required this.entries,
-  });
+  const PriceHistoryList({super.key, required this.entries});
 
   String _formatDate(DateTime date) {
     final year = date.year.toString();
@@ -25,24 +22,14 @@ class PriceHistoryList extends StatelessWidget {
     if (entries.isEmpty) {
       return Card(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 22,
-            vertical: 30,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 30),
           child: Column(
             children: const [
-              Icon(
-                Icons.receipt_long,
-                size: 54,
-                color: AppColors.primary,
-              ),
+              Icon(Icons.receipt_long, size: 54, color: AppColors.primary),
               SizedBox(height: 14),
               Text(
                 'No Price History',
-                style: TextStyle(
-                  fontSize: 21,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
               Text(
@@ -60,16 +47,12 @@ class PriceHistoryList extends StatelessWidget {
       children: [
         const Text(
           'Price History',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
 
         ...entries.reversed.map((entry) {
-          final branding =
-              StoreBranding.fromStoreName(entry.store);
+          final branding = StoreBranding.fromStoreName(entry.store);
 
           final location = [
             entry.city,
@@ -81,10 +64,7 @@ class PriceHistoryList extends StatelessWidget {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: branding.backgroundColor,
-                child: Icon(
-                  branding.icon,
-                  color: branding.primaryColor,
-                ),
+                child: Icon(branding.icon, color: branding.primaryColor),
               ),
               title: Text(
                 branding.displayName,
@@ -94,12 +74,10 @@ class PriceHistoryList extends StatelessWidget {
                 ),
               ),
               subtitle: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(_formatDate(entry.createdAt)),
-                  if (location.isNotEmpty)
-                    Text(location),
+                  if (location.isNotEmpty) Text(location),
                   if (entry.source.trim().isNotEmpty)
                     Text('Source: ${entry.source}'),
                 ],

@@ -23,8 +23,7 @@ class SavingsSummaryService {
 
       productsCompared++;
 
-      final amountSaved =
-          summary.currentPrice - summary.lowestPrice;
+      final amountSaved = summary.currentPrice - summary.lowestPrice;
 
       if (amountSaved <= 0.01) {
         continue;
@@ -40,8 +39,7 @@ class SavingsSummaryService {
         comparisonPrice: summary.lowestPrice,
       );
 
-      if (bestDeal == null ||
-          highlight.amountSaved > bestDeal.amountSaved) {
+      if (bestDeal == null || highlight.amountSaved > bestDeal.amountSaved) {
         bestDeal = highlight;
       }
     }
@@ -58,8 +56,7 @@ class SavingsSummaryService {
   static String _displayStore(String storeName) {
     final cleanedName = storeName.trim();
 
-    if (cleanedName.isEmpty ||
-        cleanedName.toLowerCase() == 'not available') {
+    if (cleanedName.isEmpty || cleanedName.toLowerCase() == 'not available') {
       return 'Unknown store';
     }
 

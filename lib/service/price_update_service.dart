@@ -29,7 +29,8 @@ class PriceUpdateService {
     for (final item in shoppingTrip.items) {
       final barcode = item.barcode.trim();
 
-      final canUpdatePrice = barcode.isNotEmpty &&
+      final canUpdatePrice =
+          barcode.isNotEmpty &&
           storeName.isNotEmpty &&
           !item.requiresReview &&
           item.confidenceScore >= 75 &&
@@ -49,11 +50,11 @@ class PriceUpdateService {
           'city': shoppingTrip.city,
           'price': item.unitPrice,
           'currency': 'CAD',
-          'store_id':
-              shoppingTrip.storeId.isEmpty ? null : shoppingTrip.storeId,
+          'store_id': shoppingTrip.storeId.isEmpty
+              ? null
+              : shoppingTrip.storeId,
           'source': 'receipt',
-          'notes':
-              'Automatically added from shopping trip ${shoppingTrip.id}.',
+          'notes': 'Automatically added from shopping trip ${shoppingTrip.id}.',
         });
 
         inserted++;

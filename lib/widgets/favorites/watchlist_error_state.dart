@@ -20,25 +20,15 @@ class WatchlistErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-              color: AppColors.warning,
-            ),
+            const Icon(Icons.error_outline, size: 64, color: AppColors.warning),
             const SizedBox(height: 16),
             const Text(
               'Unable to Load Watchlist',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-            ),
+            Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 20),
             FilledButton.icon(
               onPressed: onRetry,

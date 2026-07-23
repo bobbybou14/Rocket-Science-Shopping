@@ -47,9 +47,9 @@ class _ProductMatcherTestScreenState extends State<ProductMatcherTestScreen> {
         isLoading = false;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Matching failed: $error')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Matching failed: $error')));
     }
   }
 
@@ -96,8 +96,8 @@ class _ProductMatcherTestScreenState extends State<ProductMatcherTestScreen> {
             color: result.confidenceScore >= 75
                 ? Colors.green
                 : result.confidenceScore >= 55
-                    ? Colors.orange
-                    : Colors.red,
+                ? Colors.orange
+                : Colors.red,
           ),
         ),
       ),
@@ -113,9 +113,7 @@ class _ProductMatcherTestScreenState extends State<ProductMatcherTestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Product Matcher Test'),
-      ),
+      appBar: AppBar(title: const Text('Product Matcher Test')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [

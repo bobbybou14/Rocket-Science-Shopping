@@ -1,11 +1,23 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+
+if (keystorePropertiesFile.exists()) {
+    FileInputStream(keystorePropertiesFile).use { inputStream ->
+        keystoreProperties.load(inputStream)
+    }
+}
+
 android {
-    namespace = "com.example.smartcart_canada"
+    namespace = "ca.bouldapps.smartcart"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -15,8 +27,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Replace with your permanent unique application ID before publishing.
-        applicationId = "com.example.smartcart_canada"
+        applicationId = "ca.bouldapps.smartcart"
 
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
@@ -24,11 +35,21 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+    create("release") {
+        keyAlias = keystoreProperties.getProperty("keyAlias")
+        keyPassword = keystoreProperties.getProperty("keyPassword")
+        storePassword = keystoreProperties.getProperty("storePassword")
+
+        storeFile = keystoreProperties
+            .getProperty("storeFile")
+            ?.let { rootProject.file(it) }
+    }
+}
+
     buildTypes {
         release {
-            // Temporary signing configuration for local release testing.
-            // Replace with a proper release signing configuration before publishing.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
 
             isMinifyEnabled = true
             isShrinkResources = true

@@ -48,8 +48,8 @@ class Price {
       notes: map['notes'] ?? '',
 
       createdAt: map['created_at'] == null
-    ? null
-    : DateTime.tryParse(map['created_at'].toString()),
+          ? null
+          : DateTime.tryParse(map['created_at'].toString()),
     );
   }
 

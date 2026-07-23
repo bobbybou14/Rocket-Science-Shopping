@@ -6,10 +6,7 @@ class BasketItemRequest {
   final Product product;
   final double quantity;
 
-  const BasketItemRequest({
-    required this.product,
-    this.quantity = 1,
-  });
+  const BasketItemRequest({required this.product, this.quantity = 1});
 }
 
 class BasketStoreItemResult {
@@ -80,10 +77,7 @@ class BasketComparisonService {
       );
     }
 
-    final storeResponse = await _supabase
-        .from('stores')
-        .select()
-        .order('name');
+    final storeResponse = await _supabase.from('stores').select().order('name');
 
     final stores = List<Map<String, dynamic>>.from(storeResponse);
 
@@ -91,11 +85,11 @@ class BasketComparisonService {
 
     for (final store in stores) {
       final storeId = store['id']?.toString() ?? '';
-      
+
       if (storeId.isEmpty) {
         continue;
       }
-      
+
       final storeName = store['name']?.toString() ?? 'Unknown Store';
       final city = store['city']?.toString() ?? '';
       final province = store['province']?.toString() ?? '';
@@ -108,8 +102,7 @@ class BasketComparisonService {
 
       for (final basketItem in basketItems) {
         final barcode = basketItem.product.barcode;
-        final quantity =
-            basketItem.quantity <= 0 ? 1.0 : basketItem.quantity;
+        final quantity = basketItem.quantity <= 0 ? 1.0 : basketItem.quantity;
 
         final priceResponse = await _supabase
             .from('prices')
@@ -187,8 +180,7 @@ class BasketComparisonService {
         return a.total.compareTo(b.total);
       }
 
-      final missingComparison =
-          a.missingItems.compareTo(b.missingItems);
+      final missingComparison = a.missingItems.compareTo(b.missingItems);
 
       if (missingComparison != 0) {
         return missingComparison;
@@ -209,13 +201,11 @@ class BasketComparisonService {
 
       if (completeStores.length > 1) {
         final mostExpensiveCompleteStore = completeStores.reduce(
-          (current, next) =>
-              next.total > current.total ? next : current,
+          (current, next) => next.total > current.total ? next : current,
         );
 
         potentialSavings =
-            mostExpensiveCompleteStore.total -
-            cheapestCompleteStore.total;
+            mostExpensiveCompleteStore.total - cheapestCompleteStore.total;
       }
     }
 

@@ -37,43 +37,33 @@ class StoreComparisonCard extends StatelessWidget {
     final statusColor = isCheapest
         ? AppColors.success
         : isComplete
-            ? branding.primaryColor
-            : AppColors.warning;
+        ? branding.primaryColor
+        : AppColors.warning;
 
     final statusBackground = isCheapest
         ? AppColors.success.withValues(alpha: 0.12)
         : isComplete
-            ? branding.backgroundColor
-            : AppColors.warning.withValues(alpha: 0.12);
+        ? branding.backgroundColor
+        : AppColors.warning.withValues(alpha: 0.12);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       clipBehavior: Clip.antiAlias,
       child: ExpansionTile(
         tilePadding: const EdgeInsets.all(18),
-        childrenPadding: const EdgeInsets.only(
-          left: 18,
-          right: 18,
-          bottom: 18,
-        ),
+        childrenPadding: const EdgeInsets.only(left: 18, right: 18, bottom: 18),
         leading: Container(
           width: 54,
           height: 54,
           decoration: BoxDecoration(
             color: statusBackground,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: statusColor.withValues(alpha: 0.30),
-            ),
+            border: Border.all(color: statusColor.withValues(alpha: 0.30)),
           ),
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Icon(
-                branding.icon,
-                color: branding.primaryColor,
-                size: 30,
-              ),
+              Icon(branding.icon, color: branding.primaryColor, size: 30),
               if (isCheapest)
                 Positioned(
                   right: 2,
@@ -146,12 +136,7 @@ class StoreComparisonCard extends StatelessWidget {
             ),
             if (location.isNotEmpty) ...[
               const SizedBox(height: 3),
-              Text(
-                location,
-                style: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
+              Text(location, style: const TextStyle(fontSize: 14)),
             ],
           ],
         ),
@@ -164,9 +149,7 @@ class StoreComparisonCard extends StatelessWidget {
                 isComplete ? 'Complete Basket' : 'Partial Basket',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: isComplete
-                      ? AppColors.success
-                      : AppColors.warning,
+                  color: isComplete ? AppColors.success : AppColors.warning,
                 ),
               ),
               const SizedBox(height: 4),
@@ -193,9 +176,7 @@ class StoreComparisonCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: isCheapest
-                  ? AppColors.success
-                  : branding.primaryColor,
+              color: isCheapest ? AppColors.success : branding.primaryColor,
             ),
           ),
         ),
@@ -213,18 +194,15 @@ class StoreComparisonCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(
-                  branding.icon,
-                  color: branding.primaryColor,
-                ),
+                Icon(branding.icon, color: branding.primaryColor),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     isComplete
                         ? '${branding.displayName} complete basket total: '
-                            '\$${store.total.toStringAsFixed(2)}'
+                              '\$${store.total.toStringAsFixed(2)}'
                         : '${branding.displayName} partial basket total: '
-                            '\$${store.total.toStringAsFixed(2)}',
+                              '\$${store.total.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: branding.primaryColor,
@@ -274,17 +252,11 @@ class StoreComparisonCard extends StatelessWidget {
             (item) => ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Icon(
-                item.hasPrice
-                    ? Icons.check_circle
-                    : Icons.warning_amber,
-                color: item.hasPrice
-                    ? AppColors.success
-                    : AppColors.warning,
+                item.hasPrice ? Icons.check_circle : Icons.warning_amber,
+                color: item.hasPrice ? AppColors.success : AppColors.warning,
               ),
               title: Text(item.productName),
-              subtitle: Text(
-                'Quantity: ${item.quantity.toStringAsFixed(0)}',
-              ),
+              subtitle: Text('Quantity: ${item.quantity.toStringAsFixed(0)}'),
               trailing: item.hasPrice
                   ? Text(
                       '\$${item.lineTotal!.toStringAsFixed(2)}',

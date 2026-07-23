@@ -63,11 +63,7 @@ class FavoriteProductCard extends StatelessWidget {
 
   Widget productImage() {
     if (product.imageUrl.trim().isEmpty) {
-      return const Icon(
-        Icons.shopping_bag,
-        size: 34,
-        color: AppColors.primary,
-      );
+      return const Icon(Icons.shopping_bag, size: 34, color: AppColors.primary);
     }
 
     return Image.network(
@@ -87,8 +83,7 @@ class FavoriteProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasPrice = summary.hasData;
 
-    final percentPrefix =
-        summary.percentageChange > 0 ? '+' : '';
+    final percentPrefix = summary.percentageChange > 0 ? '+' : '';
 
     return Card(
       margin: const EdgeInsets.only(bottom: 14),
@@ -98,39 +93,30 @@ class FavoriteProductCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: 62,
                 height: 62,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(
-                    alpha: 0.08,
-                  ),
-                  borderRadius:
-                      BorderRadius.circular(16),
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(16),
-                  child: Center(
-                    child: productImage(),
-                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  child: Center(child: productImage()),
                 ),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       productName,
                       style: const TextStyle(
                         fontSize: 18,
-                        fontWeight:
-                            FontWeight.bold,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 5),
@@ -145,26 +131,20 @@ class FavoriteProductCard extends StatelessWidget {
                         '\$${summary.currentPrice.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 22,
-                          fontWeight:
-                              FontWeight.bold,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 5),
                       Row(
                         children: [
-                          Icon(
-                            trendIcon,
-                            size: 19,
-                            color: trendColor,
-                          ),
+                          Icon(trendIcon, size: 19, color: trendColor),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
                               '${summary.trend} '
                               '($percentPrefix${summary.percentageChange.toStringAsFixed(1)}%)',
                               style: TextStyle(
-                                fontWeight:
-                                    FontWeight.w600,
+                                fontWeight: FontWeight.w600,
                                 color: trendColor,
                               ),
                             ),
@@ -172,16 +152,11 @@ class FavoriteProductCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 5),
-                      Text(
-                        'Best store: ${summary.bestStore}',
-                      ),
+                      Text('Best store: ${summary.bestStore}'),
                     ] else
                       const Text(
                         'No recorded price history yet.',
-                        style: TextStyle(
-                          fontStyle:
-                              FontStyle.italic,
-                        ),
+                        style: TextStyle(fontStyle: FontStyle.italic),
                       ),
                   ],
                 ),
@@ -190,18 +165,12 @@ class FavoriteProductCard extends StatelessWidget {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
+                  const Icon(Icons.star, color: Colors.amber),
                   const SizedBox(height: 8),
                   IconButton(
                     onPressed: onRemove,
-                    icon: const Icon(
-                      Icons.delete_outline,
-                    ),
-                    tooltip:
-                        'Remove from favourites',
+                    icon: const Icon(Icons.delete_outline),
+                    tooltip: 'Remove from favourites',
                   ),
                 ],
               ),

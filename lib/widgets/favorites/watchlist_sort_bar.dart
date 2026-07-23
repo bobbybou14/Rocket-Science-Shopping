@@ -55,10 +55,7 @@ class WatchlistSortBar extends StatelessWidget {
     return Card(
       margin: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 6,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<WatchlistSort>(
             value: selectedSort,
@@ -69,19 +66,13 @@ class WatchlistSortBar extends StatelessWidget {
                 value: sort,
                 child: Row(
                   children: [
-                    Icon(
-                      iconForSort(sort),
-                      size: 20,
-                      color: AppColors.primary,
-                    ),
+                    Icon(iconForSort(sort), size: 20, color: AppColors.primary),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         labelForSort(sort),
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
                   ],

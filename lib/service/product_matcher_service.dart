@@ -23,10 +23,7 @@ class ProductMatcherService {
     required List<Product> products,
   }) {
     return receiptItems.map((item) {
-      return matchItem(
-        receiptItem: item,
-        products: products,
-      );
+      return matchItem(receiptItem: item, products: products);
     }).toList();
   }
 
@@ -111,16 +108,16 @@ class ProductMatcherService {
   }
 
   static List<String> _tokens(String value) {
-  return value
-      .trim()
-      .toUpperCase()
-      .replaceAll(RegExp(r'[^A-Z0-9 ]'), ' ')
-      .split(RegExp(r'\s+'))
-      .map(_normalizeToken)
-      .where((token) => token.length >= 2)
-      .toSet()
-      .toList();
-}
+    return value
+        .trim()
+        .toUpperCase()
+        .replaceAll(RegExp(r'[^A-Z0-9 ]'), ' ')
+        .split(RegExp(r'\s+'))
+        .map(_normalizeToken)
+        .where((token) => token.length >= 2)
+        .toSet()
+        .toList();
+  }
 
   static String _normalizeToken(String token) {
     final normalized = token.trim().toUpperCase();

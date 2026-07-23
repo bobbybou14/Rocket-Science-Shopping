@@ -9,10 +9,7 @@ import '../service/store_service.dart';
 class AddPriceScreen extends StatefulWidget {
   final Product product;
 
-  const AddPriceScreen({
-    super.key,
-    required this.product,
-  });
+  const AddPriceScreen({super.key, required this.product});
 
   @override
   State<AddPriceScreen> createState() => _AddPriceScreenState();
@@ -52,18 +49,18 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
 
   Future<void> save() async {
     if (selectedStore == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a store.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select a store.')));
       return;
     }
 
     final amount = double.tryParse(priceController.text);
 
     if (amount == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter a valid price.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Enter a valid price.')));
       return;
     }
 
@@ -121,9 +118,7 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
                     items: stores.map((store) {
                       return DropdownMenuItem(
                         value: store,
-                        child: Text(
-                          '${store.name} (${store.city})',
-                        ),
+                        child: Text('${store.name} (${store.city})'),
                       );
                     }).toList(),
                     onChanged: (value) {
@@ -137,8 +132,9 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
 
                   TextField(
                     controller: priceController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     decoration: const InputDecoration(
                       labelText: 'Price',
                       prefixText: '\$',
@@ -153,9 +149,7 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
                     child: ElevatedButton.icon(
                       onPressed: saving ? null : save,
                       icon: const Icon(Icons.save),
-                      label: Text(
-                        saving ? 'Saving...' : 'Save Price',
-                      ),
+                      label: Text(saving ? 'Saving...' : 'Save Price'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: smartCartRed,
                         foregroundColor: Colors.white,

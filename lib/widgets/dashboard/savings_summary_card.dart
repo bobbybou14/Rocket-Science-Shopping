@@ -31,10 +31,7 @@ class SavingsSummaryCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              AppColors.primary.withValues(alpha: 0.10),
-              Colors.white,
-            ],
+            colors: [AppColors.primary.withValues(alpha: 0.10), Colors.white],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -44,9 +41,7 @@ class SavingsSummaryCard extends StatelessWidget {
           children: [
             const _CardHeader(),
             const SizedBox(height: 20),
-            _PotentialSavingsAmount(
-              amount: summary.watchlistSavingsPotential,
-            ),
+            _PotentialSavingsAmount(amount: summary.watchlistSavingsPotential),
             const SizedBox(height: 18),
             Row(
               children: [
@@ -56,7 +51,7 @@ class SavingsSummaryCard extends StatelessWidget {
                     value: summary.priceDropCount.toString(),
                     label: summary.priceDropCount == 1
                         ? 'Price drop'
-                        : 'Price drops',
+                        : 'Deals Found',
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -66,16 +61,14 @@ class SavingsSummaryCard extends StatelessWidget {
                     value: summary.purchasesCompared.toString(),
                     label: summary.purchasesCompared == 1
                         ? 'Product compared'
-                        : 'Products compared',
+                        : 'Items Tracked',
                   ),
                 ),
               ],
             ),
             if (summary.bestDeal != null) ...[
               const SizedBox(height: 20),
-              _BestOpportunityCard(
-                highlight: summary.bestDeal!,
-              ),
+              _BestOpportunityCard(highlight: summary.bestDeal!),
             ],
           ],
         ),
@@ -111,18 +104,12 @@ class _CardHeader extends StatelessWidget {
             children: [
               Text(
                 'Savings Opportunities',
-                style: TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 2),
               Text(
-                'Based on your watchlist price history',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey,
-                ),
+                'Helping you spend less on every grocery trip',
+                style: TextStyle(fontSize: 13, color: Colors.grey),
               ),
             ],
           ),
@@ -135,9 +122,7 @@ class _CardHeader extends StatelessWidget {
 class _PotentialSavingsAmount extends StatelessWidget {
   final double amount;
 
-  const _PotentialSavingsAmount({
-    required this.amount,
-  });
+  const _PotentialSavingsAmount({required this.amount});
 
   @override
   Widget build(BuildContext context) {
@@ -145,10 +130,7 @@ class _PotentialSavingsAmount extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 18,
-        vertical: 16,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       decoration: BoxDecoration(
         color: hasSavings
             ? Colors.green.withValues(alpha: 0.09)
@@ -164,15 +146,11 @@ class _PotentialSavingsAmount extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            hasSavings
-                ? 'Potential watchlist savings'
-                : 'No savings opportunity right now',
+            hasSavings ? 'You could save' : 'Great news!',
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: hasSavings
-                  ? Colors.green.shade800
-                  : Colors.grey.shade700,
+              color: hasSavings ? Colors.green.shade800 : Colors.grey.shade700,
             ),
           ),
           const SizedBox(height: 5),
@@ -181,20 +159,15 @@ class _PotentialSavingsAmount extends StatelessWidget {
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: hasSavings
-                  ? Colors.green.shade800
-                  : Colors.grey.shade700,
+              color: hasSavings ? Colors.green.shade800 : Colors.grey.shade700,
             ),
           ),
           const SizedBox(height: 3),
           Text(
             hasSavings
-                ? 'Available by buying at the lowest recorded prices.'
-                : 'Current prices match their lowest recorded prices.',
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey.shade700,
-            ),
+                ? "Based on the lowest prices we've found."
+                : "You're already getting the best prices we've seen.",
+            style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
           ),
         ],
       ),
@@ -216,42 +189,28 @@ class _SummaryMetric extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(
-        minHeight: 92,
-      ),
+      constraints: const BoxConstraints(minHeight: 92),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.82),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: Colors.grey.withValues(alpha: 0.15),
-        ),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            size: 21,
-            color: AppColors.primary,
-          ),
+          Icon(icon, size: 21, color: AppColors.primary),
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 2),
           Text(
             label,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade700,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
           ),
         ],
       ),
@@ -262,9 +221,7 @@ class _SummaryMetric extends StatelessWidget {
 class _BestOpportunityCard extends StatelessWidget {
   final SavingsHighlight highlight;
 
-  const _BestOpportunityCard({
-    required this.highlight,
-  });
+  const _BestOpportunityCard({required this.highlight});
 
   @override
   Widget build(BuildContext context) {
@@ -274,9 +231,7 @@ class _BestOpportunityCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.88),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.16),
-        ),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.16)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,17 +239,14 @@ class _BestOpportunityCard extends StatelessWidget {
           const Row(
             children: [
               Icon(
-                Icons.star_outline,
+                Icons.local_offer_outlined,
                 size: 21,
                 color: AppColors.primary,
               ),
               SizedBox(width: 7),
               Text(
-                'Best Opportunity',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
+                "Today's Best Deal",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -303,29 +255,17 @@ class _BestOpportunityCard extends StatelessWidget {
             highlight.productName,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 9),
-          StoreBadge(
-            storeName: highlight.storeName,
-            compact: true,
-          ),
+          StoreBadge(storeName: highlight.storeName, compact: true),
           const SizedBox(height: 12),
           Wrap(
             spacing: 14,
             runSpacing: 8,
             children: [
-              _PriceLabel(
-                label: 'Current',
-                value: highlight.purchasePrice,
-              ),
-              _PriceLabel(
-                label: 'Lowest',
-                value: highlight.comparisonPrice,
-              ),
+              _PriceLabel(label: 'Current', value: highlight.purchasePrice),
+              _PriceLabel(label: 'Lowest', value: highlight.comparisonPrice),
               _PriceLabel(
                 label: 'Save',
                 value: highlight.amountSaved,
@@ -354,23 +294,17 @@ class _PriceLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(
-        style: DefaultTextStyle.of(context).style.copyWith(
-              fontSize: 13,
-            ),
+        style: DefaultTextStyle.of(context).style.copyWith(fontSize: 13),
         children: [
           TextSpan(
             text: '$label: ',
-            style: TextStyle(
-              color: Colors.grey.shade700,
-            ),
+            style: TextStyle(color: Colors.grey.shade700),
           ),
           TextSpan(
             text: '\$${value.toStringAsFixed(2)}',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: emphasize
-                  ? Colors.green.shade800
-                  : Colors.black87,
+              color: emphasize ? Colors.green.shade800 : Colors.black87,
             ),
           ),
         ],
@@ -386,10 +320,7 @@ class _EmptySavingsSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: 28,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
         child: Column(
           children: [
             Container(
@@ -409,10 +340,7 @@ class _EmptySavingsSummaryCard extends StatelessWidget {
             const Text(
               'No Savings Opportunities Yet',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -440,9 +368,7 @@ class _SavingsSummaryLoadingCard extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'Finding savings opportunities...',
-              style: TextStyle(
-                color: Colors.grey.shade700,
-              ),
+              style: TextStyle(color: Colors.grey.shade700),
             ),
           ],
         ),

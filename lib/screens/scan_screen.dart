@@ -20,16 +20,13 @@ class ScanScreen extends StatefulWidget {
 class _ScanScreenState extends State<ScanScreen> {
   static const Color smartCartRed = Color(0xFFD6001C);
 
-  final TextEditingController barcodeController =
-      TextEditingController();
+  final TextEditingController barcodeController = TextEditingController();
 
-   final MobileScannerController scannerController =
-      MobileScannerController();
+  final MobileScannerController scannerController = MobileScannerController();
 
   CartItem? scannedItem;
 
-  String message =
-      'Point your camera at a barcode or type one below.';
+  String message = 'Point your camera at a barcode or type one below.';
 
   bool hasScanned = false;
   bool isLoading = false;
@@ -44,18 +41,13 @@ class _ScanScreenState extends State<ScanScreen> {
       return false;
     }
 
-    return DateTime.now()
-            .difference(previousTime)
-            .inMilliseconds <
-        1500;
+    return DateTime.now().difference(previousTime).inMilliseconds < 1500;
   }
 
   Future<void> lookupBarcode(String barcode) async {
     final cleanBarcode = barcode.trim();
 
-    if (cleanBarcode.isEmpty ||
-        isLoading ||
-        isDuplicateScan(cleanBarcode)) {
+    if (cleanBarcode.isEmpty || isLoading || isDuplicateScan(cleanBarcode)) {
       return;
     }
 
@@ -67,28 +59,20 @@ class _ScanScreenState extends State<ScanScreen> {
       hasScanned = true;
       isLoading = true;
       scannedItem = null;
-      message =
-          'Looking up product...\n\nBarcode:\n$cleanBarcode';
+      message = 'Looking up product...\n\nBarcode:\n$cleanBarcode';
     });
 
-    CartItem? product =
-        await SupabaseProductService.findByBarcode(
+    CartItem? product = await SupabaseProductService.findByBarcode(
       cleanBarcode,
     );
 
-    product ??= await ProductService.findByBarcode(
-      cleanBarcode,
-    );
+    product ??= await ProductService.findByBarcode(cleanBarcode);
 
     if (product == null) {
-      product = await UpcLookupService.lookup(
-        cleanBarcode,
-      );
+      product = await UpcLookupService.lookup(cleanBarcode);
 
       if (product != null) {
-        await SupabaseProductService.saveProduct(
-          product.product,
-        );
+        await SupabaseProductService.saveProduct(product.product);
       }
     }
 
@@ -98,8 +82,7 @@ class _ScanScreenState extends State<ScanScreen> {
       setState(() {
         scannedItem = null;
         isLoading = false;
-        message =
-            'Product not found.\n\nBarcode:\n$cleanBarcode';
+        message = 'Product not found.\n\nBarcode:\n$cleanBarcode';
       });
 
       return;
@@ -120,15 +103,11 @@ class _ScanScreenState extends State<ScanScreen> {
       ..showSnackBar(
         SnackBar(
           duration: const Duration(milliseconds: 900),
-          content: Text(
-            '${product.name} added to cart',
-          ),
+          content: Text('${product.name} added to cart'),
         ),
       );
 
-    await Future.delayed(
-      const Duration(milliseconds: 750),
-    );
+    await Future.delayed(const Duration(milliseconds: 750));
 
     if (!mounted) return;
 
@@ -140,25 +119,23 @@ class _ScanScreenState extends State<ScanScreen> {
       hasScanned = false;
       scannedItem = null;
       isLoading = false;
-      message =
-          'Point your camera at a barcode or type one below.';
+      message = 'Point your camera at a barcode or type one below.';
       barcodeController.clear();
     });
     scannerController.start();
   }
 
- @override
- void dispose() {
-   barcodeController.dispose();
-   scannerController.dispose();
-   super.dispose();
-}
+  @override
+  void dispose() {
+    barcodeController.dispose();
+    scannerController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>();
-    final storeName =
-        ShoppingSessionService.currentStoreName;
+    final storeName = ShoppingSessionService.currentStoreName;
 
     return Scaffold(
       appBar: AppBar(
@@ -181,16 +158,13 @@ class _ScanScreenState extends State<ScanScreen> {
                 MobileScanner(
                   controller: scannerController,
                   onDetect: (capture) {
-                    if (hasScanned ||
-                        capture.barcodes.isEmpty) {
+                    if (hasScanned || capture.barcodes.isEmpty) {
                       return;
                     }
 
-                    final barcode =
-                        capture.barcodes.first.rawValue;
+                    final barcode = capture.barcodes.first.rawValue;
 
-                    if (barcode == null ||
-                        barcode.isEmpty) {
+                    if (barcode == null || barcode.isEmpty) {
                       return;
                     }
 
@@ -203,12 +177,8 @@ class _ScanScreenState extends State<ScanScreen> {
                     width: 270,
                     height: 150,
                     decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.white,
-                        width: 3,
-                      ),
-                      borderRadius:
-                          BorderRadius.circular(16),
+                      border: Border.all(color: Colors.white, width: 3),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                 ),
@@ -222,11 +192,8 @@ class _ScanScreenState extends State<ScanScreen> {
                       vertical: 10,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(
-                        alpha: 0.65,
-                      ),
-                      borderRadius:
-                          BorderRadius.circular(12),
+                      color: Colors.black.withValues(alpha: 0.65),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(
                       'Place the barcode inside the frame',
@@ -252,8 +219,7 @@ class _ScanScreenState extends State<ScanScreen> {
                     keyboardType: TextInputType.number,
                     onSubmitted: lookupBarcode,
                     decoration: const InputDecoration(
-                      labelText:
-                          'Enter barcode manually',
+                      labelText: 'Enter barcode manually',
                       prefixIcon: Icon(Icons.numbers),
                       border: OutlineInputBorder(),
                     ),
@@ -264,22 +230,14 @@ class _ScanScreenState extends State<ScanScreen> {
                     child: FilledButton.icon(
                       onPressed: isLoading
                           ? null
-                          : () => lookupBarcode(
-                                barcodeController.text
-                                    .trim(),
-                              ),
+                          : () => lookupBarcode(barcodeController.text.trim()),
                       style: FilledButton.styleFrom(
                         backgroundColor: smartCartRed,
                         foregroundColor: Colors.white,
-                        padding:
-                            const EdgeInsets.symmetric(
-                          vertical: 14,
-                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                       icon: const Icon(Icons.search),
-                      label: const Text(
-                        'Lookup Barcode',
-                      ),
+                      label: const Text('Lookup Barcode'),
                     ),
                   ),
                   const SizedBox(height: 18),
@@ -302,20 +260,14 @@ class _ScanScreenState extends State<ScanScreen> {
                         Text(
                           message,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 17,
-                          ),
+                          style: const TextStyle(fontSize: 17),
                         ),
                         if (hasScanned) ...[
                           const SizedBox(height: 14),
                           OutlinedButton.icon(
                             onPressed: resetScanner,
-                            icon: const Icon(
-                              Icons.refresh,
-                            ),
-                            label: const Text(
-                              'Scan Another Item',
-                            ),
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('Scan Another Item'),
                           ),
                         ],
                       ],
@@ -336,28 +288,18 @@ class _ScanScreenState extends State<ScanScreen> {
   }) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       color: Colors.white,
       child: Row(
         children: [
-          const Icon(
-            Icons.storefront,
-            color: smartCartRed,
-            size: 30,
-          ),
+          const Icon(Icons.storefront, color: smartCartRed, size: 30),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  storeName.isEmpty
-                      ? 'Current Store'
-                      : storeName,
+                  storeName.isEmpty ? 'Current Store' : storeName,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -366,22 +308,17 @@ class _ScanScreenState extends State<ScanScreen> {
                 Text(
                   '$itemCount '
                   '${itemCount == 1 ? "item" : "items"}',
-                  style: TextStyle(
-                    color: Colors.grey.shade700,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade700),
                 ),
               ],
             ),
           ),
           Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               const Text(
                 'Estimated Total',
-                style: TextStyle(
-                  color: Colors.grey,
-                ),
+                style: TextStyle(color: Colors.grey),
               ),
               Text(
                 '\$${total.toStringAsFixed(2)}',
@@ -405,48 +342,30 @@ class _ScanScreenState extends State<ScanScreen> {
       decoration: BoxDecoration(
         color: Colors.green.shade50,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: Colors.green.shade300,
-        ),
+        border: Border.all(color: Colors.green.shade300),
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.check_circle,
-            size: 42,
-            color: Colors.green.shade700,
-          ),
+          Icon(Icons.check_circle, size: 42, color: Colors.green.shade700),
           const SizedBox(height: 8),
           Text(
             item.name,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 21,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 6),
           Text(
             item.price == 0
                 ? 'Price not available yet'
                 : '\$${item.price.toStringAsFixed(2)}',
-            style: const TextStyle(
-              fontSize: 18,
-            ),
+            style: const TextStyle(fontSize: 18),
           ),
           const SizedBox(height: 4),
-          Text(
-            item.taxable
-                ? 'Ontario HST applies'
-                : 'No HST',
-          ),
+          Text(item.taxable ? 'Ontario HST applies' : 'No HST'),
           const SizedBox(height: 8),
           const Text(
             'Added to cart — ready for next scan',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: Colors.green,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.green),
           ),
         ],
       ),

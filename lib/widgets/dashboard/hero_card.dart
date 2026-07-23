@@ -81,10 +81,7 @@ class HeroCard extends StatelessWidget {
                     ),
                     Text(
                       'Made for Canadian grocery shopping',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 15,
-                      ),
+                      style: TextStyle(color: Colors.white70, fontSize: 15),
                     ),
                   ],
                 ),
@@ -103,10 +100,7 @@ class HeroCard extends StatelessWidget {
           const SizedBox(height: 6),
           const Text(
             'Here is a snapshot of your grocery activity this month.',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 16,
-            ),
+            style: TextStyle(color: Colors.white70, fontSize: 16),
           ),
           const SizedBox(height: 26),
           Container(
@@ -121,10 +115,7 @@ class HeroCard extends StatelessWidget {
               children: [
                 const Text(
                   'Spent this month',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 15,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 15),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -158,15 +149,9 @@ class HeroCard extends StatelessWidget {
     );
   }
 
-  Widget _summaryChip({
-    required IconData icon,
-    required String label,
-  }) {
+  Widget _summaryChip({required IconData icon, required String label}) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(20),
@@ -174,11 +159,7 @@ class HeroCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            color: Colors.white,
-            size: 18,
-          ),
+          Icon(icon, color: Colors.white, size: 18),
           const SizedBox(width: 6),
           Text(
             label,

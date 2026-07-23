@@ -20,8 +20,7 @@ class ProductDetailsScreen extends StatefulWidget {
   });
 
   @override
-  State<ProductDetailsScreen> createState() =>
-      _ProductDetailsScreenState();
+  State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
@@ -41,10 +40,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Future<void> loadProductDetails() async {
-    await Future.wait([
-      loadPrices(),
-      loadFavoriteStatus(),
-    ]);
+    await Future.wait([loadPrices(), loadFavoriteStatus()]);
   }
 
   Future<void> loadPrices() async {
@@ -54,8 +50,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     });
 
     try {
-      final results =
-          await PriceService.getPricesForProduct(
+      final results = await PriceService.getPricesForProduct(
         widget.product.barcode,
       );
 
@@ -70,8 +65,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
       setState(() {
         loading = false;
-        errorMessage =
-            'Unable to load prices: $error';
+        errorMessage = 'Unable to load prices: $error';
       });
     }
   }
@@ -82,8 +76,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     });
 
     try {
-      final favoriteStatus =
-          await FavoritesService.isFavorite(
+      final favoriteStatus = await FavoritesService.isFavorite(
         widget.product.barcode,
       );
 
@@ -101,11 +94,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Unable to load favourite status: $error',
-          ),
-        ),
+        SnackBar(content: Text('Unable to load favourite status: $error')),
       );
     }
   }
@@ -120,8 +109,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     });
 
     try {
-      final updatedStatus =
-          await FavoritesService.toggleFavorite(
+      final updatedStatus = await FavoritesService.toggleFavorite(
         widget.product,
       );
 
@@ -149,11 +137,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Unable to update favourite: $error',
-          ),
-        ),
+        SnackBar(content: Text('Unable to update favourite: $error')),
       );
     }
   }
@@ -161,10 +145,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   double get averagePrice {
     if (prices.isEmpty) return 0;
 
-    final total = prices.fold<double>(
-      0,
-      (sum, price) => sum + price.price,
-    );
+    final total = prices.fold<double>(0, (sum, price) => sum + price.price);
 
     return total / prices.length;
   }
@@ -172,17 +153,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   double get lowestPrice {
     if (prices.isEmpty) return 0;
 
-    return prices
-        .map((price) => price.price)
-        .reduce((a, b) => a < b ? a : b);
+    return prices.map((price) => price.price).reduce((a, b) => a < b ? a : b);
   }
 
   double get highestPrice {
     if (prices.isEmpty) return 0;
 
-    return prices
-        .map((price) => price.price)
-        .reduce((a, b) => a > b ? a : b);
+    return prices.map((price) => price.price).reduce((a, b) => a > b ? a : b);
   }
 
   double get potentialSavings {
@@ -195,9 +172,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     final saved = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (_) => AddPriceScreen(
-          product: widget.product,
-        ),
+        builder: (_) => AddPriceScreen(product: widget.product),
       ),
     );
 
@@ -210,9 +185,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => PriceHistoryScreen(
-          product: widget.product,
-        ),
+        builder: (_) => PriceHistoryScreen(product: widget.product),
       ),
     );
 
@@ -224,14 +197,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void addToCart() {
     if (widget.onAddToCart == null) return;
 
-    final hasValidPrice =
-        prices.isNotEmpty && lowestPrice > 0;
+    final hasValidPrice = prices.isNotEmpty && lowestPrice > 0;
 
     final item = CartItem(
       product: widget.product,
-      price: hasValidPrice
-          ? lowestPrice
-          : 0.0,
+      price: hasValidPrice ? lowestPrice : 0.0,
     );
 
     widget.onAddToCart!(item);
@@ -276,25 +246,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         leading: CircleAvatar(
           backgroundColor: isFavorite
               ? Colors.amber.withValues(alpha: 0.16)
-              : AppColors.primary.withValues(
-                  alpha: 0.10,
-                ),
+              : AppColors.primary.withValues(alpha: 0.10),
           child: Icon(
-            isFavorite
-                ? Icons.star
-                : Icons.star_border,
-            color: isFavorite
-                ? Colors.amber.shade800
-                : AppColors.primary,
+            isFavorite ? Icons.star : Icons.star_border,
+            color: isFavorite ? Colors.amber.shade800 : AppColors.primary,
           ),
         ),
         title: Text(
-          isFavorite
-              ? 'Saved to Favourites'
-              : 'Add to Favourites',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          isFavorite ? 'Saved to Favourites' : 'Add to Favourites',
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
           isFavorite
@@ -305,16 +265,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ? const SizedBox(
                 width: 22,
                 height: 22,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                ),
+                child: CircularProgressIndicator(strokeWidth: 2),
               )
-            : const Icon(
-                Icons.chevron_right,
-              ),
-        onTap: isUpdatingFavorite
-            ? null
-            : toggleFavorite,
+            : const Icon(Icons.chevron_right),
+        onTap: isUpdatingFavorite ? null : toggleFavorite,
       ),
     );
   }
@@ -324,9 +278,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       return const Card(
         child: Padding(
           padding: EdgeInsets.all(24),
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: Center(child: CircularProgressIndicator()),
         ),
       );
     }
@@ -343,10 +295,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 color: AppColors.primary,
               ),
               const SizedBox(height: 12),
-              Text(
-                errorMessage!,
-                textAlign: TextAlign.center,
-              ),
+              Text(errorMessage!, textAlign: TextAlign.center),
               const SizedBox(height: 12),
               FilledButton.icon(
                 onPressed: loadPrices,
@@ -363,19 +312,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       return const Card(
         child: Padding(
           padding: EdgeInsets.all(18),
-          child: Text(
-            'No price data yet.',
-            style: TextStyle(fontSize: 18),
-          ),
+          child: Text('No price data yet.', style: TextStyle(fontSize: 18)),
         ),
       );
     }
 
     final bestPrice = prices.reduce(
-      (current, next) =>
-          next.price < current.price
-              ? next
-              : current,
+      (current, next) => next.price < current.price ? next : current,
     );
 
     return Card(
@@ -383,24 +326,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       child: Padding(
         padding: const EdgeInsets.all(18),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
               'Best Price',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Text(
-              bestPrice.store.isEmpty
-                  ? 'Unknown Store'
-                  : bestPrice.store,
-              style: const TextStyle(
-                fontSize: 20,
-              ),
+              bestPrice.store.isEmpty ? 'Unknown Store' : bestPrice.store,
+              style: const TextStyle(fontSize: 20),
             ),
             Text(
               '\$${bestPrice.price.toStringAsFixed(2)}',
@@ -411,25 +346,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ),
             ),
             const Divider(height: 28),
-            _summaryRow(
-              'Average Price',
-              averagePrice,
-            ),
-            _summaryRow(
-              'Highest Price',
-              highestPrice,
-            ),
-            _summaryRow(
-              'Potential Savings',
-              potentialSavings,
-            ),
+            _summaryRow('Average Price', averagePrice),
+            _summaryRow('Highest Price', highestPrice),
+            _summaryRow('Potential Savings', potentialSavings),
             const SizedBox(height: 6),
             Text(
               '${prices.length} price record'
               '${prices.length == 1 ? '' : 's'} compared',
-              style: const TextStyle(
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontSize: 16),
             ),
           ],
         ),
@@ -437,30 +361,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  Widget _summaryRow(
-    String label,
-    double amount,
-  ) {
+  Widget _summaryRow(String label, double amount) {
     return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 6,
-      ),
+      padding: const EdgeInsets.only(bottom: 6),
       child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 17,
-            ),
-          ),
+          Text(label, style: const TextStyle(fontSize: 17)),
           Text(
             '\$${amount.toStringAsFixed(2)}',
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -468,49 +378,31 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Widget priceCard(Price price) {
-    final isCheapest =
-        prices.isNotEmpty &&
-        price.price == lowestPrice;
+    final isCheapest = prices.isNotEmpty && price.price == lowestPrice;
 
     final location = [
       price.city,
       price.province,
-    ].where(
-      (value) => value.trim().isNotEmpty,
-    ).join(', ');
+    ].where((value) => value.trim().isNotEmpty).join(', ');
 
     return Card(
-      margin: const EdgeInsets.symmetric(
-        vertical: 6,
-      ),
+      margin: const EdgeInsets.symmetric(vertical: 6),
       child: ListTile(
         leading: Icon(
-          isCheapest
-              ? Icons.emoji_events
-              : Icons.store,
-          color: isCheapest
-              ? AppColors.warning
-              : AppColors.primary,
+          isCheapest ? Icons.emoji_events : Icons.store,
+          color: isCheapest ? AppColors.warning : AppColors.primary,
         ),
         title: Text(
-          price.store.isEmpty
-              ? 'Unknown Store'
-              : price.store,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          price.store.isEmpty ? 'Unknown Store' : price.store,
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: location.isEmpty
-            ? null
-            : Text(location),
+        subtitle: location.isEmpty ? null : Text(location),
         trailing: Text(
           '\$${price.price.toStringAsFixed(2)}',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: isCheapest
-                ? AppColors.success
-                : AppColors.textPrimary,
+            color: isCheapest ? AppColors.success : AppColors.textPrimary,
           ),
         ),
       ),
@@ -527,31 +419,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         actions: [
           if (isLoadingFavorite)
             const Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: Center(
                 child: SizedBox(
                   width: 22,
                   height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                  ),
+                  child: CircularProgressIndicator(strokeWidth: 2),
                 ),
               ),
             )
           else
             IconButton(
-              onPressed: isUpdatingFavorite
-                  ? null
-                  : toggleFavorite,
+              onPressed: isUpdatingFavorite ? null : toggleFavorite,
               icon: Icon(
-                isFavorite
-                    ? Icons.star
-                    : Icons.star_border,
-                color: isFavorite
-                    ? Colors.amber
-                    : null,
+                isFavorite ? Icons.star : Icons.star_border,
+                color: isFavorite ? Colors.amber : null,
               ),
               tooltip: isFavorite
                   ? 'Remove from Favourites'
@@ -570,36 +452,25 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             Text(
               product.name,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
             if (product.brand.isNotEmpty)
               Text(
                 product.brand,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 18,
-                ),
+                style: const TextStyle(fontSize: 18),
               ),
             if (product.size.isNotEmpty)
               Text(
                 product.size,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 18,
-                ),
+                style: const TextStyle(fontSize: 18),
               ),
             const SizedBox(height: 10),
             Text(
-              product.taxable
-                  ? 'Ontario HST Applies'
-                  : 'No HST',
+              product.taxable ? 'Ontario HST Applies' : 'No HST',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 18,
-              ),
+              style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 20),
             favoriteStatusCard(),
@@ -609,34 +480,24 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: addToCart,
-                  icon: const Icon(
-                    Icons.shopping_cart,
-                  ),
-                  label: const Text(
-                    'Add to Cart',
-                  ),
+                  icon: const Icon(Icons.shopping_cart),
+                  label: const Text('Add to Cart'),
                 ),
               ),
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed:
-                    openPriceHistoryScreen,
-                icon: const Icon(
-                  Icons.show_chart,
-                ),
-                label: const Text(
-                  'View Price History',
-                ),
+                onPressed: openPriceHistoryScreen,
+                icon: const Icon(Icons.show_chart),
+                label: const Text('View Price History'),
               ),
             ),
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed:
-                    openAddPriceScreen,
+                onPressed: openAddPriceScreen,
                 icon: const Icon(Icons.add),
                 label: const Text('Add Price'),
               ),
@@ -646,23 +507,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             const SizedBox(height: 25),
             const Text(
               'Current Prices',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            if (!loading &&
-                errorMessage == null &&
-                prices.isEmpty)
-              const Text(
-                'No prices found yet.',
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              )
-            else if (!loading &&
-                errorMessage == null)
+            if (!loading && errorMessage == null && prices.isEmpty)
+              const Text('No prices found yet.', style: TextStyle(fontSize: 18))
+            else if (!loading && errorMessage == null)
               ...prices.map(priceCard),
             const SizedBox(height: 80),
           ],

@@ -10,18 +10,13 @@ import '../widgets/price/price_statistics_card.dart';
 class PriceHistoryScreen extends StatefulWidget {
   final Product product;
 
-  const PriceHistoryScreen({
-    super.key,
-    required this.product,
-  });
+  const PriceHistoryScreen({super.key, required this.product});
 
   @override
-  State<PriceHistoryScreen> createState() =>
-      _PriceHistoryScreenState();
+  State<PriceHistoryScreen> createState() => _PriceHistoryScreenState();
 }
 
-class _PriceHistoryScreenState
-    extends State<PriceHistoryScreen> {
+class _PriceHistoryScreenState extends State<PriceHistoryScreen> {
   PriceHistorySummary? summary;
 
   bool isLoading = true;
@@ -40,8 +35,7 @@ class _PriceHistoryScreenState
     });
 
     try {
-      final result =
-          await PriceHistoryService.getPriceHistory(
+      final result = await PriceHistoryService.getPriceHistory(
         widget.product.barcode,
       );
 
@@ -56,8 +50,7 @@ class _PriceHistoryScreenState
 
       setState(() {
         isLoading = false;
-        errorMessage =
-            'Unable to load price history: $error';
+        errorMessage = 'Unable to load price history: $error';
       });
     }
   }
@@ -87,9 +80,7 @@ class _PriceHistoryScreenState
               width: 62,
               height: 62,
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(
-                  alpha: 0.10,
-                ),
+                color: AppColors.primary.withValues(alpha: 0.10),
                 borderRadius: BorderRadius.circular(18),
               ),
               child: widget.product.imageUrl.trim().isEmpty
@@ -116,8 +107,7 @@ class _PriceHistoryScreenState
             const SizedBox(width: 16),
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     productDisplayName,
@@ -127,24 +117,16 @@ class _PriceHistoryScreenState
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    'Barcode: ${widget.product.barcode}',
-                  ),
-                  if (widget.product.category
-                      .trim()
-                      .isNotEmpty)
+                  Text('Barcode: ${widget.product.barcode}'),
+                  if (widget.product.category.trim().isNotEmpty)
                     Text(
                       'Category: '
                       '${widget.product.category}',
                     ),
                   const SizedBox(height: 6),
                   Text(
-                    widget.product.taxable
-                        ? 'Ontario HST applies'
-                        : 'No HST',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    widget.product.taxable ? 'Ontario HST applies' : 'No HST',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
@@ -156,9 +138,7 @@ class _PriceHistoryScreenState
   }
 
   Widget loadingState() {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 
   Widget errorState() {
@@ -168,19 +148,12 @@ class _PriceHistoryScreenState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-              color: AppColors.primary,
-            ),
+            const Icon(Icons.error_outline, size: 64, color: AppColors.primary),
             const SizedBox(height: 16),
             const Text(
               'Price History Could Not Be Loaded',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Text(
@@ -199,9 +172,7 @@ class _PriceHistoryScreenState
     );
   }
 
-  Widget priceHistoryContent(
-    PriceHistorySummary data,
-  ) {
+  Widget priceHistoryContent(PriceHistorySummary data) {
     return RefreshIndicator(
       onRefresh: loadPriceHistory,
       child: ListView(
@@ -209,17 +180,11 @@ class _PriceHistoryScreenState
         children: [
           productHeader(),
           const SizedBox(height: 16),
-          PriceStatisticsCard(
-            summary: data,
-          ),
+          PriceStatisticsCard(summary: data),
           const SizedBox(height: 16),
-          PriceHistoryChart(
-            entries: data.entries,
-          ),
+          PriceHistoryChart(entries: data.entries),
           const SizedBox(height: 22),
-          PriceHistoryList(
-            entries: data.entries,
-          ),
+          PriceHistoryList(entries: data.entries),
           const SizedBox(height: 30),
         ],
       ),
@@ -239,9 +204,7 @@ class _PriceHistoryScreenState
 
     if (data == null) {
       return const Center(
-        child: Text(
-          'No price history information was found.',
-        ),
+        child: Text('No price history information was found.'),
       );
     }
 
@@ -255,8 +218,7 @@ class _PriceHistoryScreenState
         title: const Text('Price Intelligence'),
         actions: [
           IconButton(
-            onPressed:
-                isLoading ? null : loadPriceHistory,
+            onPressed: isLoading ? null : loadPriceHistory,
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh Price History',
           ),

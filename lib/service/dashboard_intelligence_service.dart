@@ -38,10 +38,10 @@ class DashboardBestStore {
   });
 
   const DashboardBestStore.empty()
-      : storeName = 'No Store Data',
-        tripCount = 0,
-        totalSpent = 0,
-        averageTripCost = 0;
+    : storeName = 'No Store Data',
+      tripCount = 0,
+      totalSpent = 0,
+      averageTripCost = 0;
 
   bool get hasData => tripCount > 0;
 }
@@ -56,18 +56,15 @@ class DashboardIntelligence {
   });
 
   const DashboardIntelligence.empty()
-      : bestStore = const DashboardBestStore.empty(),
-        priceAlerts = const [];
+    : bestStore = const DashboardBestStore.empty(),
+      priceAlerts = const [];
 }
 
 class DashboardIntelligenceService {
   static final SupabaseClient _supabase = Supabase.instance.client;
 
   static Future<DashboardIntelligence> loadDashboardIntelligence() async {
-    final results = await Future.wait([
-      _loadBestStore(),
-      _loadPriceAlerts(),
-    ]);
+    final results = await Future.wait([_loadBestStore(), _loadPriceAlerts()]);
 
     return DashboardIntelligence(
       bestStore: results[0] as DashboardBestStore,
@@ -97,8 +94,7 @@ class DashboardIntelligenceService {
     for (final row in rows) {
       final rawStoreName = row['store_name']?.toString().trim() ?? '';
 
-      final storeName =
-          rawStoreName.isEmpty ? 'Unknown Store' : rawStoreName;
+      final storeName = rawStoreName.isEmpty ? 'Unknown Store' : rawStoreName;
 
       final key = storeName.toLowerCase();
       final total = _toDouble(row['total']);
@@ -116,8 +112,9 @@ class DashboardIntelligenceService {
       final tripCount = storeCounts[key] ?? 0;
       final totalSpent = storeTotals[key] ?? 0;
 
-      final averageTripCost =
-          tripCount == 0 ? double.infinity : totalSpent / tripCount;
+      final averageTripCost = tripCount == 0
+          ? double.infinity
+          : totalSpent / tripCount;
 
       final hasMoreTrips = tripCount > highestTripCount;
 
@@ -138,14 +135,12 @@ class DashboardIntelligenceService {
 
     final tripCount = storeCounts[bestStoreKey] ?? 0;
     final totalSpent = storeTotals[bestStoreKey] ?? 0;
-   final double averageTripCost =
-    tripCount == 0
+    final double averageTripCost = tripCount == 0
         ? 0.0
         : totalSpent / tripCount;
 
     return DashboardBestStore(
-      storeName:
-          displayNames[bestStoreKey] ?? 'Unknown Store',
+      storeName: displayNames[bestStoreKey] ?? 'Unknown Store',
       tripCount: tripCount,
       totalSpent: totalSpent,
       averageTripCost: averageTripCost,
@@ -171,8 +166,7 @@ class DashboardIntelligenceService {
 
     final rows = List<Map<String, dynamic>>.from(response);
 
-    final groupedRows =
-        <String, List<Map<String, dynamic>>>{};
+    final groupedRows = <String, List<Map<String, dynamic>>>{};
 
     for (final row in rows) {
       final barcode = row['barcode']?.toString().trim() ?? '';
@@ -212,8 +206,7 @@ class DashboardIntelligenceService {
       }
 
       final priceChange = currentPrice - previousPrice;
-      final percentageChange =
-          (priceChange / previousPrice) * 100;
+      final percentageChange = (priceChange / previousPrice) * 100;
 
       if (percentageChange.abs() < 2) {
         continue;
@@ -223,10 +216,9 @@ class DashboardIntelligenceService {
         DashboardPriceAlert(
           barcode: entry.key,
           productName: _productDisplayName(latestRow),
-          storeName:
-              latestRow['store']?.toString().trim().isEmpty ?? true
-                  ? 'Unknown Store'
-                  : latestRow['store'].toString().trim(),
+          storeName: latestRow['store']?.toString().trim().isEmpty ?? true
+              ? 'Unknown Store'
+              : latestRow['store'].toString().trim(),
           previousPrice: previousPrice,
           currentPrice: currentPrice,
           priceChange: priceChange,
@@ -237,22 +229,17 @@ class DashboardIntelligenceService {
     }
 
     alerts.sort(
-      (a, b) => b.percentageChange
-          .abs()
-          .compareTo(a.percentageChange.abs()),
+      (a, b) => b.percentageChange.abs().compareTo(a.percentageChange.abs()),
     );
 
     return alerts.take(3).toList();
   }
 
-  static String _productDisplayName(
-    Map<String, dynamic> row,
-  ) {
+  static String _productDisplayName(Map<String, dynamic> row) {
     final productData = row['products'];
 
     if (productData is Map) {
-      final productMap =
-          Map<String, dynamic>.from(productData);
+      final productMap = Map<String, dynamic>.from(productData);
 
       final parts = [
         productMap['brand']?.toString() ?? '',

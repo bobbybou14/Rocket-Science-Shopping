@@ -36,9 +36,7 @@ class _ReceiptHistoryScreenState extends State<ReceiptHistoryScreen> {
   void openReceiptDetails(Receipt receipt) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => ReceiptDetailsScreen(receipt: receipt),
-      ),
+      MaterialPageRoute(builder: (_) => ReceiptDetailsScreen(receipt: receipt)),
     );
   }
 
@@ -56,10 +54,7 @@ class _ReceiptHistoryScreenState extends State<ReceiptHistoryScreen> {
     return Card(
       child: ListTile(
         onTap: () => openReceiptDetails(receipt),
-        leading: const Icon(
-          Icons.receipt_long,
-          color: AppColors.primary,
-        ),
+        leading: const Icon(Icons.receipt_long, color: AppColors.primary),
         title: Text(
           receipt.storeName.isEmpty ? 'Receipt Upload' : receipt.storeName,
           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -78,29 +73,27 @@ class _ReceiptHistoryScreenState extends State<ReceiptHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Receipt History'),
-      ),
+      appBar: AppBar(title: const Text('Receipt History')),
       body: loading
           ? const Center(child: CircularProgressIndicator())
           : receipts.isEmpty
-              ? const Center(
-                  child: Text(
-                    'No receipts uploaded yet.',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: loadReceipts,
-                  color: AppColors.primary,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: receipts.length,
-                    itemBuilder: (context, index) {
-                      return receiptCard(receipts[index]);
-                    },
-                  ),
-                ),
+          ? const Center(
+              child: Text(
+                'No receipts uploaded yet.',
+                style: TextStyle(fontSize: 20),
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: loadReceipts,
+              color: AppColors.primary,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: receipts.length,
+                itemBuilder: (context, index) {
+                  return receiptCard(receipts[index]);
+                },
+              ),
+            ),
     );
   }
 }

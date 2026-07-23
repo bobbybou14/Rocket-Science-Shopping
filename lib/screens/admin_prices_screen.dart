@@ -52,9 +52,13 @@ class _AdminPricesScreenState extends State<AdminPricesScreen> {
   }
 
   Future<void> savePrice() async {
-    if (selectedProduct == null || selectedStore == null || priceController.text.trim().isEmpty) {
+    if (selectedProduct == null ||
+        selectedStore == null ||
+        priceController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Select a product, store, and enter a price.')),
+        const SnackBar(
+          content: Text('Select a product, store, and enter a price.'),
+        ),
       );
       return;
     }
@@ -62,9 +66,9 @@ class _AdminPricesScreenState extends State<AdminPricesScreen> {
     final amount = double.tryParse(priceController.text.trim());
 
     if (amount == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter a valid price.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Enter a valid price.')));
       return;
     }
 
@@ -93,9 +97,9 @@ class _AdminPricesScreenState extends State<AdminPricesScreen> {
 
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Price saved successfully.')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Price saved successfully.')));
   }
 
   @override
@@ -152,7 +156,9 @@ class _AdminPricesScreenState extends State<AdminPricesScreen> {
                   const SizedBox(height: 16),
                   TextField(
                     controller: priceController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     decoration: const InputDecoration(
                       labelText: 'Price',
                       prefixText: '\$',

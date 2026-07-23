@@ -51,7 +51,9 @@ class _ReceiptParserTestScreenState extends State<ReceiptParserTestScreen> {
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            Text('Store: ${receipt.storeName.isEmpty ? "Not found" : receipt.storeName}'),
+            Text(
+              'Store: ${receipt.storeName.isEmpty ? "Not found" : receipt.storeName}',
+            ),
             Text('Date: ${formatDate(receipt.purchaseDate)}'),
             Text('Subtotal: \$${receipt.subtotal.toStringAsFixed(2)}'),
             Text('Tax: \$${receipt.tax.toStringAsFixed(2)}'),
@@ -70,7 +72,9 @@ class _ReceiptParserTestScreenState extends State<ReceiptParserTestScreen> {
                   dense: true,
                   contentPadding: EdgeInsets.zero,
                   title: Text(item.name),
-                  subtitle: Text('Confidence: ${item.confidenceScore.toStringAsFixed(0)}%'),
+                  subtitle: Text(
+                    'Confidence: ${item.confidenceScore.toStringAsFixed(0)}%',
+                  ),
                   trailing: Text('\$${item.price.toStringAsFixed(2)}'),
                 ),
               ),
@@ -106,9 +110,7 @@ class _ReceiptParserTestScreenState extends State<ReceiptParserTestScreen> {
         'AUTH 123456';
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Receipt Parser Test'),
-      ),
+      appBar: AppBar(title: const Text('Receipt Parser Test')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [

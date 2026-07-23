@@ -16,6 +16,17 @@ class ReceiptService {
     return Receipt.fromMap(response);
   }
 
+  static Future<Receipt> updateReceipt(Receipt receipt) async {
+    final response = await _client
+        .from('receipts')
+        .update(receipt.toMap())
+        .eq('id', receipt.id)
+        .select()
+        .single();
+
+    return Receipt.fromMap(response);
+  }
+
   static Future<void> saveReceiptItems(List<ReceiptItem> items) async {
     if (items.isEmpty) return;
 

@@ -36,7 +36,7 @@ class BestStoreCard extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              branding.backgroundColor,
+              branding.backgroundColor.withValues(alpha: 0.75),
               Colors.white,
             ],
             begin: Alignment.topLeft,
@@ -47,15 +47,13 @@ class BestStoreCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 70,
-              height: 70,
+              width: 76,
+              height: 76,
               decoration: BoxDecoration(
                 color: branding.backgroundColor,
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: branding.primaryColor.withValues(
-                    alpha: 0.25,
-                  ),
+                  color: branding.primaryColor.withValues(alpha: 0.25),
                 ),
               ),
               child: Icon(
@@ -70,35 +68,35 @@ class BestStoreCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Most Visited Store This Month',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
+                    'Favourite Store This Month',
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   const SizedBox(height: 8),
-                  StoreBadge(
-                    storeName: branding.displayName,
+                  StoreBadge(storeName: branding.displayName),
+                  const SizedBox(height: 8),
+
+                  const Text(
+                    'You shop here more than anywhere else.',
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
+
                   const SizedBox(height: 16),
                   _DetailRow(
                     icon: Icons.shopping_bag_outlined,
-                    text:
-                        '$trips shopping trip${trips == 1 ? '' : 's'}',
+                    text: '$trips trip${trips == 1 ? '' : 's'} this month',
                     color: branding.primaryColor,
                   ),
                   const SizedBox(height: 8),
                   _DetailRow(
                     icon: Icons.receipt_long_outlined,
                     text:
-                        '\$${averageTripCost.toStringAsFixed(2)} average trip',
+                        'Average trip \$${averageTripCost.toStringAsFixed(2)}',
                     color: branding.primaryColor,
                   ),
                   const SizedBox(height: 8),
                   _DetailRow(
                     icon: Icons.payments_outlined,
-                    text:
-                        '\$${totalSpent.toStringAsFixed(2)} spent there',
+                    text: 'Spent \$${totalSpent.toStringAsFixed(2)} this month',
                     color: branding.primaryColor,
                   ),
                 ],
@@ -113,7 +111,7 @@ class BestStoreCard extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: const Icon(
-                Icons.emoji_events,
+                Icons.favorite_rounded,
                 color: Colors.amber,
                 size: 25,
               ),
@@ -140,18 +138,12 @@ class _DetailRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 19,
-          color: color,
-        ),
+        Icon(icon, size: 19, color: color),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
       ],
@@ -166,10 +158,7 @@ class _EmptyBestStoreCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: 30,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
         child: Column(
           children: [
             Container(
@@ -187,16 +176,13 @@ class _EmptyBestStoreCard extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             const Text(
-              'No Store Insights Yet',
+              'No Favourite Store Yet',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 21,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(
-              'Shopping trips saved this month will be used to identify your most visited store.',
+              'Upload a few grocery receipts and SmartCart Canada will discover where you shop most often and provide personalized shopping insights.',
               textAlign: TextAlign.center,
             ),
           ],

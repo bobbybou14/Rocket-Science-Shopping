@@ -8,12 +8,9 @@ class SupabaseProductService {
 
   static Future<List<Product>> getProducts() async {
     try {
-      final response =
-          await _client.from('products').select().order('name');
+      final response = await _client.from('products').select().order('name');
 
-      return response
-          .map<Product>((item) => Product.fromMap(item))
-          .toList();
+      return response.map<Product>((item) => Product.fromMap(item)).toList();
     } catch (_) {
       return [];
     }
@@ -33,10 +30,7 @@ class SupabaseProductService {
 
       final product = Product.fromMap(response);
 
-      return CartItem(
-        product: product,
-        price: 0.00,
-      );
+      return CartItem(product: product, price: 0.00);
     } catch (_) {
       return null;
     }
@@ -44,9 +38,7 @@ class SupabaseProductService {
 
   static Future<void> saveProduct(Product product) async {
     try {
-      await _client
-          .from('products')
-          .upsert(product.toMap());
+      await _client.from('products').upsert(product.toMap());
     } catch (_) {
       return;
     }

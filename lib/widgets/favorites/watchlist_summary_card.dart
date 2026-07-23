@@ -27,17 +27,11 @@ class WatchlistSummaryCard extends StatelessWidget {
           children: [
             const Row(
               children: [
-                Icon(
-                  Icons.auto_awesome,
-                  color: AppColors.primary,
-                ),
+                Icon(Icons.auto_awesome, color: AppColors.primary),
                 SizedBox(width: 10),
                 Text(
                   'Watchlist Intelligence',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -108,21 +102,14 @@ class _SummaryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 16,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            color: color,
-            size: 28,
-          ),
+          Icon(icon, color: color, size: 28),
           const SizedBox(height: 10),
           Text(
             value,
@@ -136,9 +123,7 @@ class _SummaryTile extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 13,
-            ),
+            style: const TextStyle(fontSize: 13),
           ),
         ],
       ),

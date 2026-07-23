@@ -7,16 +7,9 @@ class StoreService {
 
   static Future<List<Store>> getStores() async {
     try {
-      final response = await _client
-          .from('stores')
-          .select()
-          .order('name');
+      final response = await _client.from('stores').select().order('name');
 
-      return response
-          .map<Store>(
-            (store) => Store.fromMap(store),
-          )
-          .toList();
+      return response.map<Store>((store) => Store.fromMap(store)).toList();
     } catch (_) {
       return [];
     }
@@ -24,9 +17,7 @@ class StoreService {
 
   static Future<void> saveStore(Store store) async {
     try {
-      await _client
-          .from('stores')
-          .insert(store.toMap());
+      await _client.from('stores').insert(store.toMap());
     } catch (_) {
       return;
     }

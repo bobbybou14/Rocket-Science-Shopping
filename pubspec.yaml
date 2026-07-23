@@ -29,7 +29,7 @@ dependencies:
   # Receipt Images
   image_picker: ^1.1.2
 
-  # On-device OCR
+   # On-device OCR for Android and iOS
   google_mlkit_text_recognition: ^0.15.0
 
 dev_dependencies:
@@ -42,4 +42,5 @@ flutter:
   uses-material-design: true
 
   assets:
-    - .env
+   - .env
+   - assets/sample_receipt.txt

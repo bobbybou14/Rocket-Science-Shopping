@@ -51,18 +51,13 @@ class _OcrTestScreenState extends State<OcrTestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('OCR Test'),
-      ),
+      appBar: AppBar(title: const Text('OCR Test')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           const Text(
             'OCR Test Screen',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
           const Text(

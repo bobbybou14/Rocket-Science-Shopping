@@ -39,11 +39,7 @@ class ProductSelectorCard extends StatelessWidget {
         child: Row(
           children: [
             CircleAvatar(
-              child: Icon(
-                quantity > 0
-                    ? Icons.check
-                    : Icons.inventory_2,
-              ),
+              child: Icon(quantity > 0 ? Icons.check : Icons.inventory_2),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -68,9 +64,7 @@ class ProductSelectorCard extends StatelessWidget {
             ),
             IconButton(
               onPressed: onDecrease,
-              icon: const Icon(
-                Icons.remove_circle_outline,
-              ),
+              icon: const Icon(Icons.remove_circle_outline),
             ),
             SizedBox(
               width: 36,
@@ -85,9 +79,7 @@ class ProductSelectorCard extends StatelessWidget {
             ),
             IconButton(
               onPressed: onIncrease,
-              icon: const Icon(
-                Icons.add_circle_outline,
-              ),
+              icon: const Icon(Icons.add_circle_outline),
             ),
           ],
         ),

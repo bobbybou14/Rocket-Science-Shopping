@@ -13,17 +13,12 @@ class WatchlistLoading extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(
-              color: AppColors.primary,
-            ),
+            CircularProgressIndicator(color: AppColors.primary),
             SizedBox(height: 18),
             Text(
               'Loading your watchlist...',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
             ),
           ],
         ),

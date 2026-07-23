@@ -32,49 +32,45 @@ class _HomeScreenState extends State<HomeScreen> {
     loadDashboardInsights();
   }
 
- @override
-void didUpdateWidget(HomeScreen oldWidget) {
-  super.didUpdateWidget(oldWidget);
+  @override
+  void didUpdateWidget(HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
 
-  if (oldWidget.cart != widget.cart) {
-    loadDashboardInsights();
+    if (oldWidget.cart != widget.cart) {
+      loadDashboardInsights();
+    }
   }
-}
 
   Future<void> loadDashboardInsights() async {
-  setState(() {
-    loadingInsights = true;
-  });
-
-  try {
-    final results = await Future.wait([
-      DashboardService.potentialSavings(widget.cart),
-      DashboardService.bestStore(widget.cart),
-    ]);
-
-    if (!mounted) return;
-
     setState(() {
-      potentialSavings = results[0] as double;
-      bestStore = results[1] as String;
-      loadingInsights = false;
-    });
-  } catch (error) {
-    if (!mounted) return;
-
-    setState(() {
-      loadingInsights = false;
+      loadingInsights = true;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Unable to load dashboard insights: $error',
-        ),
-      ),
-    );
+    try {
+      final results = await Future.wait([
+        DashboardService.potentialSavings(widget.cart),
+        DashboardService.bestStore(widget.cart),
+      ]);
+
+      if (!mounted) return;
+
+      setState(() {
+        potentialSavings = results[0] as double;
+        bestStore = results[1] as String;
+        loadingInsights = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+
+      setState(() {
+        loadingInsights = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unable to load dashboard insights: $error')),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -82,9 +78,7 @@ void didUpdateWidget(HomeScreen oldWidget) {
     final cartTotal = DashboardService.cartTotal(widget.cart);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('SmartCart Canada'),
-      ),
+      appBar: AppBar(title: const Text('SmartCart Canada')),
       body: RefreshIndicator(
         onRefresh: loadDashboardInsights,
         color: AppColors.primary,
@@ -93,18 +87,12 @@ void didUpdateWidget(HomeScreen oldWidget) {
           children: [
             const Text(
               'Welcome Back!',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
               'Ready to save money today?',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey.shade700,
-              ),
+              style: TextStyle(fontSize: 18, color: Colors.grey.shade700),
             ),
             const SizedBox(height: 30),
             DashboardCard(

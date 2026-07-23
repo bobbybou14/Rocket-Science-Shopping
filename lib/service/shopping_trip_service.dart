@@ -19,14 +19,10 @@ class ShoppingTripService {
 
     if (shoppingTrip.items.isNotEmpty) {
       final itemRows = shoppingTrip.items.map((item) {
-        return item
-            .copyWithShoppingTripId(savedTrip.id)
-            .toMap();
+        return item.copyWithShoppingTripId(savedTrip.id).toMap();
       }).toList();
 
-      await _supabase
-          .from('shopping_trip_items')
-          .insert(itemRows);
+      await _supabase.from('shopping_trip_items').insert(itemRows);
     }
 
     return getShoppingTrip(savedTrip.id);
@@ -74,28 +70,17 @@ class ShoppingTripService {
       if (productMap is Map<String, dynamic>) {
         product = Product.fromMap(productMap);
       } else if (productMap is Map) {
-        product = Product.fromMap(
-          Map<String, dynamic>.from(productMap),
-        );
+        product = Product.fromMap(Map<String, dynamic>.from(productMap));
       }
 
-      return ShoppingTripItem.fromMap(
-        row,
-        product: product,
-      );
+      return ShoppingTripItem.fromMap(row, product: product);
     }).toList();
 
-    return ShoppingTrip.fromMap(
-      tripResponse,
-      items: items,
-    );
+    return ShoppingTrip.fromMap(tripResponse, items: items);
   }
 
   static Future<void> deleteShoppingTrip(String shoppingTripId) async {
-    await _supabase
-        .from('shopping_trips')
-        .delete()
-        .eq('id', shoppingTripId);
+    await _supabase.from('shopping_trips').delete().eq('id', shoppingTripId);
   }
 }
 

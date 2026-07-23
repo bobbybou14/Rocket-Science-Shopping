@@ -6,11 +6,7 @@ class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback? onTap;
 
-  const ProductCard({
-    super.key,
-    required this.product,
-    this.onTap,
-  });
+  const ProductCard({super.key, required this.product, this.onTap});
 
   static const Color smartCartRed = Color(0xFFD6001C);
 
@@ -19,9 +15,7 @@ class ProductCard extends StatelessWidget {
     return Card(
       elevation: 3,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: onTap,
@@ -79,9 +73,7 @@ class ProductCard extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(
                           product.brand,
-                          style: TextStyle(
-                            color: Colors.grey.shade700,
-                          ),
+                          style: TextStyle(color: Colors.grey.shade700),
                         ),
                       ),
 
@@ -90,9 +82,7 @@ class ProductCard extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 2),
                         child: Text(
                           product.size,
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                          ),
+                          style: TextStyle(color: Colors.grey.shade600),
                         ),
                       ),
 
@@ -104,16 +94,12 @@ class ProductCard extends StatelessWidget {
                           product.taxable
                               ? Icons.receipt_long
                               : Icons.check_circle,
-                          color: product.taxable
-                              ? Colors.orange
-                              : Colors.green,
+                          color: product.taxable ? Colors.orange : Colors.green,
                           size: 18,
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          product.taxable
-                              ? 'HST Applies'
-                              : 'Tax Exempt',
+                          product.taxable ? 'HST Applies' : 'Tax Exempt',
                           style: TextStyle(
                             color: product.taxable
                                 ? Colors.orange
@@ -127,10 +113,7 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
 
-              const Icon(
-                Icons.chevron_right,
-                color: Colors.grey,
-              ),
+              const Icon(Icons.chevron_right, color: Colors.grey),
             ],
           ),
         ),

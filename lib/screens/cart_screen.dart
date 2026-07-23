@@ -20,8 +20,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  final TextEditingController _searchController =
-      TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   String _searchText = '';
 
@@ -34,9 +33,7 @@ class _CartScreenState extends State<CartScreen> {
       builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Clear cart?'),
-          content: const Text(
-            'This will remove every item from your cart.',
-          ),
+          content: const Text('This will remove every item from your cart.'),
           actions: [
             TextButton(
               onPressed: () {
@@ -63,18 +60,13 @@ class _CartScreenState extends State<CartScreen> {
 
       if (!context.mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Cart cleared.'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Cart cleared.')));
     }
   }
 
-  void _openBasketComparison(
-    BuildContext context,
-    CartProvider cart,
-  ) {
+  void _openBasketComparison(BuildContext context, CartProvider cart) {
     final basketItems = cart.items
         .map(
           (item) => BasketItemRequest(
@@ -87,9 +79,7 @@ class _CartScreenState extends State<CartScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => BasketComparisonScreen(
-          initialItems: basketItems,
-        ),
+        builder: (_) => BasketComparisonScreen(initialItems: basketItems),
       ),
     );
   }
@@ -97,18 +87,18 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>();
-final filteredItems = cart.items.where((item) {
-  if (_searchText.isEmpty) {
-    return true;
-  }
+    final filteredItems = cart.items.where((item) {
+      if (_searchText.isEmpty) {
+        return true;
+      }
 
-  final search = _searchText;
+      final search = _searchText;
 
-  return item.product.name.toLowerCase().contains(search) ||
-      item.product.brand.toLowerCase().contains(search) ||
-      item.product.barcode.toLowerCase().contains(search) ||
-      item.product.size.toLowerCase().contains(search);
-}).toList();
+      return item.product.name.toLowerCase().contains(search) ||
+          item.product.brand.toLowerCase().contains(search) ||
+          item.product.barcode.toLowerCase().contains(search) ||
+          item.product.size.toLowerCase().contains(search);
+    }).toList();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shopping Cart'),
@@ -129,82 +119,86 @@ final filteredItems = cart.items.where((item) {
           ? const EmptyCart()
           : Column(
               children: [
-  CartSummaryHeader(cart: cart),
+                CartSummaryHeader(cart: cart),
 
-  CartSearchBar(
-  controller: _searchController,
-  onChanged: (value) {
-    setState(() {
-      _searchText = value.toLowerCase().trim();
-    });
-  },
-),
+                CartSearchBar(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchText = value.toLowerCase().trim();
+                    });
+                  },
+                ),
 
-  Expanded(
-  child: filteredItems.isEmpty
-      ? const Center(
-          child: Text(
-            'No matching items',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        )
-      : ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: filteredItems.length,
-                    separatorBuilder: (_, _) {
-                      return const SizedBox(height: 12);
-                    },
-                    itemBuilder: (context, index) {
-                      final item = filteredItems[index];
+                Expanded(
+                  child: filteredItems.isEmpty
+                      ? const Center(
+                          child: Text(
+                            'No matching items',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        )
+                      : ListView.separated(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: filteredItems.length,
+                          separatorBuilder: (_, _) {
+                            return const SizedBox(height: 12);
+                          },
+                          itemBuilder: (context, index) {
+                            final item = filteredItems[index];
 
-                      return Dismissible(
-  key: ValueKey(item.product.barcode),
-  direction: DismissDirection.endToStart,
-  background: Container(
-    alignment: Alignment.centerRight,
-    padding: const EdgeInsets.only(right: 24),
-    color: Colors.red,
-    child: const Icon(
-      Icons.delete,
-      color: Colors.white,
-      size: 32,
-    ),
-  ),
-  onDismissed: (_) {
-    cart.removeItem(item);
+                            return Dismissible(
+                              key: ValueKey(item.product.barcode),
+                              direction: DismissDirection.endToStart,
+                              background: Container(
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.only(right: 24),
+                                color: Colors.red,
+                                child: const Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                  size: 32,
+                                ),
+                              ),
+                              onDismissed: (_) {
+                                cart.removeItem(item);
 
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                ScaffoldMessenger.of(
+                                  context,
+                                ).hideCurrentSnackBar();
 
-ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(
-    content: Text('${item.product.name} removed'),
-    action: SnackBarAction(
-      label: 'Undo',
-      onPressed: () {
-        cart.restoreItem(item);
-      },
-    ),
-  ),
-);
-  },
-  child: CartItemCard(
-    item: item,
-    onIncrease: () {
-      cart.increaseQuantity(item);
-    },
-    onDecrease: () {
-      cart.decreaseQuantity(item);
-    },
-    onRemove: () {
-      cart.removeItem(item);
-    },
-  ),
-);
-                    },
-                  ),
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      '${item.product.name} removed',
+                                    ),
+                                    action: SnackBarAction(
+                                      label: 'Undo',
+                                      onPressed: () {
+                                        cart.restoreItem(item);
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: CartItemCard(
+                                item: item,
+                                onIncrease: () {
+                                  cart.increaseQuantity(item);
+                                },
+                                onDecrease: () {
+                                  cart.decreaseQuantity(item);
+                                },
+                                onRemove: () {
+                                  cart.removeItem(item);
+                                },
+                              ),
+                            );
+                          },
+                        ),
                 ),
                 CartTotals(
                   cart: cart,

@@ -7,10 +7,7 @@ import '../../service/dashboard_intelligence_service.dart';
 class PriceAlertsCard extends StatelessWidget {
   final List<DashboardPriceAlert> alerts;
 
-  const PriceAlertsCard({
-    super.key,
-    required this.alerts,
-  });
+  const PriceAlertsCard({super.key, required this.alerts});
 
   @override
   Widget build(BuildContext context) {
@@ -20,35 +17,48 @@ class PriceAlertsCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(
-                  Icons.notifications_active,
-                  color: AppColors.primary,
+                Container(
+                  width: 46,
+                  height: 46,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: const Icon(
+                    Icons.local_offer_outlined,
+                    color: AppColors.primary,
+                    size: 27,
+                  ),
                 ),
-                SizedBox(width: 10),
-                Text(
-                  'Price Alerts',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Price Alerts',
+                        style: TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Recent price changes on products you track',
+                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                      ),
+                    ],
                   ),
                 ),
               ],
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Recent price changes detected from your recorded grocery prices.',
             ),
             const SizedBox(height: 18),
             if (alerts.isEmpty)
               const _EmptyAlertsState()
             else
-              ...alerts.map(
-                (alert) => _PriceAlertTile(
-                  alert: alert,
-                ),
-              ),
+              ...alerts.map((alert) => _PriceAlertTile(alert: alert)),
           ],
         ),
       ),
@@ -59,25 +69,17 @@ class PriceAlertsCard extends StatelessWidget {
 class _PriceAlertTile extends StatelessWidget {
   final DashboardPriceAlert alert;
 
-  const _PriceAlertTile({
-    required this.alert,
-  });
+  const _PriceAlertTile({required this.alert});
 
   @override
   Widget build(BuildContext context) {
     final isDrop = alert.isPriceDrop;
 
-    final changeColor = isDrop
-        ? AppColors.success
-        : Colors.red;
+    final changeColor = isDrop ? AppColors.success : Colors.red;
 
-    final changeIcon = isDrop
-        ? Icons.trending_down
-        : Icons.trending_up;
+    final changeIcon = isDrop ? Icons.trending_down : Icons.trending_up;
 
-    final branding = StoreBranding.fromStoreName(
-      alert.storeName,
-    );
+    final branding = StoreBranding.fromStoreName(alert.storeName);
 
     final sign = alert.percentageChange > 0 ? '+' : '';
 
@@ -87,24 +89,18 @@ class _PriceAlertTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: changeColor.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: changeColor.withValues(alpha: 0.18),
-        ),
+        border: Border.all(color: changeColor.withValues(alpha: 0.18)),
       ),
       child: Row(
         children: [
           CircleAvatar(
             backgroundColor: branding.backgroundColor,
-            child: Icon(
-              branding.icon,
-              color: branding.primaryColor,
-            ),
+            child: Icon(branding.icon, color: branding.primaryColor),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   alert.productName,
@@ -125,9 +121,7 @@ class _PriceAlertTile extends StatelessWidget {
                 Text(
                   '\$${alert.previousPrice.toStringAsFixed(2)} → '
                   '\$${alert.currentPrice.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 13,
-                  ),
+                  style: const TextStyle(fontSize: 13),
                 ),
               ],
             ),
@@ -135,13 +129,9 @@ class _PriceAlertTile extends StatelessWidget {
           const SizedBox(width: 12),
           Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment:
-                CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Icon(
-                changeIcon,
-                color: changeColor,
-              ),
+              Icon(changeIcon, color: changeColor),
               const SizedBox(height: 4),
               Text(
                 '$sign${alert.percentageChange.toStringAsFixed(1)}%',
@@ -175,29 +165,19 @@ class _EmptyAlertsState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 22,
-        vertical: 28,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 28),
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(14),
       ),
       child: const Column(
         children: [
-          Icon(
-            Icons.notifications_none,
-            size: 48,
-            color: AppColors.primary,
-          ),
+          Icon(Icons.notifications_none, size: 48, color: AppColors.primary),
           SizedBox(height: 12),
           Text(
             'No Price Alerts Yet',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
           Text(

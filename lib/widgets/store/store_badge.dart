@@ -4,11 +4,7 @@ class StoreBadge extends StatelessWidget {
   final String storeName;
   final bool compact;
 
-  const StoreBadge({
-    super.key,
-    required this.storeName,
-    this.compact = false,
-  });
+  const StoreBadge({super.key, required this.storeName, this.compact = false});
 
   String get normalizedStoreName {
     return storeName.trim().toLowerCase();
@@ -140,11 +136,7 @@ class StoreBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            storeIcon,
-            size: iconSize,
-            color: foregroundColor,
-          ),
+          Icon(storeIcon, size: iconSize, color: foregroundColor),
           const SizedBox(width: 6),
           Flexible(
             child: Text(

@@ -23,30 +23,19 @@ class DashboardCard extends StatelessWidget {
     return Card(
       elevation: 3,
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: ListTile(
         onTap: onTap,
         contentPadding: const EdgeInsets.all(18),
         leading: CircleAvatar(
           backgroundColor: AppColors.primary.withValues(),
-          child: Icon(
-            icon,
-            color: AppColors.primary,
-          ),
+          child: Icon(icon, color: AppColors.primary),
         ),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(subtitle),
         trailing: Text(
           value,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
       ),
     );

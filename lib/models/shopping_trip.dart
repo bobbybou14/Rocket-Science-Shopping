@@ -43,7 +43,7 @@ class ShoppingTrip {
       province: map['province']?.toString() ?? '',
       purchaseDate:
           DateTime.tryParse(map['purchase_date']?.toString() ?? '') ??
-              DateTime.now(),
+          DateTime.now(),
       subtotal: _toDouble(map['subtotal']),
       tax: _toDouble(map['tax']),
       total: _toDouble(map['total']),
@@ -70,6 +70,38 @@ class ShoppingTrip {
       'source': source,
       'processing_status': processingStatus,
     };
+  }
+
+  ShoppingTrip copyWith({
+    String? id,
+    String? storeId,
+    String? storeName,
+    String? city,
+    String? province,
+    DateTime? purchaseDate,
+    double? subtotal,
+    double? tax,
+    double? total,
+    String? source,
+    String? processingStatus,
+    DateTime? createdAt,
+    List<ShoppingTripItem>? items,
+  }) {
+    return ShoppingTrip(
+      id: id ?? this.id,
+      storeId: storeId ?? this.storeId,
+      storeName: storeName ?? this.storeName,
+      city: city ?? this.city,
+      province: province ?? this.province,
+      purchaseDate: purchaseDate ?? this.purchaseDate,
+      subtotal: subtotal ?? this.subtotal,
+      tax: tax ?? this.tax,
+      total: total ?? this.total,
+      source: source ?? this.source,
+      processingStatus: processingStatus ?? this.processingStatus,
+      createdAt: createdAt ?? this.createdAt,
+      items: items ?? this.items,
+    );
   }
 
   static double _toDouble(dynamic value) {
@@ -107,6 +139,36 @@ class ShoppingTripItem {
     this.requiresReview = true,
     this.createdAt,
   });
+  ShoppingTripItem copyWith({
+    String? id,
+    String? shoppingTripId,
+    String? rawReceiptName,
+    Product? product,
+    bool clearProduct = false,
+    String? barcode,
+    double? quantity,
+    double? unitPrice,
+    double? lineTotal,
+    double? confidenceScore,
+    bool? requiresReview,
+    DateTime? createdAt,
+  }) {
+    final updatedProduct = clearProduct ? null : product ?? this.product;
+
+    return ShoppingTripItem(
+      id: id ?? this.id,
+      shoppingTripId: shoppingTripId ?? this.shoppingTripId,
+      rawReceiptName: rawReceiptName ?? this.rawReceiptName,
+      product: updatedProduct,
+      barcode: barcode ?? updatedProduct?.barcode ?? this.barcode,
+      quantity: quantity ?? this.quantity,
+      unitPrice: unitPrice ?? this.unitPrice,
+      lineTotal: lineTotal ?? this.lineTotal,
+      confidenceScore: confidenceScore ?? this.confidenceScore,
+      requiresReview: requiresReview ?? this.requiresReview,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 
   factory ShoppingTripItem.fromMap(
     Map<String, dynamic> map, {
@@ -121,8 +183,7 @@ class ShoppingTripItem {
       quantity: ShoppingTrip._toDouble(map['quantity']),
       unitPrice: ShoppingTrip._toDouble(map['unit_price']),
       lineTotal: ShoppingTrip._toDouble(map['line_total']),
-      confidenceScore:
-          ShoppingTrip._toDouble(map['confidence_score']),
+      confidenceScore: ShoppingTrip._toDouble(map['confidence_score']),
       requiresReview: map['requires_review'] ?? true,
       createdAt: map['created_at'] == null
           ? null
@@ -132,8 +193,7 @@ class ShoppingTripItem {
 
   Map<String, dynamic> toMap() {
     return {
-      'shopping_trip_id':
-          shoppingTripId.isEmpty ? null : shoppingTripId,
+      'shopping_trip_id': shoppingTripId.isEmpty ? null : shoppingTripId,
       'raw_receipt_name': rawReceiptName,
       'barcode': barcode.isEmpty ? null : barcode,
       'quantity': quantity,

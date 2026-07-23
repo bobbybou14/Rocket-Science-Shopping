@@ -1,0 +1,16 @@
+WALMART
+123 MAIN STREET
+LONDON ON
+
+MILK 2% 4L              6.49
+WHITE BREAD             3.29
+BANANAS                 2.17
+GROUND BEEF             12.45
+EGGS LARGE 12           4.99
+
+SUBTOTAL                 29.39
+HST                       1.14
+TOTAL                    30.53
+
+VISA
+THANK YOU

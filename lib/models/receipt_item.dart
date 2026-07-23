@@ -36,8 +36,7 @@ class ReceiptItem {
       totalPrice: double.tryParse(map['total_price'].toString()) ?? 0,
       taxAmount: double.tryParse(map['tax_amount'].toString()) ?? 0,
       matchedProduct: map['matched_product'] ?? false,
-      confidenceScore:
-          double.tryParse(map['confidence_score'].toString()) ?? 0,
+      confidenceScore: double.tryParse(map['confidence_score'].toString()) ?? 0,
       createdAt: map['created_at'] == null
           ? null
           : DateTime.tryParse(map['created_at'].toString()),

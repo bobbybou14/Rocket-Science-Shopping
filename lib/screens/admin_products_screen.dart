@@ -72,9 +72,9 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
 
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Product saved to Supabase')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Product saved to Supabase')));
   }
 
   Widget textField({
@@ -112,26 +112,11 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
               label: 'Barcode',
               keyboardType: TextInputType.number,
             ),
-            textField(
-              controller: nameController,
-              label: 'Product Name',
-            ),
-            textField(
-              controller: brandController,
-              label: 'Brand',
-            ),
-            textField(
-              controller: categoryController,
-              label: 'Category',
-            ),
-            textField(
-              controller: sizeController,
-              label: 'Size',
-            ),
-            textField(
-              controller: imageUrlController,
-              label: 'Image URL',
-            ),
+            textField(controller: nameController, label: 'Product Name'),
+            textField(controller: brandController, label: 'Brand'),
+            textField(controller: categoryController, label: 'Category'),
+            textField(controller: sizeController, label: 'Size'),
+            textField(controller: imageUrlController, label: 'Image URL'),
             SwitchListTile(
               title: const Text('Ontario HST applies'),
               value: taxable,

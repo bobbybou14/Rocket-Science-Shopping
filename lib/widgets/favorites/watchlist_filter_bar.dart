@@ -126,31 +126,24 @@ class _FilterChip extends StatelessWidget {
         avatar: Icon(
           icon,
           size: 18,
-          color: isSelected
-              ? Colors.white
-              : AppColors.primary,
+          color: isSelected ? Colors.white : AppColors.primary,
         ),
         label: Text(
           '$label ($count)',
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: isSelected
-                ? Colors.white
-                : null,
+            color: isSelected ? Colors.white : null,
           ),
         ),
         selectedColor: AppColors.primary,
-        backgroundColor:
-            AppColors.primary.withValues(alpha: 0.06),
+        backgroundColor: AppColors.primary.withValues(alpha: 0.06),
         side: BorderSide(
           color: isSelected
               ? AppColors.primary
               : AppColors.primary.withValues(alpha: 0.18),
         ),
         showCheckmark: false,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
   }
@@ -162,20 +155,15 @@ extension WatchlistFilterMatching on WatchlistFilter {
       case WatchlistFilter.all:
         return true;
       case WatchlistFilter.priceDrops:
-        return insight.type ==
-            WatchlistInsightType.priceDrop;
+        return insight.type == WatchlistInsightType.priceDrop;
       case WatchlistFilter.priceIncreases:
-        return insight.type ==
-            WatchlistInsightType.priceIncrease;
+        return insight.type == WatchlistInsightType.priceIncrease;
       case WatchlistFilter.lowestPrice:
-        return insight.type ==
-            WatchlistInsightType.lowestRecorded;
+        return insight.type == WatchlistInsightType.lowestRecorded;
       case WatchlistFilter.stable:
-        return insight.type ==
-            WatchlistInsightType.stable;
+        return insight.type == WatchlistInsightType.stable;
       case WatchlistFilter.moreDataNeeded:
-        return insight.type ==
-            WatchlistInsightType.notEnoughData;
+        return insight.type == WatchlistInsightType.notEnoughData;
     }
   }
 }

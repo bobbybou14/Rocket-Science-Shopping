@@ -15,8 +15,7 @@ class ReceiptIntelligenceScreen extends StatefulWidget {
       _ReceiptIntelligenceScreenState();
 }
 
-class _ReceiptIntelligenceScreenState
-    extends State<ReceiptIntelligenceScreen> {
+class _ReceiptIntelligenceScreenState extends State<ReceiptIntelligenceScreen> {
   final TextEditingController textController = TextEditingController();
 
   ReceiptIntelligenceResult? result;
@@ -51,20 +50,16 @@ class _ReceiptIntelligenceScreenState
         isLoadingStores = false;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Unable to load stores: $error'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unable to load stores: $error')));
     }
   }
 
   Future<void> processReceipt() async {
     if (textController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Enter or load receipt text first.'),
-        ),
+        const SnackBar(content: Text('Enter or load receipt text first.')),
       );
       return;
     }
@@ -75,8 +70,7 @@ class _ReceiptIntelligenceScreenState
     });
 
     try {
-      final processed =
-          await ReceiptIntelligenceService.processRawText(
+      final processed = await ReceiptIntelligenceService.processRawText(
         textController.text.trim(),
       );
 
@@ -84,8 +78,9 @@ class _ReceiptIntelligenceScreenState
 
       Store? detectedStore;
 
-      final detectedStoreName =
-          processed.parsedReceipt.storeName.trim().toLowerCase();
+      final detectedStoreName = processed.parsedReceipt.storeName
+          .trim()
+          .toLowerCase();
 
       if (detectedStoreName.isNotEmpty) {
         for (final store in stores) {
@@ -109,9 +104,7 @@ class _ReceiptIntelligenceScreenState
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Receipt processing failed: $error'),
-        ),
+        SnackBar(content: Text('Receipt processing failed: $error')),
       );
     }
   }
@@ -123,9 +116,7 @@ class _ReceiptIntelligenceScreenState
     if (intelligenceResult == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Process a receipt before saving a shopping trip.',
-          ),
+          content: Text('Process a receipt before saving a shopping trip.'),
         ),
       );
       return;
@@ -133,9 +124,7 @@ class _ReceiptIntelligenceScreenState
 
     if (store == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Select the store before saving.'),
-        ),
+        const SnackBar(content: Text('Select the store before saving.')),
       );
       return;
     }
@@ -147,22 +136,22 @@ class _ReceiptIntelligenceScreenState
     try {
       final shoppingTrip =
           ShoppingTripBuilderService.buildFromReceiptIntelligence(
-        intelligenceResult: intelligenceResult,
-        storeId: store.id,
-        storeName: store.name,
-        city: store.city,
-        province: store.province,
-      );
+            intelligenceResult: intelligenceResult,
+            storeId: store.id,
+            storeName: store.name,
+            city: store.city,
+            province: store.province,
+          );
 
-      final savedTrip =
-          await ShoppingTripService.saveShoppingTrip(shoppingTrip);
+      final savedTrip = await ShoppingTripService.saveShoppingTrip(
+        shoppingTrip,
+      );
 
       PriceUpdateResult? priceResult;
       String? priceUpdateError;
 
       try {
-        priceResult =
-            await PriceUpdateService.updatePricesFromShoppingTrip(
+        priceResult = await PriceUpdateService.updatePricesFromShoppingTrip(
           savedTrip,
         );
       } catch (error) {
@@ -240,11 +229,7 @@ class _ReceiptIntelligenceScreenState
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Shopping trip could not be saved: $error',
-          ),
-        ),
+        SnackBar(content: Text('Shopping trip could not be saved: $error')),
       );
     }
   }
@@ -295,9 +280,7 @@ class _ReceiptIntelligenceScreenState
               SizedBox(
                 width: 22,
                 height: 22,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                ),
+                child: CircularProgressIndicator(strokeWidth: 2),
               ),
               SizedBox(width: 12),
               Text('Loading stores...'),
@@ -336,9 +319,7 @@ class _ReceiptIntelligenceScreenState
         return DropdownMenuItem<Store>(
           value: store,
           child: Text(
-            location.isEmpty
-                ? store.name
-                : '${store.name} — $location',
+            location.isEmpty ? store.name : '${store.name} — $location',
           ),
         );
       }).toList(),
@@ -372,37 +353,24 @@ class _ReceiptIntelligenceScreenState
               children: [
                 const Text(
                   'Receipt Intelligence Result',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 14),
                 Text(
                   'Detected store: '
                   '${receipt.storeName.isEmpty ? "Not found" : receipt.storeName}',
                 ),
-                Text(
-                  'Purchase date: ${formatDate(receipt.purchaseDate)}',
-                ),
-                Text(
-                  'Subtotal: \$${receipt.subtotal.toStringAsFixed(2)}',
-                ),
-                Text(
-                  'Tax: \$${receipt.tax.toStringAsFixed(2)}',
-                ),
-                Text(
-                  'Total: \$${receipt.total.toStringAsFixed(2)}',
-                ),
+                Text('Purchase date: ${formatDate(receipt.purchaseDate)}'),
+                Text('Subtotal: \$${receipt.subtotal.toStringAsFixed(2)}'),
+                Text('Tax: \$${receipt.tax.toStringAsFixed(2)}'),
+                Text('Total: \$${receipt.total.toStringAsFixed(2)}'),
                 const Divider(height: 28),
                 Text('Items found: ${receipt.items.length}'),
                 Text(
                   'High-confidence matches: '
                   '${data.highConfidenceMatches}',
                 ),
-                Text(
-                  'Review required: ${data.reviewRequired}',
-                ),
+                Text('Review required: ${data.reviewRequired}'),
                 Text(
                   'Sensitive lines ignored: '
                   '${receipt.ignoredSensitiveLines.length}',
@@ -422,10 +390,7 @@ class _ReceiptIntelligenceScreenState
               children: [
                 const Text(
                   'Product Matches',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 if (data.productMatches.isEmpty)
@@ -434,54 +399,44 @@ class _ReceiptIntelligenceScreenState
                     child: Text('No receipt items were found.'),
                   )
                 else
-                  ...data.productMatches.map(
-                    (match) {
-                      final product = match.product;
+                  ...data.productMatches.map((match) {
+                    final product = match.product;
 
-                      final matchedName = product == null
-                          ? 'No product match found'
-                          : [
-                              product.brand,
-                              product.name,
-                              product.size,
-                            ]
-                              .where(
-                                (value) => value.trim().isNotEmpty,
-                              )
-                              .join(' ');
+                    final matchedName = product == null
+                        ? 'No product match found'
+                        : [
+                            product.brand,
+                            product.name,
+                            product.size,
+                          ].where((value) => value.trim().isNotEmpty).join(' ');
 
-                      return ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: Icon(
-                          product == null
-                              ? Icons.warning_amber
-                              : match.confidenceScore >= 75
-                                  ? Icons.check_circle
-                                  : Icons.help_outline,
-                          color: confidenceColour(
-                            match.confidenceScore,
-                          ),
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Icon(
+                        product == null
+                            ? Icons.warning_amber
+                            : match.confidenceScore >= 75
+                            ? Icons.check_circle
+                            : Icons.help_outline,
+                        color: confidenceColour(match.confidenceScore),
+                      ),
+                      title: Text(match.receiptItem.name),
+                      subtitle: Text(
+                        '$matchedName\n'
+                        'Receipt price: '
+                        '\$${match.receiptItem.price.toStringAsFixed(2)}\n'
+                        '${match.reason}',
+                      ),
+                      isThreeLine: true,
+                      trailing: Text(
+                        '${match.confidenceScore.toStringAsFixed(0)}%',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: confidenceColour(match.confidenceScore),
                         ),
-                        title: Text(match.receiptItem.name),
-                        subtitle: Text(
-                          '$matchedName\n'
-                          'Receipt price: '
-                          '\$${match.receiptItem.price.toStringAsFixed(2)}\n'
-                          '${match.reason}',
-                        ),
-                        isThreeLine: true,
-                        trailing: Text(
-                          '${match.confidenceScore.toStringAsFixed(0)}%',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: confidenceColour(
-                              match.confidenceScore,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  }),
               ],
             ),
           ),
@@ -493,15 +448,11 @@ class _ReceiptIntelligenceScreenState
               ? const SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                  ),
+                  child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.save),
           label: Text(
-            isSaving
-                ? 'Saving Shopping Trip...'
-                : 'Save Shopping Trip',
+            isSaving ? 'Saving Shopping Trip...' : 'Save Shopping Trip',
           ),
         ),
       ],
@@ -517,18 +468,13 @@ class _ReceiptIntelligenceScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Receipt Intelligence'),
-      ),
+      appBar: AppBar(title: const Text('Receipt Intelligence')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           const Text(
             'Receipt Intelligence',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
           const Text(
@@ -551,19 +497,15 @@ class _ReceiptIntelligenceScreenState
           ),
           const SizedBox(height: 12),
           OutlinedButton.icon(
-            onPressed:
-                isLoading || isSaving ? null : loadSampleText,
+            onPressed: isLoading || isSaving ? null : loadSampleText,
             icon: const Icon(Icons.text_snippet),
             label: const Text('Load Sample Receipt Text'),
           ),
           const SizedBox(height: 12),
           FilledButton.icon(
-            onPressed:
-                isLoading || isSaving ? null : processReceipt,
+            onPressed: isLoading || isSaving ? null : processReceipt,
             icon: const Icon(Icons.auto_awesome),
-            label: Text(
-              isLoading ? 'Processing...' : 'Process Receipt',
-            ),
+            label: Text(isLoading ? 'Processing...' : 'Process Receipt'),
           ),
           const SizedBox(height: 20),
           if (isLoading)

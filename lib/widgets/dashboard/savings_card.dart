@@ -6,14 +6,9 @@ class SavingsCard extends StatelessWidget {
   final double? savingsAmount;
   final VoidCallback? onTap;
 
-  const SavingsCard({
-    super.key,
-    this.savingsAmount,
-    this.onTap,
-  });
+  const SavingsCard({super.key, this.savingsAmount, this.onTap});
 
-  bool get hasSavings =>
-      savingsAmount != null && savingsAmount! > 0;
+  bool get hasSavings => savingsAmount != null && savingsAmount! > 0;
 
   @override
   Widget build(BuildContext context) {
@@ -98,10 +93,7 @@ class SavingsCard extends StatelessWidget {
               if (onTap != null)
                 const Padding(
                   padding: EdgeInsets.only(top: 16),
-                  child: Icon(
-                    Icons.chevron_right,
-                    color: AppColors.success,
-                  ),
+                  child: Icon(Icons.chevron_right, color: AppColors.success),
                 ),
             ],
           ),

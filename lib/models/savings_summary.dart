@@ -32,11 +32,11 @@ class SavingsSummary {
   });
 
   const SavingsSummary.empty()
-      : totalSavings = 0,
-        watchlistSavingsPotential = 0,
-        priceDropCount = 0,
-        purchasesCompared = 0,
-        bestDeal = null;
+    : totalSavings = 0,
+      watchlistSavingsPotential = 0,
+      priceDropCount = 0,
+      purchasesCompared = 0,
+      bestDeal = null;
 
   bool get hasData =>
       purchasesCompared > 0 ||

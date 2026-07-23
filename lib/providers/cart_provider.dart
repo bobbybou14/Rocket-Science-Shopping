@@ -13,20 +13,12 @@ class CartProvider extends ChangeNotifier {
 
   int get uniqueItemCount => _items.length;
 
-  int get itemCount => _items.fold(
-        0,
-        (total, item) => total + item.quantity,
-      );
+  int get itemCount => _items.fold(0, (total, item) => total + item.quantity);
 
-  double get subtotal => _items.fold(
-        0.0,
-        (total, item) => total + item.subtotal,
-      );
+  double get subtotal =>
+      _items.fold(0.0, (total, item) => total + item.subtotal);
 
-  double get tax => _items.fold(
-        0.0,
-        (total, item) => total + item.tax,
-      );
+  double get tax => _items.fold(0.0, (total, item) => total + item.tax);
 
   double get total => subtotal + tax;
 
@@ -35,9 +27,7 @@ class CartProvider extends ChangeNotifier {
 
     final index = barcode.isEmpty
         ? -1
-        : _items.indexWhere(
-            (existing) => existing.barcode.trim() == barcode,
-          );
+        : _items.indexWhere((existing) => existing.barcode.trim() == barcode);
 
     if (index >= 0) {
       _items[index].quantity += item.quantity;
@@ -63,10 +53,7 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setQuantity(
-    CartItem item,
-    int quantity,
-  ) {
+  void setQuantity(CartItem item, int quantity) {
     if (quantity <= 0) {
       _items.remove(item);
     } else {
@@ -81,15 +68,12 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void restoreItem(
-    CartItem item,
-  ) {
+  void restoreItem(CartItem item) {
     final barcode = item.barcode.trim();
 
-    final alreadyExists = barcode.isNotEmpty &&
-        _items.any(
-          (existing) => existing.barcode.trim() == barcode,
-        );
+    final alreadyExists =
+        barcode.isNotEmpty &&
+        _items.any((existing) => existing.barcode.trim() == barcode);
 
     if (!alreadyExists) {
       _items.add(item);
@@ -97,10 +81,7 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  void updatePrice(
-    CartItem item,
-    double newPrice,
-  ) {
+  void updatePrice(CartItem item, double newPrice) {
     item.price = newPrice;
     notifyListeners();
   }
@@ -111,16 +92,12 @@ class CartProvider extends ChangeNotifier {
   }
 
   bool containsBarcode(String barcode) {
-    return _items.any(
-      (item) => item.barcode == barcode,
-    );
+    return _items.any((item) => item.barcode == barcode);
   }
 
   CartItem? findByBarcode(String barcode) {
     try {
-      return _items.firstWhere(
-        (item) => item.barcode == barcode,
-      );
+      return _items.firstWhere((item) => item.barcode == barcode);
     } catch (_) {
       return null;
     }

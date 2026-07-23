@@ -36,10 +36,7 @@ class RecentTripCard extends StatelessWidget {
                   color: AppColors.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(
-                  Icons.shopping_bag,
-                  color: AppColors.primary,
-                ),
+                child: const Icon(Icons.shopping_bag, color: AppColors.primary),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -55,14 +52,8 @@ class RecentTripCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(date),
-                    if (location != null &&
-                        location!.trim().isNotEmpty)
-                      Text(
-                        location!,
-                        style: const TextStyle(
-                          fontSize: 13,
-                        ),
-                      ),
+                    if (location != null && location!.trim().isNotEmpty)
+                      Text(location!, style: const TextStyle(fontSize: 13)),
                   ],
                 ),
               ),
@@ -78,10 +69,7 @@ class RecentTripCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  const Icon(
-                    Icons.chevron_right,
-                    color: AppColors.primary,
-                  ),
+                  const Icon(Icons.chevron_right, color: AppColors.primary),
                 ],
               ),
             ],

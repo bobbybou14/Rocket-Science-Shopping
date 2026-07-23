@@ -51,11 +51,7 @@ class WatchlistInsightCard extends StatelessWidget {
     final product = insight.product;
 
     if (product.imageUrl.trim().isEmpty) {
-      return const Icon(
-        Icons.shopping_bag,
-        size: 34,
-        color: AppColors.primary,
-      );
+      return const Icon(Icons.shopping_bag, size: 34, color: AppColors.primary);
     }
 
     return Image.network(
@@ -121,8 +117,7 @@ class WatchlistInsightCard extends StatelessWidget {
 
     final bestStore = insight.summary.bestStore.trim();
 
-    if (bestStore.isNotEmpty &&
-        bestStore.toLowerCase() != 'not available') {
+    if (bestStore.isNotEmpty && bestStore.toLowerCase() != 'not available') {
       return bestStore;
     }
 
@@ -159,9 +154,7 @@ class WatchlistInsightCard extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                      child: Center(
-                        child: productImage(),
-                      ),
+                      child: Center(child: productImage()),
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -194,11 +187,7 @@ class WatchlistInsightCard extends StatelessWidget {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(
-                                    insightIcon,
-                                    size: 17,
-                                    color: color,
-                                  ),
+                                  Icon(insightIcon, size: 17, color: color),
                                   const SizedBox(width: 6),
                                   Flexible(
                                     child: Text(
@@ -226,16 +215,11 @@ class WatchlistInsightCard extends StatelessWidget {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                      ),
+                      const Icon(Icons.star, color: Colors.amber),
                       const SizedBox(height: 8),
                       IconButton(
                         onPressed: onRemove,
-                        icon: const Icon(
-                          Icons.delete_outline,
-                        ),
+                        icon: const Icon(Icons.delete_outline),
                         tooltip: 'Remove from favourites',
                       ),
                     ],
@@ -243,21 +227,14 @@ class WatchlistInsightCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 14),
-              Text(
-                insight.message,
-                style: const TextStyle(
-                  height: 1.35,
-                ),
-              ),
+              Text(insight.message, style: const TextStyle(height: 1.35)),
               const SizedBox(height: 14),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: color.withValues(alpha: 0.12),
-                  ),
+                  border: Border.all(color: color.withValues(alpha: 0.12)),
                 ),
                 child: Column(
                   children: [

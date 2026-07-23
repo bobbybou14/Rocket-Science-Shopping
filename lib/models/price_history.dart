@@ -39,7 +39,7 @@ class PriceHistoryEntry {
       notes: map['notes']?.toString() ?? '',
       createdAt:
           DateTime.tryParse(map['created_at']?.toString() ?? '') ??
-              DateTime.now(),
+          DateTime.now(),
     );
   }
 
@@ -80,17 +80,17 @@ class PriceHistorySummary {
   });
 
   const PriceHistorySummary.empty()
-      : entries = const [],
-        currentPrice = 0,
-        lowestPrice = 0,
-        highestPrice = 0,
-        averagePrice = 0,
-        priceChange = 0,
-        percentageChange = 0,
-        trend = 'No data',
-        bestStore = 'Not available',
-        mostRecentStore = 'Not available',
-        lastUpdated = null;
+    : entries = const [],
+      currentPrice = 0,
+      lowestPrice = 0,
+      highestPrice = 0,
+      averagePrice = 0,
+      priceChange = 0,
+      percentageChange = 0,
+      trend = 'No data',
+      bestStore = 'Not available',
+      mostRecentStore = 'Not available',
+      lastUpdated = null;
 
   bool get hasData => entries.isNotEmpty;
 

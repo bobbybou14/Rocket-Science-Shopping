@@ -46,18 +46,17 @@ class WatchlistIntelligenceResult {
   });
 
   const WatchlistIntelligenceResult.empty()
-      : insights = const [],
-        priceDrops = 0,
-        priceIncreases = 0,
-        productsAtLowestPrice = 0,
-        productsWithoutEnoughData = 0;
+    : insights = const [],
+      priceDrops = 0,
+      priceIncreases = 0,
+      productsAtLowestPrice = 0,
+      productsWithoutEnoughData = 0;
 
   bool get hasInsights => insights.isNotEmpty;
 }
 
 class WatchlistIntelligenceService {
-  static Future<WatchlistIntelligenceResult>
-      loadWatchlistIntelligence() async {
+  static Future<WatchlistIntelligenceResult> loadWatchlistIntelligence() async {
     final favorites = await FavoritesService.getFavorites();
 
     if (favorites.isEmpty) {
@@ -125,19 +124,19 @@ class WatchlistIntelligenceService {
     required PriceHistorySummary summary,
   }) {
     if (!summary.hasData || summary.priceCount < 2) {
-  return WatchlistInsight(
-    favorite: favorite,
-    product: product,
-    summary: summary,
-    headline: 'More price data needed',
-    message: summary.hasData
-        ? 'Add another price or scan another receipt containing this product '
-            'to begin tracking changes.'
-        : 'Add a price or scan a receipt containing this product '
-            'to begin tracking changes.',
-    type: WatchlistInsightType.notEnoughData,
-  );
-}
+      return WatchlistInsight(
+        favorite: favorite,
+        product: product,
+        summary: summary,
+        headline: 'More price data needed',
+        message: summary.hasData
+            ? 'Add another price or scan another receipt containing this product '
+                  'to begin tracking changes.'
+            : 'Add a price or scan a receipt containing this product '
+                  'to begin tracking changes.',
+        type: WatchlistInsightType.notEnoughData,
+      );
+    }
 
     final isAtLowestPrice =
         (summary.currentPrice - summary.lowestPrice).abs() < 0.01;
@@ -195,12 +194,8 @@ class WatchlistIntelligenceService {
     );
   }
 
-  static int _compareInsights(
-    WatchlistInsight a,
-    WatchlistInsight b,
-  ) {
-    final priorityComparison =
-        _priority(a.type).compareTo(_priority(b.type));
+  static int _compareInsights(WatchlistInsight a, WatchlistInsight b) {
+    final priorityComparison = _priority(a.type).compareTo(_priority(b.type));
 
     if (priorityComparison != 0) {
       return priorityComparison;
@@ -230,8 +225,7 @@ class WatchlistIntelligenceService {
   static String _displayStore(String storeName) {
     final cleanedName = storeName.trim();
 
-    if (cleanedName.isEmpty ||
-        cleanedName.toLowerCase() == 'not available') {
+    if (cleanedName.isEmpty || cleanedName.toLowerCase() == 'not available') {
       return 'an unknown store';
     }
 

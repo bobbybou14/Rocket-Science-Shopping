@@ -216,28 +216,26 @@ class ReceiptParserService {
   }
 
   static DateTime? _buildDate(
-  String? yearText,
-  String? monthText,
-  String? dayText,
-) {
-  final year = int.tryParse(yearText ?? '');
-  final month = int.tryParse(monthText ?? '');
-  final day = int.tryParse(dayText ?? '');
+    String? yearText,
+    String? monthText,
+    String? dayText,
+  ) {
+    final year = int.tryParse(yearText ?? '');
+    final month = int.tryParse(monthText ?? '');
+    final day = int.tryParse(dayText ?? '');
 
-  if (year == null || month == null || day == null) return null;
-  if (month < 1 || month > 12) return null;
-  if (day < 1 || day > 31) return null;
+    if (year == null || month == null || day == null) return null;
+    if (month < 1 || month > 12) return null;
+    if (day < 1 || day > 31) return null;
 
-  final date = DateTime(year, month, day);
+    final date = DateTime(year, month, day);
 
-  if (date.year != year ||
-      date.month != month ||
-      date.day != day) {
-    return null;
+    if (date.year != year || date.month != month || date.day != day) {
+      return null;
+    }
+
+    return date;
   }
-
-  return date;
-}
 
   static double? _extractAmount(String line) {
     final amountRegex = RegExp(r'-?\$?\s*((?:\d+)?\.\d{2})');
@@ -256,17 +254,26 @@ class ReceiptParserService {
   }
 
   static double _detectQuantity(String line) {
-    final kgMatch = RegExp(r'(\d+\.\d+)\s*KG', caseSensitive: false).firstMatch(line);
+    final kgMatch = RegExp(
+      r'(\d+\.\d+)\s*KG',
+      caseSensitive: false,
+    ).firstMatch(line);
     if (kgMatch != null) {
       return double.tryParse(kgMatch.group(1) ?? '') ?? 1;
     }
 
-    final lbMatch = RegExp(r'(\d+\.\d+)\s*LB', caseSensitive: false).firstMatch(line);
+    final lbMatch = RegExp(
+      r'(\d+\.\d+)\s*LB',
+      caseSensitive: false,
+    ).firstMatch(line);
     if (lbMatch != null) {
       return double.tryParse(lbMatch.group(1) ?? '') ?? 1;
     }
 
-    final quantityMatch = RegExp(r'QTY\s*(\d+)', caseSensitive: false).firstMatch(line);
+    final quantityMatch = RegExp(
+      r'QTY\s*(\d+)',
+      caseSensitive: false,
+    ).firstMatch(line);
     if (quantityMatch != null) {
       return double.tryParse(quantityMatch.group(1) ?? '') ?? 1;
     }

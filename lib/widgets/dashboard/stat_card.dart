@@ -31,29 +31,19 @@ class StatCard extends StatelessWidget {
                 color: AppColors.primary.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: Icon(
-                icon,
-                color: AppColors.primary,
-                size: 26,
-              ),
+              child: Icon(icon, color: AppColors.primary, size: 26),
             ),
             const SizedBox(height: 12),
             Text(
               value,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             Text(
               label,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
             if (supportingText != null &&
                 supportingText!.trim().isNotEmpty) ...[
@@ -63,10 +53,7 @@ class StatCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.color,
+                  color: Theme.of(context).textTheme.bodySmall?.color,
                 ),
               ),
             ],

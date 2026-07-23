@@ -40,9 +40,7 @@ class _SmartCartAppState extends State<_SmartCartApp> {
 
   Widget buildScanScreen() {
     if (!ShoppingSessionService.hasActiveSession) {
-      return StoreSelectionScreen(
-        onStoreSelected: handleStoreSelected,
-      );
+      return StoreSelectionScreen(onStoreSelected: handleStoreSelected);
     }
 
     return const ScanScreen();
@@ -64,10 +62,7 @@ class _SmartCartAppState extends State<_SmartCartApp> {
       title: 'SmartCart Canada',
       theme: AppTheme.lightTheme,
       home: Scaffold(
-        body: IndexedStack(
-          index: selectedIndex,
-          children: screens,
-        ),
+        body: IndexedStack(index: selectedIndex, children: screens),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: selectedIndex,
           type: BottomNavigationBarType.fixed,
@@ -79,10 +74,7 @@ class _SmartCartAppState extends State<_SmartCartApp> {
             });
           },
           items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard),
-              label: 'Home',
-            ),
+            BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Home'),
             BottomNavigationBarItem(
               icon: Icon(Icons.qr_code_scanner),
               label: 'Scan',

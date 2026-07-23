@@ -144,8 +144,9 @@ class StoreBranding {
     }
 
     return StoreBranding(
-      displayName:
-          storeName.trim().isEmpty ? 'Unknown Store' : storeName.trim(),
+      displayName: storeName.trim().isEmpty
+          ? 'Unknown Store'
+          : storeName.trim(),
       primaryColor: Colors.grey.shade700,
       backgroundColor: Colors.grey.shade100,
       icon: Icons.store,

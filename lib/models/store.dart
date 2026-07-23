@@ -21,12 +21,7 @@ class Store {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'province': province,
-      'city': city,
-    };
+    return {'id': id, 'name': name, 'province': province, 'city': city};
   }
 
   @override

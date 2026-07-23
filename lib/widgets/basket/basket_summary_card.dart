@@ -19,9 +19,7 @@ class BasketSummaryCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            const CircleAvatar(
-              child: Icon(Icons.shopping_cart),
-            ),
+            const CircleAvatar(child: Icon(Icons.shopping_cart)),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
@@ -29,10 +27,7 @@ class BasketSummaryCard extends StatelessWidget {
                 children: [
                   const Text(
                     'Current Basket',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -44,10 +39,7 @@ class BasketSummaryCard extends StatelessWidget {
                 ],
               ),
             ),
-            TextButton(
-              onPressed: onClear,
-              child: const Text('Clear'),
-            ),
+            TextButton(onPressed: onClear, child: const Text('Clear')),
           ],
         ),
       ),

@@ -10,21 +10,16 @@ class DashboardService {
 
   /// Total cost using the prices currently in the cart.
   static double cartTotal(List<CartItem> cart) {
-    return cart.fold(
-      0,
-      (sum, item) => sum + item.total,
-    );
+    return cart.fold(0, (sum, item) => sum + item.total);
   }
 
   /// Calculates the maximum savings if every item was purchased
   /// at its cheapest known price.
-  static Future<double> potentialSavings(
-      List<CartItem> cart) async {
+  static Future<double> potentialSavings(List<CartItem> cart) async {
     double savings = 0;
 
     for (final item in cart) {
-      final Price? cheapest =
-          await PriceService.getLowestPrice(item.barcode);
+      final Price? cheapest = await PriceService.getLowestPrice(item.barcode);
 
       if (cheapest != null && cheapest.price < item.price) {
         savings += (item.price - cheapest.price) * item.quantity;
@@ -39,16 +34,11 @@ class DashboardService {
     final Map<String, int> winners = {};
 
     for (final item in cart) {
-      final Price? cheapest =
-          await PriceService.getLowestPrice(item.barcode);
+      final Price? cheapest = await PriceService.getLowestPrice(item.barcode);
 
       if (cheapest == null) continue;
 
-      winners.update(
-        cheapest.store,
-        (count) => count + 1,
-        ifAbsent: () => 1,
-      );
+      winners.update(cheapest.store, (count) => count + 1, ifAbsent: () => 1);
     }
 
     if (winners.isEmpty) {

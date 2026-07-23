@@ -11,16 +11,13 @@ class ProductCatalogScreen extends StatefulWidget {
   const ProductCatalogScreen({super.key});
 
   @override
-  State<ProductCatalogScreen> createState() =>
-      _ProductCatalogScreenState();
+  State<ProductCatalogScreen> createState() => _ProductCatalogScreenState();
 }
 
-class _ProductCatalogScreenState
-    extends State<ProductCatalogScreen> {
+class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
   static const Color smartCartRed = Color(0xFFD6001C);
 
-  final TextEditingController searchController =
-      TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   List<Product> products = [];
   bool isLoading = true;
@@ -41,13 +38,10 @@ class _ProductCatalogScreenState
     });
 
     try {
-      final loadedProducts =
-          await ProductService.getProducts();
+      final loadedProducts = await ProductService.getProducts();
 
       loadedProducts.sort(
-        (a, b) => productDisplayName(a).compareTo(
-          productDisplayName(b),
-        ),
+        (a, b) => productDisplayName(a).compareTo(productDisplayName(b)),
       );
 
       if (!mounted) return;
@@ -61,8 +55,7 @@ class _ProductCatalogScreenState
 
       setState(() {
         isLoading = false;
-        errorMessage =
-            'Unable to load products: $error';
+        errorMessage = 'Unable to load products: $error';
       });
     }
   }
@@ -72,9 +65,7 @@ class _ProductCatalogScreenState
       product.brand,
       product.name,
       product.size,
-    ].where(
-      (value) => value.trim().isNotEmpty,
-    ).toList();
+    ].where((value) => value.trim().isNotEmpty).toList();
 
     if (parts.isEmpty) {
       return product.barcode;
@@ -92,10 +83,7 @@ class _ProductCatalogScreenState
 
     values.sort();
 
-    return [
-      'All',
-      ...values,
-    ];
+    return ['All', ...values];
   }
 
   List<Product> get filteredProducts {
@@ -126,9 +114,7 @@ class _ProductCatalogScreenState
     }).toList();
   }
 
-  Future<void> openProductDetails(
-    Product product,
-  ) async {
+  Future<void> openProductDetails(Product product) async {
     final cart = context.read<CartProvider>();
 
     await Navigator.push(
@@ -173,16 +159,12 @@ class _ProductCatalogScreenState
         foregroundColor: Colors.white,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(
-              right: 16,
-            ),
+            padding: const EdgeInsets.only(right: 16),
             child: Center(
               child: Badge(
                 label: Text('${cart.itemCount}'),
                 isLabelVisible: cart.itemCount > 0,
-                child: const Icon(
-                  Icons.shopping_cart_outlined,
-                ),
+                child: const Icon(Icons.shopping_cart_outlined),
               ),
             ),
           ),
@@ -191,8 +173,7 @@ class _ProductCatalogScreenState
       body: RefreshIndicator(
         onRefresh: loadProducts,
         child: CustomScrollView(
-          physics:
-              const AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             SliverToBoxAdapter(
               child: _CatalogHeader(
@@ -202,12 +183,7 @@ class _ProductCatalogScreenState
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  16,
-                  16,
-                  16,
-                  8,
-                ),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: TextField(
                   controller: searchController,
                   onChanged: (value) {
@@ -217,21 +193,16 @@ class _ProductCatalogScreenState
                   },
                   decoration: InputDecoration(
                     labelText: 'Search products',
-                    hintText:
-                        'Name, brand, category or barcode',
-                    prefixIcon:
-                        const Icon(Icons.search),
+                    hintText: 'Name, brand, category or barcode',
+                    prefixIcon: const Icon(Icons.search),
                     suffixIcon: searchText.isEmpty
                         ? null
                         : IconButton(
                             tooltip: 'Clear search',
                             onPressed: clearSearch,
-                            icon: const Icon(
-                              Icons.clear,
-                            ),
+                            icon: const Icon(Icons.clear),
                           ),
-                    border:
-                        const OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
               ),
@@ -241,8 +212,7 @@ class _ProductCatalogScreenState
                 child: SizedBox(
                   height: 52,
                   child: ListView.separated(
-                    padding:
-                        const EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 6,
                     ),
@@ -252,18 +222,14 @@ class _ProductCatalogScreenState
                       return const SizedBox(width: 8);
                     },
                     itemBuilder: (context, index) {
-                      final category =
-                          categories[index];
+                      final category = categories[index];
 
                       return ChoiceChip(
                         label: Text(category),
-                        selected:
-                            selectedCategory ==
-                            category,
+                        selected: selectedCategory == category,
                         onSelected: (_) {
                           setState(() {
-                            selectedCategory =
-                                category;
+                            selectedCategory = category;
                           });
                         },
                       );
@@ -274,9 +240,7 @@ class _ProductCatalogScreenState
             if (isLoading)
               const SliverFillRemaining(
                 hasScrollBody: false,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
+                child: Center(child: CircularProgressIndicator()),
               )
             else if (errorMessage != null)
               SliverFillRemaining(
@@ -298,35 +262,21 @@ class _ProductCatalogScreenState
               )
             else
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(
-                  16,
-                  8,
-                  16,
-                  24,
-                ),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 sliver: SliverList.separated(
-                  itemCount:
-                      filteredProducts.length,
+                  itemCount: filteredProducts.length,
                   separatorBuilder: (_, _) {
-                    return const SizedBox(
-                      height: 10,
-                    );
+                    return const SizedBox(height: 10);
                   },
                   itemBuilder: (context, index) {
-                    final product =
-                        filteredProducts[index];
+                    final product = filteredProducts[index];
 
-                    final cartItem =
-                        cart.findByBarcode(
-                      product.barcode,
-                    );
+                    final cartItem = cart.findByBarcode(product.barcode);
 
                     return _ProductCard(
                       product: product,
-                      displayName:
-                          productDisplayName(product),
-                      cartQuantity:
-                          cartItem?.quantity ?? 0,
+                      displayName: productDisplayName(product),
+                      cartQuantity: cartItem?.quantity ?? 0,
                       onTap: () {
                         openProductDetails(product);
                       },
@@ -354,26 +304,20 @@ class _CatalogHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 14,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       color: Colors.grey.shade100,
       child: Row(
         children: [
           const Icon(
             Icons.inventory_2_outlined,
-            color: _ProductCatalogScreenState
-                .smartCartRed,
+            color: _ProductCatalogScreenState.smartCartRed,
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               '$productCount '
               '${productCount == 1 ? "product" : "products"} available',
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
           Text(
@@ -420,8 +364,7 @@ class _ProductCard extends StatelessWidget {
                 height: 72,
                 decoration: BoxDecoration(
                   color: Colors.grey.shade100,
-                  borderRadius:
-                      BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: imageUrl.isEmpty
@@ -435,11 +378,9 @@ class _ProductCard extends StatelessWidget {
                         fit: BoxFit.contain,
                         errorBuilder: (_, _, _) {
                           return Icon(
-                            Icons
-                                .shopping_bag_outlined,
+                            Icons.shopping_bag_outlined,
                             size: 34,
-                            color:
-                                Colors.grey.shade500,
+                            color: Colors.grey.shade500,
                           );
                         },
                       ),
@@ -447,8 +388,7 @@ class _ProductCard extends StatelessWidget {
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       displayName,
@@ -459,12 +399,8 @@ class _ProductCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      category.isEmpty
-                          ? 'Uncategorized'
-                          : category,
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                      ),
+                      category.isEmpty ? 'Uncategorized' : category,
+                      style: TextStyle(color: Colors.grey.shade700),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -480,9 +416,7 @@ class _ProductCard extends StatelessWidget {
                         '$cartQuantity '
                         '${cartQuantity == 1 ? "item" : "items"} in cart',
                         style: const TextStyle(
-                          color:
-                              _ProductCatalogScreenState
-                                  .smartCartRed,
+                          color: _ProductCatalogScreenState.smartCartRed,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -491,9 +425,7 @@ class _ProductCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(
-                Icons.chevron_right,
-              ),
+              const Icon(Icons.chevron_right),
             ],
           ),
         ),
@@ -506,10 +438,7 @@ class _ErrorState extends StatelessWidget {
   final String message;
   final Future<void> Function() onRetry;
 
-  const _ErrorState({
-    required this.message,
-    required this.onRetry,
-  });
+  const _ErrorState({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -522,14 +451,10 @@ class _ErrorState extends StatelessWidget {
             const Icon(
               Icons.error_outline,
               size: 64,
-              color: _ProductCatalogScreenState
-                  .smartCartRed,
+              color: _ProductCatalogScreenState.smartCartRed,
             ),
             const SizedBox(height: 16),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-            ),
+            Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 18),
             FilledButton.icon(
               onPressed: onRetry,
@@ -562,10 +487,7 @@ class _EmptyCatalog extends StatelessWidget {
             const SizedBox(height: 16),
             const Text(
               'No products available',
-              style: TextStyle(
-                fontSize: 23,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -590,18 +512,11 @@ class _NoSearchResults extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.search_off,
-              size: 72,
-              color: Colors.grey.shade400,
-            ),
+            Icon(Icons.search_off, size: 72, color: Colors.grey.shade400),
             const SizedBox(height: 16),
             const Text(
               'No matching products',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(

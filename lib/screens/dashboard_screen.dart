@@ -22,18 +22,15 @@ class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() =>
-      _DashboardScreenState();
+  State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
   List<ShoppingTrip> trips = [];
 
-  DashboardIntelligence intelligence =
-      const DashboardIntelligence.empty();
+  DashboardIntelligence intelligence = const DashboardIntelligence.empty();
 
-  SavingsSummary savingsSummary =
-      const SavingsSummary.empty();
+  SavingsSummary savingsSummary = const SavingsSummary.empty();
 
   bool isLoading = true;
   String? errorMessage;
@@ -53,19 +50,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       final results = await Future.wait<dynamic>([
         ShoppingTripService.getShoppingTrips(),
-        DashboardIntelligenceService
-            .loadDashboardIntelligence(),
+        DashboardIntelligenceService.loadDashboardIntelligence(),
         SavingsSummaryService.loadSavingsSummary(),
       ]);
 
-      final loadedTrips =
-          results[0] as List<ShoppingTrip>;
+      final loadedTrips = results[0] as List<ShoppingTrip>;
 
-      final loadedIntelligence =
-          results[1] as DashboardIntelligence;
+      final loadedIntelligence = results[1] as DashboardIntelligence;
 
-      final loadedSavingsSummary =
-          results[2] as SavingsSummary;
+      final loadedSavingsSummary = results[2] as SavingsSummary;
 
       if (!mounted) return;
 
@@ -80,19 +73,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       setState(() {
         isLoading = false;
-        errorMessage =
-            'Unable to load dashboard information: $error';
+        errorMessage = 'Unable to load dashboard information: $error';
       });
     }
   }
 
   Future<void> openScreen(Widget screen) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => screen,
-      ),
-    );
+    await Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
 
     if (!mounted) return;
 
@@ -113,10 +100,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   double get spentThisMonth {
-    return tripsThisMonth.fold<double>(
-      0,
-      (total, trip) => total + trip.total,
-    );
+    return tripsThisMonth.fold<double>(0, (total, trip) => total + trip.total);
   }
 
   double get averageTripCost {
@@ -144,20 +128,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String formatDate(DateTime date) {
     final now = DateTime.now();
 
-    final today = DateTime(
-      now.year,
-      now.month,
-      now.day,
-    );
+    final today = DateTime(now.year, now.month, now.day);
 
-    final tripDate = DateTime(
-      date.year,
-      date.month,
-      date.day,
-    );
+    final tripDate = DateTime(date.year, date.month, date.day);
 
-    final difference =
-        today.difference(tripDate).inDays;
+    final difference = today.difference(tripDate).inDays;
 
     if (difference == 0) {
       return 'Today';
@@ -168,10 +143,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
 
     final year = date.year.toString();
-    final month =
-        date.month.toString().padLeft(2, '0');
-    final day =
-        date.day.toString().padLeft(2, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
 
     return '$year-$month-$day';
   }
@@ -180,23 +153,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return [
       trip.city,
       trip.province,
-    ].where(
-      (value) => value.trim().isNotEmpty,
-    ).join(', ');
+    ].where((value) => value.trim().isNotEmpty).join(', ');
   }
 
   Widget sectionHeading(String title) {
     return Padding(
-      padding: const EdgeInsets.only(
-        top: 6,
-        bottom: 10,
-      ),
+      padding: const EdgeInsets.only(top: 6, bottom: 10),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -217,23 +182,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-            ),
+            const Icon(Icons.error_outline, size: 64),
             const SizedBox(height: 16),
             const Text(
               'Dashboard Could Not Be Loaded',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Text(
-              errorMessage ??
-                  'An unknown error occurred.',
+              errorMessage ?? 'An unknown error occurred.',
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 18),
@@ -251,24 +209,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget emptyRecentTrips() {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: 30,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
         child: Column(
           children: [
-            const Icon(
-              Icons.shopping_bag_outlined,
-              size: 56,
-            ),
+            const Icon(Icons.shopping_bag_outlined, size: 56),
             const SizedBox(height: 14),
             const Text(
               'No Shopping Trips Yet',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 21,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -278,16 +227,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             const SizedBox(height: 18),
             FilledButton.icon(
               onPressed: () {
-                openScreen(
-                  const ReceiptUploadScreen(),
-                );
+                openScreen(const ReceiptUploadScreen());
               },
-              icon: const Icon(
-                Icons.receipt_long,
-              ),
-              label: const Text(
-                'Upload Receipt',
-              ),
+              icon: const Icon(Icons.receipt_long),
+              label: const Text('Upload Receipt'),
             ),
           ],
         ),
@@ -301,56 +244,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
         QuickActionCard(
           icon: Icons.receipt_long,
           title: 'Upload Receipt',
-          subtitle:
-              'Turn a grocery receipt into shopping history and prices',
+          subtitle: 'Turn a grocery receipt into shopping history and prices',
           onTap: () {
-            openScreen(
-              const ReceiptUploadScreen(),
+            openScreen(const ReceiptUploadScreen());
+          },
+        ),
+        QuickActionCard(
+          icon: Icons.shopping_cart_checkout,
+          title: 'Start Shopping',
+          subtitle: 'Track your grocery cart while you shop (Coming Soon)',
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Scan As You Shop is coming soon!')),
             );
           },
         ),
         QuickActionCard(
           icon: Icons.history,
           title: 'Shopping Trips',
-          subtitle:
-              'Review saved grocery trips and receipt items',
+          subtitle: 'Review saved grocery trips and receipt items',
           onTap: () {
-            openScreen(
-              const ShoppingTripHistoryScreen(),
-            );
+            openScreen(const ShoppingTripHistoryScreen());
           },
         ),
         QuickActionCard(
           icon: Icons.inventory_2,
           title: 'Browse Products',
-          subtitle:
-              'Search products, compare prices, and view history',
+          subtitle: 'Search products, compare prices, and view history',
           onTap: () {
-            openScreen(
-              const ProductCatalogScreen(),
-            );
+            openScreen(const ProductCatalogScreen());
           },
         ),
         QuickActionCard(
           icon: Icons.star,
           title: 'My Watchlist',
-          subtitle:
-              'View your favourite products and track price changes',
+          subtitle: 'View your favourite products and track price changes',
           onTap: () {
-            openScreen(
-              const FavoritesScreen(),
-            );
+            openScreen(const FavoritesScreen());
           },
         ),
         QuickActionCard(
           icon: Icons.shopping_basket,
           title: 'Compare Basket',
-          subtitle:
-              'Find the cheapest store for your grocery basket',
+          subtitle: 'Find the cheapest store for your grocery basket',
           onTap: () {
-            openScreen(
-              const BasketComparisonScreen(),
-            );
+            openScreen(const BasketComparisonScreen());
           },
         ),
       ],
@@ -358,8 +296,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget recentShoppingSection() {
-    final recentTrips =
-        trips.take(3).toList();
+    final recentTrips = trips.take(3).toList();
 
     return Column(
       children: [
@@ -368,17 +305,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             const Expanded(
               child: Text(
                 'Recent Shopping',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
             TextButton(
               onPressed: () {
-                openScreen(
-                  const ShoppingTripHistoryScreen(),
-                );
+                openScreen(const ShoppingTripHistoryScreen());
               },
               child: const Text('View All'),
             ),
@@ -391,15 +323,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ...recentTrips.map(
             (trip) => RecentTripCard(
               store: trip.storeName,
-              date: formatDate(
-                trip.purchaseDate,
-              ),
+              date: formatDate(trip.purchaseDate),
               total: trip.total,
               location: tripLocation(trip),
               onTap: () {
-                openScreen(
-                  const ShoppingTripHistoryScreen(),
-                );
+                openScreen(const ShoppingTripHistoryScreen());
               },
             ),
           ),
@@ -416,8 +344,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return errorState();
     }
 
-    final bestStore =
-        intelligence.bestStore;
+    final bestStore = intelligence.bestStore;
 
     return RefreshIndicator(
       onRefresh: loadDashboard,
@@ -429,7 +356,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             tripCount: tripCountThisMonth,
             storeCount: storesVisited,
           ),
+
           const SizedBox(height: 24),
+
+          sectionHeading('Start Here'),
+          quickActionsSection(),
+
+          const SizedBox(height: 24),
+
           sectionHeading('This Month'),
           StatsGrid(
             tripCount: tripCountThisMonth,
@@ -437,31 +371,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
             amountSpent: spentThisMonth,
             averageTripCost: averageTripCost,
           ),
+
           const SizedBox(height: 24),
-          sectionHeading(
-            'Shopping Insights',
-          ),
+
+          sectionHeading('Shopping Insights'),
+
           BestStoreCard(
             storeName: bestStore.storeName,
             totalSpent: bestStore.totalSpent,
-            averageTripCost:
-                bestStore.averageTripCost,
+            averageTripCost: bestStore.averageTripCost,
             trips: bestStore.tripCount,
             hasData: bestStore.hasData,
           ),
+
           const SizedBox(height: 14),
-          SavingsSummaryCard(
-            summary: savingsSummary,
-          ),
+
+          SavingsSummaryCard(summary: savingsSummary),
+
           const SizedBox(height: 14),
-          PriceAlertsCard(
-            alerts: intelligence.priceAlerts,
-          ),
+
+          PriceAlertsCard(alerts: intelligence.priceAlerts),
+
           const SizedBox(height: 24),
-          sectionHeading('Quick Actions'),
-          quickActionsSection(),
-          const SizedBox(height: 24),
+
           recentShoppingSection(),
+
           const SizedBox(height: 30),
         ],
       ),
@@ -470,8 +404,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: dashboardContent(),
-    );
+    return Scaffold(body: dashboardContent());
   }
 }

@@ -17,8 +17,7 @@ class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
 
   @override
-  State<FavoritesScreen> createState() =>
-      _FavoritesScreenState();
+  State<FavoritesScreen> createState() => _FavoritesScreenState();
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
@@ -45,8 +44,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
     try {
       final loadedResult =
-          await WatchlistIntelligenceService
-              .loadWatchlistIntelligence();
+          await WatchlistIntelligenceService.loadWatchlistIntelligence();
 
       if (!mounted) return;
 
@@ -59,8 +57,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
       setState(() {
         isLoading = false;
-        errorMessage =
-            'Unable to load favourites: $error';
+        errorMessage = 'Unable to load favourites: $error';
       });
     }
   }
@@ -68,11 +65,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   Future<void> openProduct(Product product) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => ProductDetailsScreen(
-          product: product,
-        ),
-      ),
+      MaterialPageRoute(builder: (_) => ProductDetailsScreen(product: product)),
     );
 
     if (!mounted) return;
@@ -80,21 +73,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     await loadWatchlist();
   }
 
-  Future<void> removeFavorite(
-    WatchlistInsight insight,
-  ) async {
+  Future<void> removeFavorite(WatchlistInsight insight) async {
     try {
-      await FavoritesService.removeFavorite(
-        insight.product.barcode,
-      );
+      await FavoritesService.removeFavorite(insight.product.barcode);
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            '${insight.product.name} removed from favourites.',
-          ),
+          content: Text('${insight.product.name} removed from favourites.'),
         ),
       );
 
@@ -103,35 +90,24 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Unable to remove favourite: $error',
-          ),
-        ),
+        SnackBar(content: Text('Unable to remove favourite: $error')),
       );
     }
   }
 
   int countInsights(WatchlistInsightType type) {
-    return result.insights
-        .where((insight) => insight.type == type)
-        .length;
+    return result.insights.where((insight) => insight.type == type).length;
   }
 
   List<WatchlistInsight> get visibleInsights {
-    final insights = result.insights
-        .where(selectedFilter.matches)
-        .toList();
+    final insights = result.insights.where(selectedFilter.matches).toList();
 
     insights.sort(compareInsights);
 
     return insights;
   }
 
-  int compareInsights(
-    WatchlistInsight a,
-    WatchlistInsight b,
-  ) {
+  int compareInsights(WatchlistInsight a, WatchlistInsight b) {
     switch (selectedSort) {
       case WatchlistSort.biggestDrop:
         return compareBiggestDrop(a, b);
@@ -147,67 +123,49 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
       case WatchlistSort.productName:
         return a.product.name.toLowerCase().compareTo(
-              b.product.name.toLowerCase(),
-            );
+          b.product.name.toLowerCase(),
+        );
     }
   }
 
-  int compareBiggestDrop(
-    WatchlistInsight a,
-    WatchlistInsight b,
-  ) {
+  int compareBiggestDrop(WatchlistInsight a, WatchlistInsight b) {
     final dataComparison = comparePriceData(a, b);
 
     if (dataComparison != 0) {
       return dataComparison;
     }
 
-    return a.summary.percentageChange.compareTo(
-      b.summary.percentageChange,
-    );
+    return a.summary.percentageChange.compareTo(b.summary.percentageChange);
   }
 
-  int compareBiggestIncrease(
-    WatchlistInsight a,
-    WatchlistInsight b,
-  ) {
+  int compareBiggestIncrease(WatchlistInsight a, WatchlistInsight b) {
     final dataComparison = comparePriceData(a, b);
 
     if (dataComparison != 0) {
       return dataComparison;
     }
 
-    return b.summary.percentageChange.compareTo(
-      a.summary.percentageChange,
-    );
+    return b.summary.percentageChange.compareTo(a.summary.percentageChange);
   }
 
-  int compareLowestPrice(
-    WatchlistInsight a,
-    WatchlistInsight b,
-  ) {
+  int compareLowestPrice(WatchlistInsight a, WatchlistInsight b) {
     final dataComparison = comparePriceData(a, b);
 
     if (dataComparison != 0) {
       return dataComparison;
     }
 
-    return a.summary.currentPrice.compareTo(
-      b.summary.currentPrice,
-    );
+    return a.summary.currentPrice.compareTo(b.summary.currentPrice);
   }
 
-  int compareRecentlyUpdated(
-    WatchlistInsight a,
-    WatchlistInsight b,
-  ) {
+  int compareRecentlyUpdated(WatchlistInsight a, WatchlistInsight b) {
     final aDate = a.summary.lastUpdated;
     final bDate = b.summary.lastUpdated;
 
     if (aDate == null && bDate == null) {
       return a.product.name.toLowerCase().compareTo(
-            b.product.name.toLowerCase(),
-          );
+        b.product.name.toLowerCase(),
+      );
     }
 
     if (aDate == null) {
@@ -221,10 +179,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     return bDate.compareTo(aDate);
   }
 
-  int comparePriceData(
-    WatchlistInsight a,
-    WatchlistInsight b,
-  ) {
+  int comparePriceData(WatchlistInsight a, WatchlistInsight b) {
     if (a.hasPriceData && !b.hasPriceData) {
       return -1;
     }
@@ -251,24 +206,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   Widget filteredEmptyState() {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 22,
-          vertical: 28,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 28),
         child: Column(
           children: [
-            const Icon(
-              Icons.filter_alt_off,
-              size: 52,
-            ),
+            const Icon(Icons.filter_alt_off, size: 52),
             const SizedBox(height: 14),
             const Text(
               'No Matching Insights',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 21,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -302,27 +248,22 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     }
 
     if (!result.hasInsights) {
-      return WatchlistEmptyState(
-        onRefresh: loadWatchlist,
-      );
+      return WatchlistEmptyState(onRefresh: loadWatchlist);
     }
 
     final insights = visibleInsights;
 
-    final priceDropCount =
-        countInsights(WatchlistInsightType.priceDrop);
+    final priceDropCount = countInsights(WatchlistInsightType.priceDrop);
 
-    final priceIncreaseCount =
-        countInsights(WatchlistInsightType.priceIncrease);
+    final priceIncreaseCount = countInsights(
+      WatchlistInsightType.priceIncrease,
+    );
 
-    final lowestPriceCount =
-        countInsights(WatchlistInsightType.lowestRecorded);
+    final lowestPriceCount = countInsights(WatchlistInsightType.lowestRecorded);
 
-    final stableCount =
-        countInsights(WatchlistInsightType.stable);
+    final stableCount = countInsights(WatchlistInsightType.stable);
 
-    final needsDataCount =
-        countInsights(WatchlistInsightType.notEnoughData);
+    final needsDataCount = countInsights(WatchlistInsightType.notEnoughData);
 
     return RefreshIndicator(
       onRefresh: loadWatchlist,
@@ -330,9 +271,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(20),
         children: [
-          WatchlistHeader(
-            totalProducts: result.insights.length,
-          ),
+          WatchlistHeader(totalProducts: result.insights.length),
           const SizedBox(height: 18),
           WatchlistSummaryCard(
             totalProducts: result.insights.length,
@@ -352,20 +291,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             needsDataCount: needsDataCount,
           ),
           const SizedBox(height: 16),
-          WatchlistSortBar(
-            selectedSort: selectedSort,
-            onChanged: updateSort,
-          ),
+          WatchlistSortBar(selectedSort: selectedSort, onChanged: updateSort),
           const SizedBox(height: 22),
           Row(
             children: [
               const Expanded(
                 child: Text(
                   'Latest Insights',
-                  style: TextStyle(
-                    fontSize: 23,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
                 ),
               ),
               Text(
@@ -405,8 +338,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         title: const Text('Favourites'),
         actions: [
           IconButton(
-            onPressed:
-                isLoading ? null : loadWatchlist,
+            onPressed: isLoading ? null : loadWatchlist,
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh Watchlist',
           ),

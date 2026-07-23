@@ -40,32 +40,22 @@ class LiveCartItem {
   }
 
   LiveCartItem increaseQuantity() {
-    return copyWith(
-      quantity: quantity + 1,
-    );
+    return copyWith(quantity: quantity + 1);
   }
 
   LiveCartItem decreaseQuantity() {
-    return copyWith(
-      quantity: quantity > 1 ? quantity - 1 : 1,
-    );
+    return copyWith(quantity: quantity > 1 ? quantity - 1 : 1);
   }
 
   LiveCartItem updateQuantity(int newQuantity) {
-    return copyWith(
-      quantity: newQuantity < 1 ? 1 : newQuantity,
-    );
+    return copyWith(quantity: newQuantity < 1 ? 1 : newQuantity);
   }
 
   LiveCartItem updatePrice(double newPrice) {
-    return copyWith(
-      unitPrice: newPrice < 0 ? 0 : newPrice,
-    );
+    return copyWith(unitPrice: newPrice < 0 ? 0 : newPrice);
   }
 
   LiveCartItem updateStore(String newStoreName) {
-    return copyWith(
-      storeName: newStoreName.trim(),
-    );
+    return copyWith(storeName: newStoreName.trim());
   }
 }
