@@ -1,7 +1,10 @@
 import '../models/receipt.dart';
 import '../models/shopping_trip.dart';
+import 'ocr_normalization_service.dart';
+import 'ocr_repair_service.dart';
 import 'ocr_service.dart';
 import 'price_update_service.dart';
+import 'receipt_builder_service.dart';
 import 'receipt_intelligence_service.dart';
 import 'receipt_service.dart';
 import 'shopping_trip_builder_service.dart';
@@ -24,8 +27,10 @@ class ReceiptProcessorService {
 
     try {
       final rawText = await OcrService.extractTextFromImage(imagePath);
+      final normalizedText = OcrNormalizationService.normalize(rawText);
+      final repairedText = OcrRepairService.repair(normalizedText);
 
-      if (rawText.trim().isEmpty) {
+      if (repairedText.trim().isEmpty) {
         await ReceiptService.updateReceipt(
           _copyReceiptWithProcessingResult(
             receipt: receipt,
@@ -40,7 +45,7 @@ class ReceiptProcessorService {
       }
 
       final intelligenceResult =
-          await ReceiptIntelligenceService.processRawText(rawText);
+          await ReceiptIntelligenceService.processRawText(repairedText);
 
       final shoppingTrip =
           ShoppingTripBuilderService.buildFromReceiptIntelligence(
@@ -93,6 +98,7 @@ class ReceiptProcessorService {
   static Future<ReceiptProcessingResult> completeReviewedReceipt({
     required Receipt receipt,
     required ShoppingTrip reviewedTrip,
+    bool allowDuplicate = false,
   }) async {
     if (reviewedTrip.items.isEmpty) {
       throw const ReceiptProcessingException(
@@ -109,12 +115,27 @@ class ReceiptProcessorService {
     try {
       final verifiedTrip = reviewedTrip.copyWith(processingStatus: 'verified');
 
-      // 1. Save the reviewed shopping trip and its items.
+      final possibleDuplicates =
+          await ShoppingTripService.findPossibleDuplicates(verifiedTrip);
+
+      if (possibleDuplicates.isNotEmpty && !allowDuplicate) {
+        throw DuplicateReceiptException(possibleDuplicates: possibleDuplicates);
+      }
+
+      // 1. Save the reviewed shopping trip and its normalized items.
       final savedTrip = await ShoppingTripService.saveShoppingTrip(
         verifiedTrip,
       );
 
-      // 2. Save the confirmed price observations.
+      // 2. Build and save the permanent receipt-item snapshot.
+      final receiptItems = ReceiptBuilderService.buildItemsFromReviewedTrip(
+        receiptId: receipt.id,
+        reviewedTrip: savedTrip,
+      );
+
+      await ReceiptService.saveReceiptItems(receiptItems);
+
+      // 3. Save the confirmed price observations.
       final priceResult = await PriceUpdateService.updatePricesFromShoppingTrip(
         savedTrip,
       );
@@ -125,7 +146,7 @@ class ReceiptProcessorService {
           .where((item) => item.product != null)
           .length;
 
-      // 3. Mark the receipt as fully processed.
+      // 4. Mark the receipt as fully processed.
       await ReceiptService.updateReceipt(
         Receipt(
           id: receipt.id,
@@ -169,6 +190,8 @@ class ReceiptProcessorService {
           reviewRequired: 0,
         ),
       );
+    } on DuplicateReceiptException {
+      rethrow;
     } catch (error, stackTrace) {
       try {
         await ReceiptService.updateReceipt(
@@ -205,10 +228,12 @@ class ReceiptProcessorService {
     }
 
     try {
-      // 1. Extract text from the receipt image.
+      // 1. Extract, normalize, and repair text from the receipt image.
       final rawText = await OcrService.extractTextFromImage(imagePath);
+      final normalizedText = OcrNormalizationService.normalize(rawText);
+      final repairedText = OcrRepairService.repair(normalizedText);
 
-      if (rawText.trim().isEmpty) {
+      if (repairedText.trim().isEmpty) {
         await ReceiptService.updateReceipt(
           _copyReceiptWithProcessingResult(
             receipt: receipt,
@@ -231,9 +256,9 @@ class ReceiptProcessorService {
         );
       }
 
-      // 2. Parse the text and match receipt items to known products.
+      // 2. Parse the repaired text and match receipt items.
       final intelligenceResult =
-          await ReceiptIntelligenceService.processRawText(rawText);
+          await ReceiptIntelligenceService.processRawText(repairedText);
 
       // 3. Build a shopping trip from the receipt results.
       final shoppingTrip =
@@ -245,12 +270,20 @@ class ReceiptProcessorService {
             province: province,
           );
 
-      // 4. Save the shopping trip and its items.
+      // 4. Save the shopping trip and its normalized items.
       final savedTrip = await ShoppingTripService.saveShoppingTrip(
         shoppingTrip,
       );
 
-      // 5. Save high-confidence price observations.
+      // 5. Build and save the permanent receipt-item snapshot.
+      final receiptItems = ReceiptBuilderService.buildItemsFromIntelligence(
+        receiptId: receipt.id,
+        intelligenceResult: intelligenceResult,
+      );
+
+      await ReceiptService.saveReceiptItems(receiptItems);
+
+      // 6. Save high-confidence price observations.
       final priceResult = await PriceUpdateService.updatePricesFromShoppingTrip(
         savedTrip,
       );
@@ -267,7 +300,7 @@ class ReceiptProcessorService {
 
       final status = reviewRequired > 0 ? 'pending_review' : 'processed';
 
-      // 6. Update the original receipt with the processing results.
+      // 7. Update the original receipt with the processing results.
       await ReceiptService.updateReceipt(
         Receipt(
           id: receipt.id,
@@ -311,21 +344,23 @@ class ReceiptProcessorService {
           reviewRequired: reviewRequired,
         ),
       );
+    } on DuplicateReceiptException {
+      rethrow;
     } catch (error, stackTrace) {
       try {
         await ReceiptService.updateReceipt(
           _copyReceiptWithProcessingResult(
             receipt: receipt,
             processingStatus: 'failed',
-            notes: 'Receipt processing failed: $error',
+            notes: 'Saving the reviewed receipt failed: $error',
           ),
         );
       } catch (_) {
-        // Preserve the original processing error if updating the receipt fails.
+        // Preserve the original completion error.
       }
 
       throw ReceiptProcessingException(
-        'Receipt processing failed.',
+        'Saving the reviewed receipt failed.',
         cause: error,
         stackTrace: stackTrace,
       );
@@ -431,6 +466,20 @@ class ReceiptProcessingResult {
   bool get wasSuccessful => status == 'processed' || status == 'pending_review';
 
   bool get requiresReview => reviewRequired > 0;
+}
+
+class DuplicateReceiptException implements Exception {
+  final List<ShoppingTrip> possibleDuplicates;
+
+  const DuplicateReceiptException({required this.possibleDuplicates});
+
+  ShoppingTrip get firstDuplicate => possibleDuplicates.first;
+
+  @override
+  String toString() {
+    return 'DuplicateReceiptException: '
+        '${possibleDuplicates.length} possible duplicate receipt(s) found.';
+  }
 }
 
 class ReceiptProcessingException implements Exception {

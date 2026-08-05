@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../models/shopping_trip.dart';
+import '../models/product.dart';
+import '../service/product_alias_service.dart';
+import '../service/product_matcher_service.dart';
+import '../service/product_suggestion_service.dart';
+import '../service/receipt_parser_service.dart';
 import '../service/receipt_processor_service.dart';
+import '../widgets/create_product_dialog.dart';
 
 class ReceiptReviewScreen extends StatefulWidget {
   final ReceiptReviewDraft draft;
@@ -32,6 +38,10 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
     return _items.fold<double>(0, (total, item) => total + item.lineTotal);
   }
 
+  double get _calculatedTotal {
+    return _calculatedSubtotal + _trip.tax;
+  }
+
   String _formatMoney(double value) {
     return '\$${value.toStringAsFixed(2)}';
   }
@@ -42,6 +52,14 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
     }
 
     return value.toStringAsFixed(3);
+  }
+
+  String _productDescription(Product product) {
+    return [
+      product.brand,
+      product.size,
+      product.category,
+    ].where((value) => value.trim().isNotEmpty).join(' • ');
   }
 
   String _confidenceLabel(double score) {
@@ -72,6 +90,457 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
     final item = _items[index];
 
     _replaceItem(index, item.copyWith(requiresReview: !item.requiresReview));
+  }
+
+  Future<void> _chooseProduct(int index) async {
+    final item = _items[index];
+    final products = widget.draft.intelligenceResult.products;
+
+    final receiptItem = ParsedReceiptItem(
+      name: item.rawReceiptName,
+      price: item.lineTotal,
+      quantity: item.quantity,
+      confidenceScore: item.confidenceScore,
+    );
+
+    final suggestions = ProductMatcherService.suggestMatches(
+      receiptItem: receiptItem,
+      products: products,
+      limit: 5,
+      minimumScore: 0,
+    );
+
+    final productSuggestionResult = ProductSuggestionService.buildSuggestion(
+      receiptItemName: item.rawReceiptName,
+      existingProducts: products,
+    );
+
+    final searchController = TextEditingController();
+
+    Product? selectedProduct;
+    var createdNewProduct = false;
+
+    final result = await showDialog<Product>(
+      context: context,
+      builder: (dialogContext) {
+        var searchQuery = '';
+
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final normalizedQuery = searchQuery.trim().toLowerCase();
+
+            final filteredProducts = normalizedQuery.isEmpty
+                ? products
+                : products.where((product) {
+                    final searchableText = [
+                      product.name,
+                      product.brand,
+                      product.category,
+                      product.size,
+                      product.barcode,
+                    ].join(' ').toLowerCase();
+
+                    return searchableText.contains(normalizedQuery);
+                  }).toList();
+
+            return AlertDialog(
+              title: const Text('Choose Product'),
+              content: SizedBox(
+                width: 620,
+                height: 600,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.rawReceiptName,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Select an existing product or create a new catalogue '
+                      'product for this receipt line.',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: searchController,
+                      autofocus: false,
+                      enabled: products.isNotEmpty,
+                      decoration: InputDecoration(
+                        labelText: 'Search products',
+                        hintText: products.isEmpty
+                            ? 'The product catalogue is currently empty'
+                            : 'Name, brand, category, size, or barcode',
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: searchQuery.isEmpty
+                            ? null
+                            : IconButton(
+                                tooltip: 'Clear search',
+                                onPressed: () {
+                                  searchController.clear();
+
+                                  setDialogState(() {
+                                    searchQuery = '';
+                                  });
+                                },
+                                icon: const Icon(Icons.clear),
+                              ),
+                        border: const OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setDialogState(() {
+                          searchQuery = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    Expanded(
+                      child: products.isEmpty
+                          ? _buildNoCatalogueProductsMessage()
+                          : normalizedQuery.isEmpty
+                          ? _buildSuggestedProductList(
+                              suggestions: suggestions,
+                              selectedProduct: selectedProduct,
+                              onSelected: (product) {
+                                setDialogState(() {
+                                  selectedProduct = product;
+                                });
+                              },
+                            )
+                          : _buildProductSearchResults(
+                              products: filteredProducts,
+                              selectedProduct: selectedProduct,
+                              onSelected: (product) {
+                                setDialogState(() {
+                                  selectedProduct = product;
+                                });
+                              },
+                            ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.add_business_outlined),
+                          const SizedBox(width: 12),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Didn\'t find the correct product?',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 3),
+                                Text(
+                                  'Create it now and teach SmartCart how to '
+                                  'recognize this receipt wording.',
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          FilledButton.tonalIcon(
+                            onPressed: () async {
+                              final createdProduct =
+                                  await CreateProductDialog.show(
+                                    context: dialogContext,
+                                    suggestion:
+                                        productSuggestionResult.suggestion,
+                                    receiptItemName: item.rawReceiptName,
+                                  );
+
+                              if (createdProduct == null ||
+                                  !dialogContext.mounted) {
+                                return;
+                              }
+
+                              createdNewProduct = true;
+
+                              Navigator.pop(dialogContext, createdProduct);
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text('Create New'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                  },
+                  child: const Text('Cancel'),
+                ),
+                FilledButton.icon(
+                  onPressed: selectedProduct == null
+                      ? null
+                      : () {
+                          Navigator.pop(dialogContext, selectedProduct);
+                        },
+                  icon: const Icon(Icons.check),
+                  label: const Text('Use Product'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    searchController.dispose();
+
+    if (result == null || !mounted) return;
+
+    _replaceItem(
+      index,
+      item.copyWith(
+        product: result,
+        barcode: result.barcode,
+        confidenceScore: 100,
+        requiresReview: false,
+      ),
+    );
+
+    if (createdNewProduct) {
+      final messenger = ScaffoldMessenger.of(context);
+
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              '${result.name} was created and matched to this receipt item.',
+            ),
+          ),
+        );
+
+      return;
+    }
+
+    final shouldRemember = await _askToRememberAlias(
+      receiptItemName: item.rawReceiptName,
+      product: result,
+    );
+
+    if (shouldRemember == true) {
+      final saved = await ProductAliasService.saveAlias(
+        alias: item.rawReceiptName,
+        product: result,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            saved
+                ? '${result.name} selected and correction remembered.'
+                : '${result.name} selected, but the correction could not be saved.',
+          ),
+        ),
+      );
+
+      return;
+    }
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('${result.name} selected.')));
+  }
+
+  Future<bool?> _askToRememberAlias({
+    required String receiptItemName,
+    required Product product,
+  }) {
+    if (receiptItemName.trim().isEmpty || product.barcode.isEmpty) {
+      return Future.value(false);
+    }
+
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Remember This Correction?'),
+          content: SizedBox(
+            width: 440,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'SmartCart can use this correction to recognize the same '
+                  'receipt wording automatically in the future.',
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Receipt wording',
+                  style: Theme.of(dialogContext).textTheme.labelLarge,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  receiptItemName,
+                  style: Theme.of(dialogContext).textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                const Icon(Icons.arrow_downward),
+                const SizedBox(height: 16),
+                Text(
+                  'Catalogue product',
+                  style: Theme.of(dialogContext).textTheme.labelLarge,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  product.name,
+                  style: Theme.of(dialogContext).textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                if (_productDescription(product).isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(_productDescription(product)),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, false);
+              },
+              child: const Text('Not Now'),
+            ),
+            FilledButton.icon(
+              onPressed: () {
+                Navigator.pop(dialogContext, true);
+              },
+              icon: const Icon(Icons.psychology_outlined),
+              label: const Text('Remember'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildNoCatalogueProductsMessage() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.inventory_2_outlined,
+              size: 56,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(height: 14),
+            Text(
+              'No catalogue products are available yet.',
+              textAlign: TextAlign.center,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Create a new product below to add it to the SmartCart '
+              'catalogue and match it to this receipt item.',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSuggestedProductList({
+    required List<ProductMatchResult> suggestions,
+    required Product? selectedProduct,
+    required ValueChanged<Product> onSelected,
+  }) {
+    if (suggestions.isEmpty) {
+      return const Center(
+        child: Text(
+          'No automatic suggestions were found.\n'
+          'Use the search box to find a product.',
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
+    return ListView(
+      children: [
+        Text(
+          'Suggested matches',
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+
+        ...suggestions.map((suggestion) {
+          final product = suggestion.product;
+
+          if (product == null) {
+            return const SizedBox.shrink();
+          }
+
+          return _ProductOptionTile(
+            product: product,
+            confidenceScore: suggestion.confidenceScore,
+            selected: selectedProduct?.barcode == product.barcode,
+            onTap: () => onSelected(product),
+          );
+        }),
+
+        const SizedBox(height: 12),
+
+        const Text(
+          'Search the full catalogue above if the correct product is not listed.',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProductSearchResults({
+    required List<Product> products,
+    required Product? selectedProduct,
+    required ValueChanged<Product> onSelected,
+  }) {
+    if (products.isEmpty) {
+      return const Center(child: Text('No products match your search.'));
+    }
+
+    return ListView.separated(
+      itemCount: products.length,
+      separatorBuilder: (_, _) => const Divider(height: 1),
+      itemBuilder: (context, index) {
+        final product = products[index];
+
+        return _ProductOptionTile(
+          product: product,
+          selected: selectedProduct?.barcode == product.barcode,
+          onTap: () => onSelected(product),
+        );
+      },
+    );
   }
 
   Future<void> _editItem(int index) async {
@@ -193,6 +662,176 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
     _replaceItem(index, result);
   }
 
+  Future<void> _addItem() async {
+    final nameController = TextEditingController();
+    final quantityController = TextEditingController(text: '1');
+    final lineTotalController = TextEditingController();
+
+    final result = await showDialog<ShoppingTripItem>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Add Receipt Item'),
+          content: SizedBox(
+            width: 420,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Enter the missing item exactly as it appears on the receipt.',
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: nameController,
+                    autofocus: true,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: const InputDecoration(
+                      labelText: 'Receipt item name',
+                      hintText: 'Example: Organic Bananas',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: quantityController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: 'Quantity',
+                      hintText: '1',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: lineTotalController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: 'Line total',
+                      hintText: '0.00',
+                      prefixText: '\$',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Cancel'),
+            ),
+            FilledButton.icon(
+              onPressed: () {
+                final name = nameController.text.trim();
+
+                final quantity = double.tryParse(
+                  quantityController.text.trim().replaceAll(',', '.'),
+                );
+
+                final lineTotal = double.tryParse(
+                  lineTotalController.text
+                      .trim()
+                      .replaceAll('\$', '')
+                      .replaceAll(',', '.'),
+                );
+
+                if (name.isEmpty) {
+                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                    const SnackBar(
+                      content: Text('Enter the receipt item name.'),
+                    ),
+                  );
+                  return;
+                }
+
+                if (quantity == null || quantity <= 0) {
+                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Enter a valid quantity greater than zero.',
+                      ),
+                    ),
+                  );
+                  return;
+                }
+
+                if (lineTotal == null || lineTotal < 0) {
+                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                    const SnackBar(content: Text('Enter a valid line total.')),
+                  );
+                  return;
+                }
+
+                final unitPrice = lineTotal / quantity;
+
+                Navigator.pop(
+                  dialogContext,
+                  ShoppingTripItem(
+                    id: '',
+                    shoppingTripId: _trip.id,
+                    rawReceiptName: name,
+                    quantity: quantity,
+                    unitPrice: unitPrice,
+                    lineTotal: lineTotal,
+                    confidenceScore: 100,
+                    requiresReview: false,
+                  ),
+                );
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Add Item'),
+            ),
+          ],
+        );
+      },
+    );
+
+    nameController.dispose();
+    quantityController.dispose();
+    lineTotalController.dispose();
+
+    if (result == null || !mounted) return;
+
+    setState(() {
+      _items.add(result);
+    });
+
+    final messenger = ScaffoldMessenger.of(context);
+
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 2),
+          content: Row(
+            children: [
+              Expanded(child: Text('${result.rawReceiptName} added.')),
+              TextButton(
+                onPressed: () {
+                  if (!mounted) return;
+
+                  setState(() {
+                    _items.remove(result);
+                  });
+
+                  messenger.hideCurrentSnackBar();
+                },
+                child: const Text('Undo'),
+              ),
+            ],
+          ),
+        ),
+      );
+  }
+
   void _removeItem(int index) {
     final removedItem = _items[index];
 
@@ -200,22 +839,33 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
       _items.removeAt(index);
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${removedItem.rawReceiptName} removed.'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            if (!mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
 
-            setState(() {
-              final insertIndex = index.clamp(0, _items.length);
-              _items.insert(insertIndex, removedItem);
-            });
-          },
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 2),
+          content: Row(
+            children: [
+              Expanded(child: Text('${removedItem.rawReceiptName} removed.')),
+              TextButton(
+                onPressed: () {
+                  if (!mounted) return;
+
+                  setState(() {
+                    final insertIndex = index.clamp(0, _items.length);
+                    _items.insert(insertIndex, removedItem);
+                  });
+
+                  messenger.hideCurrentSnackBar();
+                },
+                child: const Text('Undo'),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
   }
 
   void _markAllReviewed() {
@@ -249,6 +899,7 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
 
     final reviewedTrip = _trip.copyWith(
       subtotal: _calculatedSubtotal,
+      total: _calculatedTotal,
       processingStatus: 'verified',
       items: _items,
     );
@@ -317,8 +968,8 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                 ),
                 Expanded(
                   child: _SummaryValue(
-                    label: 'Receipt total',
-                    value: _formatMoney(_trip.total),
+                    label: 'Updated total',
+                    value: _formatMoney(_calculatedTotal),
                   ),
                 ),
                 Expanded(
@@ -376,8 +1027,15 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                     switch (value) {
                       case 'edit':
                         _editItem(index);
+                        break;
+
+                      case 'chooseProduct':
+                        _chooseProduct(index);
+                        break;
+
                       case 'remove':
                         _removeItem(index);
+                        break;
                     }
                   },
                   itemBuilder: (context) => const [
@@ -385,7 +1043,15 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                       value: 'edit',
                       child: ListTile(
                         leading: Icon(Icons.edit),
-                        title: Text('Edit'),
+                        title: Text('Edit Receipt Details'),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'chooseProduct',
+                      child: ListTile(
+                        leading: Icon(Icons.shopping_bag_outlined),
+                        title: Text('Choose Product'),
                         contentPadding: EdgeInsets.zero,
                       ),
                     ),
@@ -400,6 +1066,60 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                   ],
                 ),
               ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: item.product == null
+                  ? Row(
+                      children: [
+                        const Icon(Icons.link_off),
+                        const SizedBox(width: 10),
+                        const Expanded(
+                          child: Text(
+                            'No catalogue product selected',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => _chooseProduct(index),
+                          child: const Text('Choose'),
+                        ),
+                      ],
+                    )
+                  : Row(
+                      children: [
+                        const Icon(Icons.inventory_2_outlined),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.product!.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              if (_productDescription(item.product!).isNotEmpty)
+                                Text(
+                                  _productDescription(item.product!),
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                            ],
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => _chooseProduct(index),
+                          child: const Text('Change'),
+                        ),
+                      ],
+                    ),
             ),
             const SizedBox(height: 12),
             Wrap(
@@ -449,8 +1169,8 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
             if (item.product == null) ...[
               const SizedBox(height: 8),
               const Text(
-                'No product match was found. You can still accept this '
-                'receipt item or edit its details.',
+                'No product match was found. Choose a catalogue '
+                'product, accept this receipt item, or edit its details.',
               ),
             ],
           ],
@@ -484,14 +1204,45 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
         elevation: 12,
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: FilledButton.icon(
-            onPressed: _itemsNeedingReview == 0 ? _confirmReceipt : null,
-            icon: const Icon(Icons.check_circle_outline),
-            label: Text(
-              _itemsNeedingReview == 0
-                  ? 'Confirm Receipt'
-                  : '$_itemsNeedingReview Item(s) Need Review',
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _addItem,
+                      icon: const Icon(Icons.add),
+                      label: const Text('Add Item'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 2,
+                    child: FilledButton.icon(
+                      onPressed: _itemsNeedingReview == 0
+                          ? _confirmReceipt
+                          : null,
+                      icon: const Icon(Icons.check_circle_outline),
+                      label: Text(
+                        _itemsNeedingReview == 0
+                            ? 'Confirm Receipt'
+                            : '$_itemsNeedingReview Item(s) Need Review',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton.icon(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.cancel_outlined),
+                  label: const Text('Cancel Receipt'),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -535,5 +1286,87 @@ class _InfoChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Chip(avatar: Icon(icon, size: 18), label: Text(label));
+  }
+}
+
+class _ProductOptionTile extends StatelessWidget {
+  final Product product;
+  final double? confidenceScore;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _ProductOptionTile({
+    required this.product,
+    required this.selected,
+    required this.onTap,
+    this.confidenceScore,
+  });
+
+  String get description {
+    return [
+      product.brand,
+      product.size,
+      product.category,
+      if (product.barcode.isNotEmpty) product.barcode,
+    ].where((value) => value.trim().isNotEmpty).join(' • ');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RadioGroup<bool>(
+      groupValue: selected,
+      onChanged: (value) {
+        if (value == true) {
+          onTap();
+        }
+      },
+      child: Card(
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      if (description.isNotEmpty) ...[
+                        const SizedBox(height: 3),
+                        Text(
+                          description,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                if (confidenceScore != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Text(
+                      '${confidenceScore!.toStringAsFixed(0)}%',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: confidenceScore! >= 75
+                            ? Colors.green
+                            : confidenceScore! >= 45
+                            ? Colors.orange
+                            : Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ),
+                const Radio<bool>(value: true),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

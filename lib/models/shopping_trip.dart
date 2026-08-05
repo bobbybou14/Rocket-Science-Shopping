@@ -184,7 +184,7 @@ class ShoppingTripItem {
       unitPrice: ShoppingTrip._toDouble(map['unit_price']),
       lineTotal: ShoppingTrip._toDouble(map['line_total']),
       confidenceScore: ShoppingTrip._toDouble(map['confidence_score']),
-      requiresReview: map['requires_review'] ?? true,
+      requiresReview: map['requires_review'] == true,
       createdAt: map['created_at'] == null
           ? null
           : DateTime.tryParse(map['created_at'].toString()),

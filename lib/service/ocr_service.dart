@@ -1,13 +1,18 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
+import 'windows_ocr_service.dart';
+
 class OcrService {
-  static const String _windowsSampleReceiptPath = 'assets/sample_receipt.txt';
+  const OcrService._();
 
   static Future<String> extractTextFromImage(String imagePath) async {
-    if (imagePath.trim().isEmpty) {
-      throw const OcrException('A receipt image path is required.');
+    final cleanedPath = imagePath.trim();
+
+    if (cleanedPath.isEmpty) {
+      throw const OcrException(
+        'A receipt image path is required.',
+      );
     }
 
     if (kIsWeb) {
@@ -19,10 +24,10 @@ class OcrService {
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
       case TargetPlatform.iOS:
-        return _extractWithMlKit(imagePath);
+        return _extractWithMlKit(cleanedPath);
 
-      case TargetPlatform.windows:
-        return _loadWindowsDevelopmentReceipt();
+            case TargetPlatform.windows:
+        return _extractWithWindowsOcr(cleanedPath);
 
       case TargetPlatform.macOS:
       case TargetPlatform.linux:
@@ -35,17 +40,19 @@ class OcrService {
   }
 
   static Future<String> _extractWithMlKit(String imagePath) async {
-    final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
+    final textRecognizer = TextRecognizer(
+      script: TextRecognitionScript.latin,
+    );
 
     try {
       final inputImage = InputImage.fromFilePath(imagePath);
-
       final recognizedText = await textRecognizer.processImage(inputImage);
-
       final extractedText = recognizedText.text.trim();
 
       if (extractedText.isEmpty) {
-        throw const OcrException('No readable text was found on the receipt.');
+        throw const OcrException(
+          'No readable text was found on the receipt.',
+        );
       }
 
       return extractedText;
@@ -57,34 +64,43 @@ class OcrService {
         cause: error,
         stackTrace: stackTrace,
       );
-    } finally {
+        } finally {
       await textRecognizer.close();
     }
   }
 
-  static Future<String> _loadWindowsDevelopmentReceipt() async {
+  static Future<String> _extractWithWindowsOcr(
+    String imagePath,
+  ) async {
     try {
-      final sampleText = await rootBundle.loadString(_windowsSampleReceiptPath);
+      final extractedText =
+          await WindowsOcrService.extractText(imagePath);
 
-      final cleanedText = sampleText.trim();
+            debugPrint(
+        'Windows OCR extracted ${extractedText.length} characters.',
+      );
+            debugPrint('----- RAW RECEIPT OCR START -----');
 
-      if (cleanedText.isEmpty) {
-        throw const OcrException('The Windows sample receipt file is empty.');
+      final ocrLines = extractedText.split('\n');
+
+      for (var index = 0; index < ocrLines.length; index++) {
+        debugPrint(
+          'OCR LINE ${index + 1}: ${ocrLines[index]}',
+        );
       }
 
-      debugPrint(
-        'Windows development mode: using '
-        '$_windowsSampleReceiptPath instead of image OCR.',
-      );
+      debugPrint('----- RAW RECEIPT OCR END -----');
 
-      return cleanedText;
-    } on OcrException {
-      rethrow;
+      return extractedText;
+    } on WindowsOcrException catch (error, stackTrace) {
+      throw OcrException(
+        error.message,
+        cause: error.cause ?? error,
+        stackTrace: error.stackTrace ?? stackTrace,
+      );
     } catch (error, stackTrace) {
       throw OcrException(
-        'Could not load the Windows sample receipt text. '
-        'Confirm that assets/sample_receipt.txt exists and is '
-        'listed in pubspec.yaml.',
+        'The receipt image could not be processed by Windows OCR.',
         cause: error,
         stackTrace: stackTrace,
       );
@@ -97,7 +113,11 @@ class OcrException implements Exception {
   final Object? cause;
   final StackTrace? stackTrace;
 
-  const OcrException(this.message, {this.cause, this.stackTrace});
+  const OcrException(
+    this.message, {
+    this.cause,
+    this.stackTrace,
+  });
 
   @override
   String toString() {

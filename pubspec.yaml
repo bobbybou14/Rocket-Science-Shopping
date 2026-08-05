@@ -2,7 +2,7 @@ name: smartcart_canada
 description: "SmartCart Canada - Privacy-first grocery price intelligence for Canadians."
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 0.9.0+1
 
 environment:
   sdk: ^3.12.2
@@ -13,6 +13,9 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   provider: ^6.1.5
+
+  # Local App Preferences
+  shared_preferences: ^2.5.5
 
   # Barcode Scanner
   mobile_scanner: ^7.2.0
@@ -29,7 +32,7 @@ dependencies:
   # Receipt Images
   image_picker: ^1.1.2
 
-   # On-device OCR for Android and iOS
+  # On-device OCR for Android and iOS
   google_mlkit_text_recognition: ^0.15.0
 
 dev_dependencies:
@@ -42,5 +45,6 @@ flutter:
   uses-material-design: true
 
   assets:
-   - .env
-   - assets/sample_receipt.txt
+  - .env
+  - assets/sample_receipt.txt
+  - assets/catalogues/

@@ -1,3 +1,5 @@
+import 'measurement_unit.dart';
+
 class PriceHistoryEntry {
   final String id;
   final String barcode;
@@ -9,6 +11,20 @@ class PriceHistoryEntry {
   final String currency;
   final String source;
   final String notes;
+
+  // Measurement
+  final MeasurementUnit advertisedUnit;
+  final double measurementQuantity;
+  final MeasurementUnit normalizedUnit;
+  final double? normalizedUnitPrice;
+
+  // Sale information
+  final bool isSale;
+  final double? regularPrice;
+  final DateTime? saleStartDate;
+  final DateTime? saleEndDate;
+  final String? promotionType;
+
   final DateTime createdAt;
 
   const PriceHistoryEntry({
@@ -23,6 +39,15 @@ class PriceHistoryEntry {
     required this.source,
     required this.notes,
     required this.createdAt,
+    this.advertisedUnit = MeasurementUnit.each,
+    this.measurementQuantity = 1,
+    this.normalizedUnit = MeasurementUnit.each,
+    this.normalizedUnitPrice,
+    this.isSale = false,
+    this.regularPrice,
+    this.saleStartDate,
+    this.saleEndDate,
+    this.promotionType,
   });
 
   factory PriceHistoryEntry.fromMap(Map<String, dynamic> map) {
@@ -37,18 +62,90 @@ class PriceHistoryEntry {
       currency: map['currency']?.toString() ?? 'CAD',
       source: map['source']?.toString() ?? '',
       notes: map['notes']?.toString() ?? '',
+      advertisedUnit: MeasurementUnit.fromDatabase(map['advertised_unit']),
+      measurementQuantity: _toDouble(map['measurement_quantity'], 1),
+      normalizedUnit: MeasurementUnit.fromDatabase(map['normalized_unit']),
+      normalizedUnitPrice: _toNullableDouble(map['normalized_unit_price']),
+      isSale: map['is_sale'] == true,
+      regularPrice: _toNullableDouble(map['regular_price']),
+      saleStartDate: _toDateTime(map['sale_start_date']),
+      saleEndDate: _toDateTime(map['sale_end_date']),
+      promotionType: map['promotion_type']?.toString(),
       createdAt:
           DateTime.tryParse(map['created_at']?.toString() ?? '') ??
           DateTime.now(),
     );
   }
 
-  static double _toDouble(dynamic value) {
+  bool get hasNormalizedUnitPrice =>
+      normalizedUnitPrice != null && normalizedUnitPrice! > 0;
+
+  bool get hasRegularPrice => regularPrice != null && regularPrice! > 0;
+
+  bool get hasActiveSale {
+    if (!isSale) {
+      return false;
+    }
+
+    final now = DateTime.now();
+
+    if (saleStartDate != null && now.isBefore(saleStartDate!)) {
+      return false;
+    }
+
+    if (saleEndDate != null && now.isAfter(saleEndDate!)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  double get savingsAmount {
+    if (!hasRegularPrice || regularPrice! <= price) {
+      return 0;
+    }
+
+    return regularPrice! - price;
+  }
+
+  double get savingsPercentage {
+    if (!hasRegularPrice || regularPrice! <= 0) {
+      return 0;
+    }
+
+    return (savingsAmount / regularPrice!) * 100;
+  }
+
+  static double _toDouble(dynamic value, [double fallback = 0]) {
     if (value is num) {
       return value.toDouble();
     }
 
-    return double.tryParse(value?.toString() ?? '') ?? 0;
+    return double.tryParse(value?.toString() ?? '') ?? fallback;
+  }
+
+  static double? _toNullableDouble(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+
+    if (value is num) {
+      return value.toDouble();
+    }
+
+    return double.tryParse(value.toString());
+  }
+
+  static DateTime? _toDateTime(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+
+    if (value is DateTime) {
+      return value;
+    }
+
+    return DateTime.tryParse(value.toString());
   }
 }
 

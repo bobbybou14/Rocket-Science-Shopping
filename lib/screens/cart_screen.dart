@@ -6,8 +6,11 @@ import '../widgets/cart/cart_item_card.dart';
 import '../widgets/cart/cart_totals.dart';
 import '../widgets/cart/cart_summary_header.dart';
 import '../widgets/cart/empty_cart.dart';
+import '../models/shopping_trip.dart';
 import '../providers/cart_provider.dart';
 import '../service/basket_comparison_service.dart';
+import '../service/shopping_session_service.dart';
+import '../service/shopping_trip_service.dart';
 import 'basket_comparison_screen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -82,6 +85,127 @@ class _CartScreenState extends State<CartScreen> {
         builder: (_) => BasketComparisonScreen(initialItems: basketItems),
       ),
     );
+  }
+
+  Future<void> _finishShopping(BuildContext context, CartProvider cart) async {
+    if (cart.isEmpty) {
+      return;
+    }
+
+    final storeName = ShoppingSessionService.currentStoreName.trim();
+
+    final shouldSave = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Finish Shopping?'),
+          content: Text(
+            'Store: ${storeName.isEmpty ? "Current Store" : storeName}\n'
+            'Items: ${cart.itemCount}\n'
+            'Subtotal: \$${cart.subtotal.toStringAsFixed(2)}\n'
+            'Estimated tax: \$${cart.tax.toStringAsFixed(2)}\n'
+            'Estimated total: \$${cart.total.toStringAsFixed(2)}\n\n'
+            'This will save the shopping trip and clear the active cart.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, false);
+              },
+              child: const Text('Keep Shopping'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, true);
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.green.shade700,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Finish and Save'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldSave != true || !context.mounted) {
+      return;
+    }
+
+    final tripItems = cart.items.map((item) {
+      return ShoppingTripItem(
+        id: '',
+        shoppingTripId: '',
+        rawReceiptName: item.product.name,
+        product: item.product,
+        barcode: item.barcode,
+        quantity: item.quantity.toDouble(),
+        unitPrice: item.price,
+        lineTotal: item.subtotal,
+        confidenceScore: 100,
+        requiresReview: false,
+      );
+    }).toList();
+
+    final shoppingTrip = ShoppingTrip(
+      id: '',
+      storeId: '',
+      storeName: storeName.isEmpty ? 'Current Store' : storeName,
+      city: '',
+      province: 'Ontario',
+      purchaseDate: DateTime.now(),
+      subtotal: cart.subtotal,
+      tax: cart.tax,
+      total: cart.total,
+      source: 'live_shopping',
+      processingStatus: 'confirmed',
+      items: tripItems,
+    );
+
+    try {
+      final savedTrip = await ShoppingTripService.saveShoppingTrip(
+        shoppingTrip,
+      );
+
+      cart.clear();
+      ShoppingSessionService.endSession();
+
+      if (!context.mounted) {
+        return;
+      }
+
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: const Text('Shopping Trip Saved'),
+            content: Text(
+              'Your shopping trip was saved successfully.\n\n'
+              'Store: ${savedTrip.storeName}\n'
+              'Items: ${savedTrip.items.length}\n'
+              'Total: \$${savedTrip.total.toStringAsFixed(2)}',
+            ),
+            actions: [
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(dialogContext);
+                },
+                child: const Text('Done'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (error) {
+      if (!context.mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Shopping trip could not be saved: $error')),
+      );
+    }
   }
 
   @override
@@ -202,6 +326,9 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 CartTotals(
                   cart: cart,
+                  onFinishShopping: () {
+                    _finishShopping(context, cart);
+                  },
                   onCompareStores: () {
                     _openBasketComparison(context, cart);
                   },

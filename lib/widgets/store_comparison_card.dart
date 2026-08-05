@@ -29,6 +29,255 @@ class StoreComparisonCard extends StatelessWidget {
     return '${store.pricedItems} of $totalItems items found';
   }
 
+  String get normalizedCoverageText {
+    if (store.normalizedItems == 0) {
+      return 'No comparable unit prices available';
+    }
+
+    return '${store.normalizedItems} item'
+        '${store.normalizedItems == 1 ? '' : 's'} with unit pricing';
+  }
+
+  String get bestValueText {
+    return '${store.bestValueItems} best-value item'
+        '${store.bestValueItems == 1 ? '' : 's'}';
+  }
+
+  String _formatQuantity(double quantity) {
+    if (quantity == quantity.roundToDouble()) {
+      return quantity.toStringAsFixed(0);
+    }
+
+    return quantity.toStringAsFixed(2);
+  }
+
+  String _formatMeasurementQuantity(double quantity) {
+    if (quantity == quantity.roundToDouble()) {
+      return quantity.toStringAsFixed(0);
+    }
+
+    if (quantity.abs() < 10) {
+      return quantity.toStringAsFixed(2);
+    }
+
+    return quantity.toStringAsFixed(1);
+  }
+
+  String _unitLabel(String unit) {
+    switch (unit.trim().toLowerCase()) {
+      case 'kilogram':
+      case 'kg':
+        return 'kg';
+      case 'gram':
+      case 'g':
+        return 'g';
+      case 'litre':
+      case 'liter':
+      case 'l':
+        return 'L';
+      case 'millilitre':
+      case 'milliliter':
+      case 'ml':
+        return 'mL';
+      case 'pound':
+      case 'lb':
+        return 'lb';
+      case 'ounce':
+      case 'oz':
+        return 'oz';
+      case 'each':
+        return 'each';
+      default:
+        return unit;
+    }
+  }
+
+  String? _packageDescription(BasketStoreItemResult item) {
+    final measurementQuantity = item.measurementQuantity;
+    final advertisedUnit = item.advertisedUnit;
+
+    if (measurementQuantity == null ||
+        advertisedUnit == null ||
+        advertisedUnit.trim().isEmpty) {
+      return null;
+    }
+
+    return '${_formatMeasurementQuantity(measurementQuantity)} '
+        '${_unitLabel(advertisedUnit)}';
+  }
+
+  String? _normalizedPriceDescription(BasketStoreItemResult item) {
+    if (!item.hasNormalizedUnitPrice) {
+      return null;
+    }
+
+    return '\$${item.normalizedUnitPrice!.toStringAsFixed(2)}'
+        '/${_unitLabel(item.normalizedUnit!)}';
+  }
+
+  Widget _buildItemRow(BasketStoreItemResult item, StoreBranding branding) {
+    final packageDescription = _packageDescription(item);
+    final normalizedPriceDescription = _normalizedPriceDescription(item);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: Color(0x1F000000))),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Icon(
+              item.hasPrice
+                  ? item.isBestUnitValue
+                        ? Icons.workspace_premium
+                        : Icons.check_circle
+                  : Icons.warning_amber,
+              color: item.hasPrice
+                  ? item.isBestUnitValue
+                        ? AppColors.success
+                        : branding.primaryColor
+                  : AppColors.warning,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.productName,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Quantity: ${_formatQuantity(item.quantity)}',
+                  style: const TextStyle(fontSize: 13),
+                ),
+                if (item.hasPrice && item.unitPrice != null) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    packageDescription == null
+                        ? 'Shelf price: '
+                              '\$${item.unitPrice!.toStringAsFixed(2)}'
+                        : 'Shelf price: '
+                              '\$${item.unitPrice!.toStringAsFixed(2)} '
+                              'for $packageDescription',
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                ],
+                if (normalizedPriceDescription != null) ...[
+                  const SizedBox(height: 6),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 9,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: item.isBestUnitValue
+                              ? AppColors.success.withValues(alpha: 0.12)
+                              : branding.backgroundColor,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: item.isBestUnitValue
+                                ? AppColors.success.withValues(alpha: 0.35)
+                                : branding.primaryColor.withValues(alpha: 0.25),
+                          ),
+                        ),
+                        child: Text(
+                          normalizedPriceDescription,
+                          style: TextStyle(
+                            color: item.isBestUnitValue
+                                ? AppColors.success
+                                : branding.primaryColor,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      if (item.isBestUnitValue)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 9,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.success.withValues(alpha: 0.14),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.star,
+                                size: 14,
+                                color: AppColors.success,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                'BEST UNIT VALUE',
+                                style: TextStyle(
+                                  color: AppColors.success,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+                if (item.hasPrice && normalizedPriceDescription == null) ...[
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Unit-price comparison unavailable',
+                    style: TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          if (item.hasPrice && item.lineTotal != null)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '\$${item.lineTotal!.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: branding.primaryColor,
+                  ),
+                ),
+                if (item.quantity != 1)
+                  Text(
+                    '${_formatQuantity(item.quantity)} × '
+                    '\$${item.unitPrice!.toStringAsFixed(2)}',
+                    style: const TextStyle(fontSize: 11, color: Colors.black54),
+                  ),
+              ],
+            )
+          else
+            const Text(
+              'Missing',
+              style: TextStyle(
+                color: AppColors.warning,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isComplete = store.isComplete;
@@ -118,10 +367,10 @@ class StoreComparisonCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Text(
-                  'BEST VALUE',
+                  'CHEAPEST COMPLETE BASKET',
                   style: TextStyle(
                     color: AppColors.success,
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -154,6 +403,20 @@ class StoreComparisonCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(coverageText),
+              const SizedBox(height: 2),
+              Text(
+                normalizedCoverageText,
+                style: const TextStyle(fontSize: 13),
+              ),
+              if (store.bestValueItems > 0)
+                Text(
+                  bestValueText,
+                  style: const TextStyle(
+                    color: AppColors.success,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               if (!isComplete)
                 Text(
                   '${store.missingItems} item'
@@ -212,6 +475,39 @@ class StoreComparisonCard extends StatelessWidget {
               ],
             ),
           ),
+          if (store.normalizedItems > 0)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: AppColors.success.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: AppColors.success.withValues(alpha: 0.20),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.scale, color: AppColors.success),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      store.bestValueItems > 0
+                          ? '$normalizedCoverageText. '
+                                '$bestValueText at this store.'
+                          : '$normalizedCoverageText. '
+                                'Unit prices are shown below for comparison.',
+                      style: const TextStyle(
+                        color: AppColors.success,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           if (isCheapest && potentialSavings > 0)
             Container(
               width: double.infinity,
@@ -222,8 +518,8 @@ class StoreComparisonCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Text(
-                'Potential savings compared with the highest complete basket: '
-                '\$${potentialSavings.toStringAsFixed(2)}',
+                'Potential savings compared with the highest complete '
+                'basket: \$${potentialSavings.toStringAsFixed(2)}',
                 style: const TextStyle(
                   color: AppColors.success,
                   fontWeight: FontWeight.bold,
@@ -248,32 +544,7 @@ class StoreComparisonCard extends StatelessWidget {
                 ),
               ),
             ),
-          ...store.items.map(
-            (item) => ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Icon(
-                item.hasPrice ? Icons.check_circle : Icons.warning_amber,
-                color: item.hasPrice ? AppColors.success : AppColors.warning,
-              ),
-              title: Text(item.productName),
-              subtitle: Text('Quantity: ${item.quantity.toStringAsFixed(0)}'),
-              trailing: item.hasPrice
-                  ? Text(
-                      '\$${item.lineTotal!.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: branding.primaryColor,
-                      ),
-                    )
-                  : const Text(
-                      'Missing',
-                      style: TextStyle(
-                        color: AppColors.warning,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-            ),
-          ),
+          ...store.items.map((item) => _buildItemRow(item, branding)),
         ],
       ),
     );

@@ -1,7 +1,6 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/shopping_trip.dart';
 import '../core/theme/app_colors.dart';
@@ -10,6 +9,7 @@ import '../models/store.dart';
 import '../service/receipt_processor_service.dart';
 import '../service/receipt_service.dart';
 import '../service/store_service.dart';
+import 'add_store_screen.dart';
 import 'receipt_history_screen.dart';
 import 'receipt_review_screen.dart';
 
@@ -51,6 +51,44 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
     });
   }
 
+  Future<void> addNewStore() async {
+    final newStore = await Navigator.push<Store>(
+      context,
+      MaterialPageRoute(builder: (_) => const AddStoreScreen()),
+    );
+
+    if (!mounted || newStore == null) return;
+
+    setState(() {
+      stores = [...stores, newStore]
+        ..sort((a, b) {
+          final provinceComparison = a.province.compareTo(b.province);
+
+          if (provinceComparison != 0) {
+            return provinceComparison;
+          }
+
+          final cityComparison = a.city.compareTo(b.city);
+
+          if (cityComparison != 0) {
+            return cityComparison;
+          }
+
+          return a.name.compareTo(b.name);
+        });
+
+      selectedStore = newStore;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '${newStore.name} in ${newStore.city}, ${newStore.province} was added.',
+        ),
+      ),
+    );
+  }
+
   Future<void> pickImage(ImageSource source) async {
     final XFile? image = await _picker.pickImage(
       source: source,
@@ -60,6 +98,8 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
     if (image == null) return;
 
     final bytes = await image.readAsBytes();
+
+    if (!mounted) return;
 
     setState(() {
       _receiptImage = image;
@@ -76,7 +116,7 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
       lastDate: DateTime.now(),
     );
 
-    if (selectedDate == null) return;
+    if (selectedDate == null || !mounted) return;
 
     setState(() {
       purchaseDate = selectedDate;
@@ -134,14 +174,60 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
       if (!mounted) return;
 
       if (reviewedTrip == null) {
+        await ReceiptService.deleteReceipt(savedReceipt.id);
+
+        if (!mounted) return;
+
         setState(() {
           isSaving = false;
           processingMessage = 'Receipt review was cancelled.';
         });
 
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Receipt cancelled and removed.')),
+        );
+
         return;
       }
 
+      setState(() {
+        processingMessage = 'Saving reviewed receipt...';
+      });
+
+      debugPrint(
+        'Review returned ${reviewedTrip.items.length} item(s). '
+        'Calling completeReviewedReceipt...',
+      );
+
+      ReceiptProcessingResult result;
+
+      try {
+        result = await ReceiptProcessorService.completeReviewedReceipt(
+          receipt: savedReceipt,
+          reviewedTrip: reviewedTrip,
+        );
+      } on DuplicateReceiptException catch (duplicate) {
+        if (!mounted) return;
+
+        final saveAnyway = await _showDuplicateReceiptDialog(duplicate);
+
+        if (!saveAnyway) {
+          setState(() {
+            isSaving = false;
+            processingMessage = 'Receipt was not saved.';
+          });
+
+          return;
+        }
+
+        result = await ReceiptProcessorService.completeReviewedReceipt(
+          receipt: savedReceipt,
+          reviewedTrip: reviewedTrip,
+          allowDuplicate: true,
+        );
+      }
+
+      debugPrint('Receipt completion returned: ${result.message}');
       if (!mounted) return;
 
       setState(() {
@@ -150,24 +236,74 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
         selectedStore = null;
         purchaseDate = DateTime.now();
         isSaving = false;
-        processingMessage = 'Receipt review completed.';
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Receipt review completed.')),
-      );
-    } catch (error) {
-      if (!mounted) return;
-
-      setState(() {
-        isSaving = false;
-        processingMessage = null;
+        processingMessage = result.message;
       });
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Receipt save failed: $error')));
+      ).showSnackBar(SnackBar(content: Text(result.message)));
+    } catch (error, stackTrace) {
+      debugPrint('Receipt processing failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        isSaving = false;
+        processingMessage = 'Receipt processing failed: $error';
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Receipt processing failed: $error'),
+          duration: const Duration(seconds: 10),
+        ),
+      );
     }
+  }
+
+  Future<bool> _showDuplicateReceiptDialog(
+    DuplicateReceiptException exception,
+  ) async {
+    if (!mounted) {
+      return false;
+    }
+
+    final duplicateCount = exception.possibleDuplicates.length;
+
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          icon: const Icon(Icons.warning_amber_rounded),
+          title: const Text('Possible Duplicate Receipt'),
+          content: Text(
+            duplicateCount == 1
+                ? 'A similar receipt has already been saved. '
+                      'Do you want to save this receipt anyway?'
+                : '$duplicateCount similar receipts have already been saved. '
+                      'Do you want to save this receipt anyway?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              },
+              child: const Text('Do Not Save'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true);
+              },
+              child: const Text('Save Anyway'),
+            ),
+          ],
+        );
+      },
+    );
+
+    return result ?? false;
   }
 
   void openReceiptHistory() {
@@ -273,14 +409,19 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
                 const SizedBox(height: 25),
                 DropdownButtonFormField<Store>(
                   initialValue: selectedStore,
+                  isExpanded: true,
                   decoration: const InputDecoration(
                     labelText: 'Store',
+                    prefixIcon: Icon(Icons.store_outlined),
                     border: OutlineInputBorder(),
                   ),
                   items: stores.map((store) {
                     return DropdownMenuItem<Store>(
                       value: store,
-                      child: Text('${store.name} - ${store.city}'),
+                      child: Text(
+                        '${store.name} - ${store.city}, ${store.province}',
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     );
                   }).toList(),
                   onChanged: isSaving
@@ -290,6 +431,12 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
                             selectedStore = value;
                           });
                         },
+                ),
+                const SizedBox(height: 10),
+                OutlinedButton.icon(
+                  onPressed: isSaving ? null : addNewStore,
+                  icon: const Icon(Icons.add_business_outlined),
+                  label: const Text('Add New Store'),
                 ),
                 const SizedBox(height: 16),
                 OutlinedButton.icon(

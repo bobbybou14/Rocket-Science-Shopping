@@ -1,0 +1,103 @@
+import 'dart:io';
+
+import 'package:flutter/widgets.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../lib/service/product_csv_import_service.dart';
+import '../lib/service/supabase_product_service.dart';
+
+Future<void> main(List<String> arguments) async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final csvPath = arguments.isNotEmpty
+      ? arguments.first
+      : 'assets/catalogues/smartcart_canada_seed_500.csv';
+
+  final csvFile = File(csvPath);
+
+  if (!await csvFile.exists()) {
+    stderr.writeln('CSV file not found: $csvPath');
+    exitCode = 1;
+    return;
+  }
+
+  final supabaseUrl = Platform.environment['SUPABASE_URL']?.trim() ?? '';
+  final supabaseAnonKey =
+      Platform.environment['SUPABASE_ANON_KEY']?.trim() ?? '';
+
+  if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
+    stderr.writeln(
+      'SUPABASE_URL and SUPABASE_ANON_KEY environment variables are required.',
+    );
+    exitCode = 1;
+    return;
+  }
+
+  await Supabase.initialize(
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey,
+  );
+
+  final csvText = await csvFile.readAsString();
+  final parseResult = ProductCsvImportService.parseCsv(csvText);
+
+  stdout.writeln('----- CSV PARSE SUMMARY -----');
+  stdout.writeln('Products parsed: ${parseResult.products.length}');
+  stdout.writeln('Parse errors: ${parseResult.errors.length}');
+
+  if (parseResult.errors.isNotEmpty) {
+    stdout.writeln('');
+    stdout.writeln('----- PARSE ERRORS -----');
+
+    for (final error in parseResult.errors.take(20)) {
+      stdout.writeln(
+        'Row ${error.rowNumber}: ${error.message}',
+      );
+    }
+
+    if (parseResult.errors.length > 20) {
+      stdout.writeln(
+        '...and ${parseResult.errors.length - 20} more parse errors.',
+      );
+    }
+  }
+
+  if (parseResult.products.isEmpty) {
+    stderr.writeln('No valid products are available to preview.');
+    exitCode = 1;
+    return;
+  }
+
+  final preview = await SupabaseProductService.previewProductImport(
+    parseResult.products,
+  );
+
+  stdout.writeln('');
+  stdout.writeln('----- IMPORT PREVIEW -----');
+  stdout.writeln('Total rows: ${preview.totalRows}');
+  stdout.writeln('Valid rows: ${preview.validRows}');
+  stdout.writeln('Would add: ${preview.added}');
+  stdout.writeln('Would update: ${preview.updated}');
+  stdout.writeln('Would skip: ${preview.skipped}');
+  stdout.writeln('Would fail: ${preview.failed}');
+
+  if (preview.errors.isNotEmpty) {
+    stdout.writeln('');
+    stdout.writeln('----- PREVIEW ERRORS -----');
+
+    for (final error in preview.errors.take(20)) {
+      stdout.writeln(
+        'Row ${error.rowNumber}: ${error.message}',
+      );
+    }
+
+    if (preview.errors.length > 20) {
+      stdout.writeln(
+        '...and ${preview.errors.length - 20} more preview errors.',
+      );
+    }
+  }
+
+  stdout.writeln('');
+  stdout.writeln('No database changes were made.');
+}

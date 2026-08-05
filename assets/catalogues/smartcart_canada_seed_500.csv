@@ -1,0 +1,500 @@
+barcode,name,brand,category,size,image_url,taxable,measurement_type,base_unit,package_quantity,variable_measurement,source,requires_tax_review
+0061077771217,100% Whole Wheat Sandwich Bread,POM,Bakery,675,https://images.openfoodfacts.org/images/products/006/107/777/1217/front_en.18.400.jpg,false,each,each,,false,Open Food Facts,true
+26073835,12 Briochettes,Les Pâtissades,Bakery,480 g e,https://images.openfoodfacts.org/images/products/000/002/607/3835/front_fr.35.400.jpg,true,weight,g,480.0,false,Open Food Facts,true
+0061077940309,14 Céréales Grains,Bon Matin,Bakery,595g,https://images.openfoodfacts.org/images/products/006/107/794/0309/front_fr.29.400.jpg,false,weight,g,595.0,false,Open Food Facts,true
+0063400138711,14 Grains,Country Harvest,Bakery,600 g,https://images.openfoodfacts.org/images/products/006/340/013/8711/front_en.79.400.jpg,false,weight,g,600.0,false,Open Food Facts,true
+0068505300292,9 Grains entiers / Whole grains Bread,Les Grains StMéthode,Bakery,600g,https://images.openfoodfacts.org/images/products/006/850/530/0292/front_fr.17.400.jpg,false,weight,g,600.0,false,Open Food Facts,true
+0068505300308,9 Grains entiers Whole Grains Loaf,Le Campagnolo St-Méthode,Bakery,570 g,https://images.openfoodfacts.org/images/products/006/850/530/0308/front_en.29.400.jpg,false,weight,g,570.0,false,Open Food Facts,true
+0063400138803,Ancient Grains with Quinoa,Country Harvest,Bakery,600 g,https://images.openfoodfacts.org/images/products/006/340/013/8803/front_en.48.400.jpg,false,weight,g,600.0,false,Open Food Facts,true
+26014098,Brioche tranchée aux pepites de chocolat,Les Patissades,Bakery,500 g,https://images.openfoodfacts.org/images/products/000/002/601/4098/front_fr.34.400.jpg,true,weight,g,500.0,false,Open Food Facts,true
+26073224,Brioche tressée,LES PÂTISSADES,Bakery,600 g,https://images.openfoodfacts.org/images/products/000/002/607/3224/front_fr.33.400.jpg,true,weight,g,600.0,false,Open Food Facts,true
+3600900020404,Chapelure,Tipiak,Bakery,275 g,https://images.openfoodfacts.org/images/products/360/090/002/0404/front_fr.78.400.jpg,false,weight,g,275.0,false,Open Food Facts,true
+0055577107799,Crispy Minis,Taste of Nature,Bakery,127 g,https://images.openfoodfacts.org/images/products/005/557/710/7799/front_en.16.400.jpg,false,weight,g,127.0,false,Open Food Facts,true
+0073472001318,EZEKIEL 4:9 Cinnamon Raisin Flourless Sprouted Grain Bread,Food For Life,Bakery,680 g,https://images.openfoodfacts.org/images/products/007/347/200/1318/front_en.43.400.jpg,false,weight,g,680.0,false,Open Food Facts,true
+0068505100342,Grand-Mère Home Style Bread,Les 5 Grains d'Autrefois,Bakery,600 g,https://images.openfoodfacts.org/images/products/006/850/510/0342/front_fr.62.400.jpg,false,weight,g,600.0,false,Open Food Facts,true
+0055617055127,Harvest Multigrain,Villaggio Rustico,Bakery,550g,https://images.openfoodfacts.org/images/products/005/561/705/5127/front_en.26.400.jpg,false,weight,g,550.0,false,Open Food Facts,true
+3472860051053,"La Mere Poulard - Pure Butter French Biscuits, 125g (4.4oz)",La Mère Poulard,Bakery,"125 g, 4.41 oz, 16 biscuits",https://images.openfoodfacts.org/images/products/347/286/005/1053/front_en.58.400.jpg,true,weight,g,125.0,false,Open Food Facts,true
+8076809507110,Macine con Panna Fresca 100% Italiana,Mulino Bianco,Bakery,800g,https://images.openfoodfacts.org/images/products/807/680/950/7110/front_fr.23.400.jpg,true,weight,g,800.0,false,Open Food Facts,true
+80602316,MixMax,Balconi,Bakery,35 g,https://images.openfoodfacts.org/images/products/000/008/060/2316/front_nl.72.400.jpg,true,weight,g,35.0,false,Open Food Facts,true
+0068505110044,Multi-Cereal Bread,Les Grains St-Méthode,Bakery,1,https://images.openfoodfacts.org/images/products/006/850/511/0044/front_en.56.400.jpg,false,each,each,,false,Open Food Facts,true
+3435660367878,Nuggets de poulet,"Douce france, Père Dodu",Bakery,1 kg,https://images.openfoodfacts.org/images/products/343/566/036/7878/front_fr.47.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0096619316212,ORGANIC LOAF,KIRKLAND Signature,Bakery,765 g,https://images.openfoodfacts.org/images/products/009/661/931/6212/front_en.69.400.jpg,false,weight,g,765.0,false,Open Food Facts,true
+0068505100366,Oat Home Style Bread,La recolte St-Méthode,Bakery,600g,https://images.openfoodfacts.org/images/products/006/850/510/0366/front_en.45.400.jpg,false,weight,g,600.0,false,Open Food Facts,true
+0030100784586,PITA Sea Salt,TOWN HOUSE,Bakery,269 g,https://images.openfoodfacts.org/images/products/003/010/078/4586/front_en.59.400.jpg,true,weight,g,269.0,false,Open Food Facts,true
+0061077856334,PROTEIN LOAF,BON MATIN,Bakery,600 g,https://images.openfoodfacts.org/images/products/006/107/785/6334/front_en.73.400.jpg,false,weight,g,600.0,false,Open Food Facts,true
+0068505102285,Pain Allongé Intégral / Integral Bread,La Récolte de St Méthode,Bakery,550g,https://images.openfoodfacts.org/images/products/006/850/510/2285/front_fr.22.400.jpg,false,weight,g,550.0,false,Open Food Facts,true
+0068505110051,Pain Quinoa Bread,Les Grains St-Méthode,Bakery,550g,https://images.openfoodfacts.org/images/products/006/850/511/0051/front_en.36.400.jpg,false,weight,g,550.0,false,Open Food Facts,true
+0068505102292,Pain de blé blanc 9 grains / 9 grains white bread,La Récolte de St Méthode,Bakery,,https://images.openfoodfacts.org/images/products/006/850/510/2292/front_en.28.400.jpg,false,each,each,,false,Open Food Facts,true
+0078935005186,RYVITA Sesame Rye Rye Crispbread,RYVITA,Bakery,250 g,https://images.openfoodfacts.org/images/products/007/893/500/5186/front_en.47.400.jpg,false,weight,g,250.0,false,Open Food Facts,true
+0068721004004,Raisin Cinnamon Swirl,Sun-Maid,Bakery,450g,https://images.openfoodfacts.org/images/products/006/872/100/4004/front_en.36.400.jpg,true,weight,g,450.0,false,Open Food Facts,true
+0078935005322,Rye Crispbread,RYVITA,Bakery,250 g,https://images.openfoodfacts.org/images/products/007/893/500/5322/front_en.37.400.jpg,false,weight,g,250.0,false,Open Food Facts,true
+0068505100717,Sesame Oat Loaf,Le Campagnolo de St-Methode,Bakery,2 tranches,https://images.openfoodfacts.org/images/products/006/850/510/0717/front_fr.52.400.jpg,false,each,each,,false,Open Food Facts,true
+0060885000670,Sourdough Bistro Classic Loaf,ACE Bakery,Bakery,1150 g,https://images.openfoodfacts.org/images/products/006/088/500/0670/front_en.34.400.jpg,false,weight,g,1150.0,false,Open Food Facts,true
+0055991040160,The Big 16,Silver Hills,Bakery,615 g,https://images.openfoodfacts.org/images/products/005/599/104/0160/front_en.198.400.jpg,false,weight,g,615.0,false,Open Food Facts,true
+3599740007501,Tranches panées de Cabillaud MSC,Findus,Bakery,,https://images.openfoodfacts.org/images/products/359/974/000/7501/front_fr.34.400.jpg,false,each,each,,false,Open Food Facts,true
+0061077771200,Ultra-Moelleux White Sandwich Bread,POM,Bakery,675 g,https://images.openfoodfacts.org/images/products/006/107/777/1200/front_fr.37.400.jpg,false,weight,g,675.0,false,Open Food Facts,true
+0068505101318,White Loaf,Les Grains St Methode,Bakery,675g,https://images.openfoodfacts.org/images/products/006/850/510/1318/front_fr.3.400.jpg,false,weight,g,675.0,false,Open Food Facts,true
+0068505101325,Whole grain Loaf with sprouted wheat,Les Grains St-Méthode,Bakery,550gr,https://images.openfoodfacts.org/images/products/006/850/510/1325/front_fr.39.400.jpg,false,weight,g,550.0,false,Open Food Facts,true
+3664346306027,1848,Poulain,Beverages,450 g,https://images.openfoodfacts.org/images/products/366/434/630/6027/front_fr.164.400.jpg,true,weight,g,450.0,false,Open Food Facts,true
+0096619846016,Almonds,Kirkland Signature,Beverages,1.36 kg,https://images.openfoodfacts.org/images/products/009/661/984/6016/front_en.110.400.jpg,false,weight,g,1360.0,false,Open Food Facts,true
+8801073114814,Artificial Spicy Chicken Flavor Stir-Fried Ramen,Samyang,Beverages,4.93 oz,https://images.openfoodfacts.org/images/products/880/107/311/4814/front_en.157.400.jpg,false,weight,g,139.76314900625,false,Open Food Facts,true
+0059749876957,Bouteille d'eau,Selection,Beverages,,https://images.openfoodfacts.org/images/products/005/974/987/6957/front_fr.21.400.jpg,false,each,each,,false,Open Food Facts,true
+0041508800129,Carbonated Natural Mineral Water,S. Pellegrino,Beverages,750 ml,https://images.openfoodfacts.org/images/products/004/150/880/0129/front_en.32.400.jpg,true,volume,ml,750.0,false,Open Food Facts,true
+3365741212592,Chicory Grains Roasted by Chicoree du Nordic,Lutun,Beverages,500 g,https://images.openfoodfacts.org/images/products/336/574/121/2592/front_en.30.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+3067140013113,Chicory Original,Leroux,Beverages,100 g,https://images.openfoodfacts.org/images/products/306/714/001/3113/front_en.66.400.jpg,false,weight,g,100.0,false,Open Food Facts,true
+06782900,Coca-Cola Original Taste,Coca-Cola,Beverages,355 ml,https://images.openfoodfacts.org/images/products/000/000/678/2900/front_en.24.400.jpg,true,volume,ml,355.0,false,Open Food Facts,true
+06731906,Coke Zero,Coca-Cola,Beverages,355 ml,https://images.openfoodfacts.org/images/products/000/000/673/1906/front_en.21.400.jpg,true,volume,ml,355.0,false,Open Food Facts,true
+6111035000058,Eau minérale naturelle,sidi ali,Beverages,"1,5 L",https://images.openfoodfacts.org/images/products/611/103/500/0058/front_en.134.400.jpg,false,volume,ml,1500.0,false,Open Food Facts,true
+0671785501008,Eska Natural Spring Water,Eska,Beverages,500 mL,https://images.openfoodfacts.org/images/products/067/178/550/1008/front_en.12.400.jpg,false,volume,ml,500.0,false,Open Food Facts,true
+0096619885725,Extra Fancy Salted Mixed Nuts,Kirkland Signature,Beverages,40 oz,https://images.openfoodfacts.org/images/products/009/661/988/5725/front_en.122.400.jpg,false,weight,g,1133.980925,false,Open Food Facts,true
+0096619234998,Extra-Large Peanuts,Costco Wholesale Canada Ltd,Beverages,1.13 k,https://images.openfoodfacts.org/images/products/009/661/923/4998/front_en.28.400.jpg,false,each,each,,false,Open Food Facts,true
+0096619142453,Fancy Whole Cashews with Sea Salt,Kirkland Signature,Beverages,"1,13 kg",https://images.openfoodfacts.org/images/products/009/661/914/2453/front_en.111.400.jpg,true,weight,g,1130.0,false,Open Food Facts,true
+0096619928910,Fancy Whole Unsalted Cashews,Kirkland Signature,Beverages,40 oz (2.5 lb) 1.13 kg,https://images.openfoodfacts.org/images/products/009/661/992/8910/front_en.31.400.jpg,false,weight,g,1133.980925,false,Open Food Facts,true
+06224017,GINGER ALE,CANADA DRY,Beverages,355 ml,https://images.openfoodfacts.org/images/products/000/000/622/4017/front_en.7.400.jpg,true,volume,ml,355.0,false,Open Food Facts,true
+3664346305990,Grand Arôme,Poulain,Beverages,450 g,https://images.openfoodfacts.org/images/products/366/434/630/5990/front_fr.120.400.jpg,true,weight,g,450.0,false,Open Food Facts,true
+0063209090692,HOT CHOCOLATE SMOOTH & CREAMY,Tim Hortons,Beverages,500g,https://images.openfoodfacts.org/images/products/006/320/909/0692/front_en.19.400.jpg,true,weight,g,500.0,false,Open Food Facts,true
+0770333022009,Hummus Traditional,Fontaine Santé,Beverages,260 g,https://images.openfoodfacts.org/images/products/077/033/302/2009/front_en.34.400.jpg,false,weight,g,260.0,false,Open Food Facts,true
+0770333022016,Hummus Traditional,fontaine Sante,Beverages,454 g,https://images.openfoodfacts.org/images/products/077/033/302/2016/front_en.34.400.jpg,false,weight,g,454.0,false,Open Food Facts,true
+0770333022023,Hummus Traditional,Fontaine Santé,Beverages,565 g,https://images.openfoodfacts.org/images/products/077/033/302/2023/front_en.4.400.jpg,false,weight,g,565.0,false,Open Food Facts,true
+0055000132152,Instant Coffee,Nescafe,Beverages,475 g,https://images.openfoodfacts.org/images/products/005/500/013/2152/front_en.54.400.jpg,false,weight,g,475.0,false,Open Food Facts,true
+20760090,Lentilles vertes,Golden Sun,Beverages,500 g,https://images.openfoodfacts.org/images/products/000/002/076/0090/front_fr.29.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+0096619332731,Macadamia Nuts,Kirkland Signature,Beverages,24 oz (1.5 lb) 680 g,https://images.openfoodfacts.org/images/products/009/661/933/2731/front_en.36.400.jpg,true,weight,g,680.388555,false,Open Food Facts,true
+0605388881243,Natural Spring Water,Great Value,Beverages,500 mL,https://images.openfoodfacts.org/images/products/060/538/888/1243/front_en.39.400.jpg,false,volume,ml,500.0,false,Open Food Facts,true
+0057379105010,Natural Spring Water,Naya,Beverages,500 ml,https://images.openfoodfacts.org/images/products/005/737/910/5010/front_en.5.400.jpg,false,volume,ml,500.0,false,Open Food Facts,true
+0060383758783,Natural Spring Water,Real Canadian,Beverages,500ml,https://images.openfoodfacts.org/images/products/006/038/375/8783/front_en.54.400.jpg,false,volume,ml,500.0,false,Open Food Facts,true
+0068274000218,Natural spring water,Nestlé,Beverages,500,https://images.openfoodfacts.org/images/products/006/827/400/0218/front_en.33.400.jpg,false,each,each,,false,Open Food Facts,true
+0096619321841,Natural spring water,Kirkland Signature,Beverages,500mL,https://images.openfoodfacts.org/images/products/009/661/932/1841/front_en.23.400.jpg,false,volume,ml,500.0,false,Open Food Facts,true
+0096619142293,Organic Hemp Hearts,Kirkland Signature,Beverages,907 g,https://images.openfoodfacts.org/images/products/009/661/914/2293/front_en.44.400.jpg,false,weight,g,907.0,false,Open Food Facts,true
+0096619165049,Organic No-Salt Seasoning,Kirkland Signature,Beverages,14.5 oz (411 g),https://images.openfoodfacts.org/images/products/009/661/916/5049/front_en.22.400.jpg,false,weight,g,411.0680853125,false,Open Food Facts,true
+0626394305608,Organic Pumpkin Seeds,La Déesse,Beverages,1.2 kg,https://images.openfoodfacts.org/images/products/062/639/430/5608/front_en.34.400.jpg,false,weight,g,1200.0,false,Open Food Facts,true
+9350271000225,Organic Raspberry Lemonade Kombucha,Remedy,Beverages,700 mL,https://images.openfoodfacts.org/images/products/935/027/100/0225/front_en.18.400.jpg,false,volume,ml,700.0,false,Open Food Facts,true
+0096619034444,Pecans,Kirkland,Beverages,907 g,https://images.openfoodfacts.org/images/products/009/661/903/4444/front_en.125.400.jpg,false,weight,g,907.0,false,Open Food Facts,true
+7613035833272,Perrier,"Nestlé, Nestlé Waters, Perrier",Beverages,1 l,https://images.openfoodfacts.org/images/products/761/303/583/3272/front_en.149.400.jpg,true,volume,ml,1000.0,false,Open Food Facts,true
+3166291010801,Persil,Ducros,Beverages,30 g,https://images.openfoodfacts.org/images/products/316/629/101/0801/front_fr.6.400.jpg,false,weight,g,30.0,false,Open Food Facts,true
+6111069010993,Pur Gingembre,Sultan,Beverages,,https://images.openfoodfacts.org/images/products/611/106/901/0993/front_fr.3.400.jpg,false,each,each,,false,Open Food Facts,true
+0068110950110,Salad Topper Lite,NaturSource,Beverages,1 kg,https://images.openfoodfacts.org/images/products/006/811/095/0110/front_en.7.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0096619107681,Shelled Pistachios,Kirkland Signature,Beverages,,https://images.openfoodfacts.org/images/products/009/661/910/7681/front_en.47.400.jpg,false,each,each,,false,Open Food Facts,true
+6111035002175,Sidi Ali,Sidi Ali,Beverages,2 L,https://images.openfoodfacts.org/images/products/611/103/500/2175/front_ar.128.400.jpg,false,volume,ml,2000.0,false,Open Food Facts,true
+3250390001508,Sirop Menthe bidon 75cl,Paquito,Beverages,750 ml,https://images.openfoodfacts.org/images/products/325/039/000/1508/front_fr.71.400.jpg,false,volume,ml,750.0,false,Open Food Facts,true
+0068110030768,Tamari Almonds,naturSource,Beverages,950 grams,https://images.openfoodfacts.org/images/products/006/811/003/0768/front_en.39.400.jpg,false,weight,g,950.0,false,Open Food Facts,true
+0096619885718,UNSALTED MIXED NUTS,KIRKLAND signature,Beverages,1.13 kg,https://images.openfoodfacts.org/images/products/009/661/988/5718/front_en.96.400.jpg,false,weight,g,1130.0,false,Open Food Facts,true
+0096619362851,Walnuts,Kirkland Signature,Beverages,1.36 kg,https://images.openfoodfacts.org/images/products/009/661/936/2851/front_en.77.400.jpg,true,weight,g,1360.0,false,Open Food Facts,true
+5449000000996,coca-cola,Coca-Cola,Beverages,33 cl,https://images.openfoodfacts.org/images/products/544/900/000/0996/front_en.1107.400.jpg,true,volume,ml,330.0,false,Open Food Facts,true
+6111035000430,sidi ali,سيدي علي,Beverages,33 cl,https://images.openfoodfacts.org/images/products/611/103/500/0430/front_en.104.400.jpg,false,volume,ml,330.0,false,Open Food Facts,true
+3168930000976,3D's Bugles goût fromage,Lay's,Breakfast,85 g,https://images.openfoodfacts.org/images/products/316/893/000/0976/front_fr.86.400.jpg,true,weight,g,85.0,false,Open Food Facts,true
+0677210091472,ALMOND FRUIT CRUNCH,innofoods,Breakfast,900 g,https://images.openfoodfacts.org/images/products/067/721/009/1472/front_en.56.400.jpg,false,weight,g,900.0,false,Open Food Facts,true
+0059724101029,All Bran Original,Kellogg's,Breakfast,525g,https://images.openfoodfacts.org/images/products/005/972/410/1029/front_en.45.400.jpg,true,weight,g,525.0,false,Open Food Facts,true
+06407014,All-Bran Buds,Kellogg's,Breakfast,500 g,https://images.openfoodfacts.org/images/products/000/000/640/7014/front_en.42.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+0064100271913,All-Bran Buds,Kellogg's,Breakfast,1.05kg,https://images.openfoodfacts.org/images/products/006/410/027/1913/front_en.64.400.jpg,false,weight,g,1050.0,false,Open Food Facts,true
+0096619338696,Almond Flour Blanched,Kirkland Signature,Breakfast,1.36 kg,https://images.openfoodfacts.org/images/products/009/661/933/8696/front_en.63.400.jpg,false,weight,g,1360.0,false,Open Food Facts,true
+0064100001596,Almond Raisin Müslix,Kellogg's,Breakfast,450 g,https://images.openfoodfacts.org/images/products/006/410/000/1596/front_en.50.400.jpg,false,weight,g,450.0,false,Open Food Facts,true
+0096619194261,Ancient Grains Probiotic Granola,Kirkland Signature,Breakfast,35.3 oz (1 kg),https://images.openfoodfacts.org/images/products/009/661/919/4261/front_en.166.400.jpg,false,weight,g,1000.7381663125,false,Open Food Facts,true
+0018627114284,Apple Cinnamon Flax Crunchy 7 Grain with Quinoa Bars,Kashi,Breakfast,200 g,https://images.openfoodfacts.org/images/products/001/862/711/4284/front_en.3.400.jpg,true,weight,g,200.0,false,Open Food Facts,true
+0852204000764,CREAMED RAW ORGANIC HONEY,WOLFE,Breakfast,1 kg,https://images.openfoodfacts.org/images/products/085/220/400/0764/front_en.28.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0686207006146,CRISPY/ CROUSTILLANTES PEANUT BUTTER CHOCOLATE,SIMPLY PROTEIN,Breakfast,,https://images.openfoodfacts.org/images/products/068/620/700/6146/front_en.35.400.jpg,true,each,each,,false,Open Food Facts,true
+0065633134652,Cheerios,Cheerios,Breakfast,570 g,https://images.openfoodfacts.org/images/products/006/563/313/4652/front_fr.25.400.jpg,false,weight,g,570.0,false,Open Food Facts,true
+0096619081257,Chewy Protein Bars,Kirkland Signature,Breakfast,1680 g,https://images.openfoodfacts.org/images/products/009/661/908/1257/front_en.46.400.jpg,true,weight,g,1680.0,false,Open Food Facts,true
+3497917001928,Chips Saveur camembert,Brets,Breakfast,125 g,https://images.openfoodfacts.org/images/products/349/791/700/1928/front_fr.79.400.jpg,true,weight,g,125.0,false,Open Food Facts,true
+0018627102557,Chocolate Chip Chia 7-Grain & Quinoa bars. Made in 🇨🇦 from domestic & impotant ingredients. Prepared for…,Kashi 🇺🇸Solana Beach California,Breakfast,5 x 40 g,https://images.openfoodfacts.org/images/products/001/862/710/2557/front_en.83.400.jpg,true,weight,g,200.0,false,Open Food Facts,true
+0675625507151,Classic Granola,One Degree Organic Foods,Breakfast,30 g,https://images.openfoodfacts.org/images/products/067/562/550/7151/front_en.41.400.jpg,false,weight,g,30.0,false,Open Food Facts,true
+0064100144521,Corn Flakes,Kellogg's,Breakfast,"1, 340 grams",https://images.openfoodfacts.org/images/products/006/410/014/4521/front_en.11.400.jpg,false,weight,g,340.0,false,Open Food Facts,true
+0064100143111,Corn Flakes,Kellogg's,Breakfast,600,https://images.openfoodfacts.org/images/products/006/410/014/3111/front_fr.20.400.jpg,false,each,each,,false,Open Food Facts,true
+0055577106617,Corn Squares,Quaker,Breakfast,375 g,https://images.openfoodfacts.org/images/products/005/557/710/6617/front_en.61.400.jpg,false,weight,g,375.0,false,Open Food Facts,true
+0628154035350,Cranberry almond crunch,Post,Breakfast,2 x 700 g,https://images.openfoodfacts.org/images/products/062/815/403/5350/front_en.39.400.jpg,false,weight,g,1400.0,false,Open Food Facts,true
+0072400011597,Cream of Wheat Original,Cream of Wheat,Breakfast,800g,https://images.openfoodfacts.org/images/products/007/240/001/1597/front_fr.11.400.jpg,false,weight,g,800.0,false,Open Food Facts,true
+0055577105238,Céréales Life (multigrains),Quaker,Breakfast,425g,https://images.openfoodfacts.org/images/products/005/557/710/5238/front_en.24.400.jpg,false,weight,g,425.0,false,Open Food Facts,true
+0065633506893,Dark Chocolate Nut Sweet & Salty,Nature Valley,Breakfast,35 g,https://images.openfoodfacts.org/images/products/006/563/350/6893/front_en.49.400.jpg,true,weight,g,35.0,false,Open Food Facts,true
+0018627114345,"Dark Chocolate, Almond & Sea Salt Chewy Chia Whole Grain Bars",Kashi,Breakfast,175 g,https://images.openfoodfacts.org/images/products/001/862/711/4345/front_en.29.400.jpg,true,weight,g,175.0,false,Open Food Facts,true
+0018627114314,Dark Mocha Almond. Product of 🇺🇸USA.,Kashi 🇺🇸Solana Beach California,Breakfast,"5 bars, 175g",https://images.openfoodfacts.org/images/products/001/862/711/4314/front_en.14.400.jpg,true,weight,g,175.0,false,Open Food Facts,true
+6132500711040,El Mordjene Crème De Noisettes Grillées,Cebon,Breakfast,700 g,https://images.openfoodfacts.org/images/products/613/250/071/1040/front_fr.55.400.jpg,false,weight,g,700.0,false,Open Food Facts,true
+26005102,Farine de Blé type 45,"Aldi, Roland Mills Ost",Breakfast,1 kg,https://images.openfoodfacts.org/images/products/000/002/600/5102/front_fr.100.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+3760130560580,Farine à pizza T45 type 00,Mon fournil,Breakfast,1 kg,https://images.openfoodfacts.org/images/products/376/013/056/0580/front_fr.25.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0065633505896,Fibre 1 Bar Oats & Chocolate,Fibre 1,Breakfast,35 g,https://images.openfoodfacts.org/images/products/006/563/350/5896/front_en.38.400.jpg,true,weight,g,35.0,false,Open Food Facts,true
+0065633186040,Fibre One,General Mills,Breakfast,587 g,https://images.openfoodfacts.org/images/products/006/563/318/6040/front_en.47.400.jpg,false,weight,g,587.0,false,Open Food Facts,true
+8712100338694,Fleur de Maïs Maizena,"MAIZENA, Unilever",Breakfast,400 g,https://images.openfoodfacts.org/images/products/871/210/033/8694/front_en.258.400.jpg,false,weight,g,400.0,false,Open Food Facts,true
+8004690612804,Fusilli,la Molisana,Breakfast,500 gram,https://images.openfoodfacts.org/images/products/800/469/061/2804/front_en.208.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+0055577113011,GRUAU INSTANTANÉ NATURE,QUAKER,Breakfast,280 g,https://images.openfoodfacts.org/images/products/005/557/711/3011/front_en.73.400.jpg,false,weight,g,280.0,false,Open Food Facts,true
+0677210091823,Granola Sans Céréales Keto Grain Free Granola,pronofoods,Breakfast,600 g,https://images.openfoodfacts.org/images/products/067/721/009/1823/front_en.58.400.jpg,false,weight,g,600.0,false,Open Food Facts,true
+0055577105405,HARVEST CRUNCH ORIGINAL,QUIRKER,Breakfast,475 g,https://images.openfoodfacts.org/images/products/005/557/710/5405/front_en.77.400.jpg,false,weight,g,475.0,false,Open Food Facts,true
+0055577312551,HARVEST CRUNCH ORIGINAL Granola Cereal,QUAKER,Breakfast,1.8 kg,https://images.openfoodfacts.org/images/products/005/557/731/2551/front_en.45.400.jpg,false,weight,g,1800.0,false,Open Food Facts,true
+0062020000842,HAZELNUT SPREAD WITH COCOA,"Ferrero Rocher, Nutella",Breakfast,725 g,https://images.openfoodfacts.org/images/products/006/202/000/0842/front_en.41.400.jpg,true,weight,g,725.0,false,Open Food Facts,true
+0068100902792,Hazelnut Spread,Kraft,Breakfast,725 g,https://images.openfoodfacts.org/images/products/006/810/090/2792/front_en.20.400.jpg,true,weight,g,725.0,false,Open Food Facts,true
+0068100903119,Hazelnut Spread with Cocoa,Kraft,Breakfast,725 g,https://images.openfoodfacts.org/images/products/006/810/090/3119/front_fr.45.400.jpg,true,weight,g,725.0,false,Open Food Facts,true
+0062020000743,Hazelnut Spread with Cocoa,Nutella,Breakfast,375 g,https://images.openfoodfacts.org/images/products/006/202/000/0743/front_en.77.400.jpg,true,weight,g,375.0,false,Open Food Facts,true
+0096619331130,Hazelnut Spread with Cocoa,Kirkland Signature,Breakfast,1 kg,https://images.openfoodfacts.org/images/products/009/661/933/1130/front_en.44.400.jpg,true,weight,g,1000.0,false,Open Food Facts,true
+0058449770213,Heritage Flakes Cereal,Nature's Path,Breakfast,907 g,https://images.openfoodfacts.org/images/products/005/844/977/0213/front_en.16.400.jpg,false,weight,g,907.0,false,Open Food Facts,true
+0058449770015,Heritage O's Cereal,Nature's Path,Breakfast,907g,https://images.openfoodfacts.org/images/products/005/844/977/0015/front_en.20.400.jpg,false,weight,g,907.0,false,Open Food Facts,true
+0096619372379,Honey,Kirkland Signature,Breakfast,750 g,https://images.openfoodfacts.org/images/products/009/661/937/2379/front_en.52.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0018627597612,"Honey Almond Flax, GO LEAN Crunch.",Kashi 🇺🇸Solana Beach California,Breakfast,58 grams,https://images.openfoodfacts.org/images/products/001/862/759/7612/front_en.68.400.jpg,false,weight,g,58.0,false,Open Food Facts,true
+0065633132948,Honey Nut Cheerios,General Mills,Breakfast,430 g,https://images.openfoodfacts.org/images/products/006/563/313/2948/front_en.34.400.jpg,false,weight,g,430.0,false,Open Food Facts,true
+0018627102571,Honey Oat Flax,Kashi,Breakfast,5 x 40g • 200g Net,https://images.openfoodfacts.org/images/products/001/862/710/2571/front_en.63.400.jpg,true,weight,g,200.0,false,Open Food Facts,true
+0065633496385,Honey nut cheerios,"Cheerios, General Mills",Breakfast,1.51 kg,https://images.openfoodfacts.org/images/products/006/563/349/6385/front_en.11.400.jpg,false,weight,g,1510.0,false,Open Food Facts,true
+0058449770947,Honey'D Corn Flakes,Nature's Path,Breakfast,750 g,https://images.openfoodfacts.org/images/products/005/844/977/0947/front_en.26.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0055577113028,Instant Oatmeal Maple & Brown Sugar,Quaker,Breakfast,8 x 43 g packages,https://images.openfoodfacts.org/images/products/005/557/711/3028/front_fr.3.400.jpg,false,weight,g,344.0,false,Open Food Facts,true
+0018627114833,Kashi GO LEAN Original Cereal,Kashi Solana Beach California 🇺🇸USA,Breakfast,,,false,each,each,,false,Open Food Facts,true
+0096619615162,Kettle Brand Krinkle Cut Pink Salt Potato Chips,Kirkland Signature,Breakfast,32 oz. (2 lb.) 907g,https://images.openfoodfacts.org/images/products/009/661/961/5162/front_en.75.400.jpg,true,weight,g,907.18474,false,Open Food Facts,true
+5410126146943,LOTUS BISCOFF CHRUNCY SPREAD JAR,Lotus Biscoff,Breakfast,380 gr,https://images.openfoodfacts.org/images/products/541/012/614/6943/front_en.32.400.jpg,true,weight,g,380.0,false,Open Food Facts,true
+0055577101018,Large Flake Oats,Quaker,Breakfast,1 kg,https://images.openfoodfacts.org/images/products/005/557/710/1018/front_en.65.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+8076800376999,Lasagne all'Uovo n.199,Barilla,Breakfast,500 g,https://images.openfoodfacts.org/images/products/807/680/037/6999/front_it.330.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+8901491101844,Lay's Potato Chips,Lay's,Breakfast,50 g,https://images.openfoodfacts.org/images/products/890/149/110/1844/front_en.32.400.jpg,true,weight,g,50.0,false,Open Food Facts,true
+3252970008419,Les Crozets Nature,Alpina,Breakfast,600 g,https://images.openfoodfacts.org/images/products/325/297/000/8419/front_fr.35.400.jpg,false,weight,g,600.0,false,Open Food Facts,true
+0687456211015,MADEGOOD Chocolate Chip Granola Bar,MADEGOOD,Breakfast,5 X 24 g,https://images.openfoodfacts.org/images/products/068/745/621/1015/front_en.65.400.jpg,true,weight,g,120.0,false,Open Food Facts,true
+0850002887419,MAGIC SPOON PROTEIN CEREAL COCOA,Magic Spoon,Breakfast,198 g,https://images.openfoodfacts.org/images/products/085/000/288/7419/front_en.59.400.jpg,false,weight,g,198.0,false,Open Food Facts,true
+0064100176164,Maple Raisin Nut Flavour Müslix,Kellogg's,Breakfast,450 g,https://images.openfoodfacts.org/images/products/006/410/017/6164/front_en.35.400.jpg,false,weight,g,450.0,false,Open Food Facts,true
+0058449779018,"Mesa Sunrise Cereal, Organic",Nature's Path Foods,Breakfast,750 g,https://images.openfoodfacts.org/images/products/005/844/977/9018/front_en.110.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0064100569195,Mini wheats,Kellogg's,Breakfast,"1,6 kg",https://images.openfoodfacts.org/images/products/006/410/056/9195/front_fr.28.400.jpg,false,weight,g,1600.0,false,Open Food Facts,true
+0737282362990,Morning Crisp Granola,Jordans,Breakfast,400,https://images.openfoodfacts.org/images/products/073/728/236/2990/front_en.19.400.jpg,false,each,each,,false,Open Food Facts,true
+0737282363010,Morning Crisp Granola Dark Chocolate,Jordans,Breakfast,400,https://images.openfoodfacts.org/images/products/073/728/236/3010/front_en.6.400.jpg,true,each,each,,false,Open Food Facts,true
+8402001010873,Muesli CRUNCHY,Hacendado,Breakfast,500gr,https://images.openfoodfacts.org/images/products/840/200/101/0873/front_en.32.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+0055712115337,Muesli Cereal Original,"Alpen, Post",Breakfast,650 g,https://images.openfoodfacts.org/images/products/005/571/211/5337/front_en.29.400.jpg,false,weight,g,650.0,false,Open Food Facts,true
+0065633134157,Multi Grain Cheerios,Cheerios,Breakfast,585g,https://images.openfoodfacts.org/images/products/006/563/313/4157/front_en.51.400.jpg,false,weight,g,585.0,false,Open Food Facts,true
+0065633132832,Multi Grain Cheerios,General Mills,Breakfast,342 g,https://images.openfoodfacts.org/images/products/006/563/313/2832/front_en.9.400.jpg,false,weight,g,342.0,false,Open Food Facts,true
+0065633496392,Multi Grain Cheerios,Cheerios,Breakfast,,https://images.openfoodfacts.org/images/products/006/563/349/6392/front_en.22.400.jpg,false,each,each,,false,Open Food Facts,true
+0058449602316,Multigrain oat bran flakes cereal,"Nature s path, Nature's Path",Breakfast,907g,https://images.openfoodfacts.org/images/products/005/844/960/2316/front_en.30.400.jpg,false,weight,g,907.0,false,Open Food Facts,true
+0096619188031,NUT BAR,KIRKLAND,Breakfast,40 g,https://images.openfoodfacts.org/images/products/009/661/918/8031/front_en.36.400.jpg,true,weight,g,40.0,false,Open Food Facts,true
+0055000139045,Nesquik Cocoa,Nestlé,Breakfast,540 g,https://images.openfoodfacts.org/images/products/005/500/013/9045/front_en.50.400.jpg,true,weight,g,540.0,false,Open Food Facts,true
+0096619188048,Nut Bars,Kirkland Signature,Breakfast,40 g,https://images.openfoodfacts.org/images/products/009/661/918/8048/front_en.40.400.jpg,true,weight,g,40.0,false,Open Food Facts,true
+0062020003843,Nutella,Nutella,Breakfast,1 kg,https://images.openfoodfacts.org/images/products/006/202/000/3843/front_fr.38.400.jpg,true,weight,g,1000.0,false,Open Food Facts,true
+0687456217062,ORGANIC CHEWY GRANOLA BARS chocolate chip,MADE GOOD,Breakfast,24g/bar,https://images.openfoodfacts.org/images/products/068/745/621/7062/front_en.13.400.jpg,true,weight,g,24.0,false,Open Food Facts,true
+0058449251002,Oat bran flakes,Nature's Path,Breakfast,1.5kg,https://images.openfoodfacts.org/images/products/005/844/925/1002/front_en.21.400.jpg,false,weight,g,1500.0,false,Open Food Facts,true
+0055577105665,Oatmeal Squares,Quaker,Breakfast,500 g,https://images.openfoodfacts.org/images/products/005/557/710/5665/front_en.54.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+0877693004499,Oatmeal cookie crunch,PRANA,Breakfast,,https://images.openfoodfacts.org/images/products/087/769/300/4499/front_en.7.400.jpg,false,each,each,,false,Open Food Facts,true
+0055577102053,One Minute Oats,Quaker,Breakfast,900g,https://images.openfoodfacts.org/images/products/005/557/710/2053/front_en.56.400.jpg,false,weight,g,900.0,false,Open Food Facts,true
+0096619199747,Organic Chia Seeds,Kirkland,Breakfast,15 g,https://images.openfoodfacts.org/images/products/009/661/919/9747/front_en.55.400.jpg,false,weight,g,15.0,false,Open Food Facts,true
+0687456225487,Organic Granola Bites,MADE GOOD,Breakfast,576g 24g/ch,https://images.openfoodfacts.org/images/products/068/745/622/5487/front_en.12.400.jpg,true,weight,g,576.0,false,Open Food Facts,true
+0055828910017,Organic Honey,Naturoney,Breakfast,1 kg,https://images.openfoodfacts.org/images/products/005/582/891/0017/front_en.50.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0737282363171,Organic Morning Muesli Fruit & Nut Medley,Jordans,Breakfast,,https://images.openfoodfacts.org/images/products/073/728/236/3171/front_en.3.400.jpg,false,each,each,,false,Open Food Facts,true
+0096619533602,Organic Quinoa,Kirkland Signature,Breakfast,2.04 kg,https://images.openfoodfacts.org/images/products/009/661/953/3602/front_en.160.400.jpg,false,weight,g,2040.0,false,Open Food Facts,true
+0060410046678,Original Recipe,Miss Vickie's,Breakfast,200 gr,https://images.openfoodfacts.org/images/products/006/041/004/6678/front_fr.4.400.jpg,true,weight,g,200.0,false,Open Food Facts,true
+0020685084423,Original Sea Salt Kettle Cooked Potato Chips,Cape Cod,Breakfast,680 g,https://images.openfoodfacts.org/images/products/002/068/508/4423/front_en.43.400.jpg,true,weight,g,680.0,false,Open Food Facts,true
+0064100111332,Original potato chips 148g pack,Pringles,Breakfast,1,https://images.openfoodfacts.org/images/products/006/410/011/1332/front_fr.4.400.jpg,true,each,each,,false,Open Food Facts,true
+8004690616604,Pasta di semola di grano duro,La Molisana,Breakfast,500 g,https://images.openfoodfacts.org/images/products/800/469/061/6604/front_it.63.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+8004690612002,Penne Rigate N°20,"La Molisana, la Molisana",Breakfast,500g,https://images.openfoodfacts.org/images/products/800/469/061/2002/front_it.90.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+0065633132818,Plain Cheerios,General Mills,Breakfast,350g,https://images.openfoodfacts.org/images/products/006/563/313/2818/front_en.41.400.jpg,false,weight,g,350.0,false,Open Food Facts,true
+0628154020035,Post Shredded Wheat,Post,Breakfast,425 g,https://images.openfoodfacts.org/images/products/062/815/402/0035/front_en.89.400.jpg,false,weight,g,425.0,false,Open Food Facts,true
+8901491435109,Potato chips (Spicy Treat flavour)20rs,Uncle Chipps,Breakfast,52 g,https://images.openfoodfacts.org/images/products/890/149/143/5109/front_en.18.400.jpg,true,weight,g,52.0,false,Open Food Facts,true
+0627987018615,Protein Pancake & Waffle Mix,Flourish,Breakfast,1 kg,https://images.openfoodfacts.org/images/products/062/798/701/8615/front_en.82.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+4099100066623,Pumpkin Seed & Flax Granola Cereal,Simply Nature,Breakfast,11.5 oz (325 g),https://images.openfoodfacts.org/images/products/409/910/006/6623/front_en.51.400.jpg,false,weight,g,326.0195159375,false,Open Food Facts,true
+0058449890072,Pumpkin Seed + Flax Granola,Nature's Path Organic,Breakfast,115 oz,https://images.openfoodfacts.org/images/products/005/844/989/0072/front_en.63.400.jpg,false,weight,g,3260.195159375,false,Open Food Facts,true
+3664346312936,Pâte à tartiner,Poulain,Breakfast,400 g,https://images.openfoodfacts.org/images/products/366/434/631/2936/front_fr.121.400.jpg,true,weight,g,400.0,false,Open Food Facts,true
+0030000012000,Quick 1-Minute Oats,Quaker Oats,Breakfast,42 Oz / 1.19 kg,https://images.openfoodfacts.org/images/products/003/000/001/2000/front_en.169.400.jpg,false,weight,g,1190.67997125,false,Open Food Facts,true
+0055577101100,Quick Oats,Quaker,Breakfast,1kg,https://images.openfoodfacts.org/images/products/005/557/710/1100/front_en.85.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0059724101067,Raisin Bran,Kellogg's,Breakfast,,https://images.openfoodfacts.org/images/products/005/972/410/1067/front_en.8.400.jpg,false,each,each,,false,Open Food Facts,true
+0055577107874,Rice Cakes,QUAKER,Breakfast,140 g,https://images.openfoodfacts.org/images/products/005/557/710/7874/front_en.42.400.jpg,false,weight,g,140.0,false,Open Food Facts,true
+0064100144507,Rice Krispies,Kellogg's,Breakfast,340 g,https://images.openfoodfacts.org/images/products/006/410/014/4507/front_en.21.400.jpg,false,weight,g,340.0,false,Open Food Facts,true
+0675625323188,Rolled Oats,One Degree Organic Foods,Breakfast,2.27 kg,https://images.openfoodfacts.org/images/products/067/562/532/3188/front_en.161.400.jpg,false,weight,g,2270.0,false,Open Food Facts,true
+0628154011323,Shredded Wheat & Bran,Post,Breakfast,525 g,https://images.openfoodfacts.org/images/products/062/815/401/1323/front_en.60.400.jpg,false,weight,g,525.0,false,Open Food Facts,true
+0628154380214,Shreddies Original,Post,Breakfast,,https://images.openfoodfacts.org/images/products/062/815/438/0214/front_fr.3.400.jpg,false,each,each,,false,Open Food Facts,true
+5410126146950,The Original Caramelised Biscuit Spread,Lotus Biscoff,Breakfast,400 g,https://images.openfoodfacts.org/images/products/541/012/614/6950/front_en.76.400.jpg,false,weight,g,400.0,false,Open Food Facts,true
+0064100028975,VECTOR,Kellogg's,Breakfast,400 g,https://images.openfoodfacts.org/images/products/006/410/002/8975/front_en.45.400.jpg,false,weight,g,400.0,false,Open Food Facts,true
+0064100236189,VECTOR,Kellogg's,Breakfast,"1,13 kg",https://images.openfoodfacts.org/images/products/006/410/023/6189/front_en.17.400.jpg,false,weight,g,1130.0,false,Open Food Facts,true
+0055712100142,Whole Grain Cereal,Weetabix,Breakfast,400 g,https://images.openfoodfacts.org/images/products/005/571/210/0142/front_en.67.400.jpg,false,weight,g,400.0,false,Open Food Facts,true
+6111249941819,alitkan farine complet 5kg,,Breakfast,,https://images.openfoodfacts.org/images/products/611/124/994/1819/front_fr.13.400.jpg,false,each,each,,false,Open Food Facts,true
+0055577105221,life whole grain cereal,Quaker,Breakfast,450,https://images.openfoodfacts.org/images/products/005/557/710/5221/front_en.20.400.jpg,false,each,each,,false,Open Food Facts,true
+7622201126131,Πραλίνα φουντουκιού με κακάο και γάλα,Merenda,Breakfast,360g,https://images.openfoodfacts.org/images/products/762/220/112/6131/front_en.38.400.jpg,true,weight,g,360.0,false,Open Food Facts,true
+26073651,10 pains au lait,Les PâtissadesAldi,Dairy,400 g,https://images.openfoodfacts.org/images/products/000/002/607/3651/front_fr.76.400.jpg,true,weight,g,400.0,false,Open Food Facts,true
+0039047001152,ALL-BUTTER SHORTBREAD FINGERS,WALKER'S,Dairy,150 g 5.3 oz,https://images.openfoodfacts.org/images/products/003/904/700/1152/front_en.120.400.jpg,true,weight,g,150.0,false,Open Food Facts,true
+0025293001503,Almond,Silk,Dairy,1.89 L,https://images.openfoodfacts.org/images/products/002/529/300/1503/front_en.158.400.jpg,false,volume,ml,1890.0,false,Open Food Facts,true
+0626027700039,Almond,Earth's Own,Dairy,1.89 L,https://images.openfoodfacts.org/images/products/062/602/770/0039/front_en.90.400.jpg,false,volume,ml,1890.0,false,Open Food Facts,true
+0036632072351,Almond & Cashew Protein Unsweetened,Silk,Dairy,1.75 L,https://images.openfoodfacts.org/images/products/003/663/207/2351/front_en.34.400.jpg,false,volume,ml,1750.0,false,Open Food Facts,true
+0041570055311,Almond Breeze Unsweetened Original,Blue Diamond Almonds,Dairy,946 ml,https://images.openfoodfacts.org/images/products/004/157/005/5311/front_en.52.400.jpg,false,volume,ml,946.0,false,Open Food Facts,true
+0626027700015,Almond Original,Earth's Own,Dairy,1.89 L,https://images.openfoodfacts.org/images/products/062/602/770/0015/front_en.39.400.jpg,false,volume,ml,1890.0,false,Open Food Facts,true
+0190646640019,BARISTA EDITION OATMILK,Oatly,Dairy,946ml,https://images.openfoodfacts.org/images/products/019/064/664/0019/front_en.46.400.jpg,false,volume,ml,946.0,false,Open Food Facts,true
+3073780828642,Babybel Light Mini,Babybel,Dairy,120 g,https://images.openfoodfacts.org/images/products/307/378/082/8642/front_en.136.400.jpg,false,weight,g,120.0,false,Open Food Facts,true
+0626027814071,Barista Oat,Earth's Own,Dairy,946 ml,https://images.openfoodfacts.org/images/products/062/602/781/4071/front_en.58.400.jpg,false,volume,ml,946.0,false,Open Food Facts,true
+0626027087703,"Barista Soy, SoNice",Earth’s Own 🇨🇦,Dairy,946 ml,https://images.openfoodfacts.org/images/products/062/602/708/7703/front_en.36.400.jpg,false,volume,ml,946.0,false,Open Food Facts,true
+0066581001041,CREAMY PEANUT BUTTER / BEURRE D'ARACHIDE CRÉMEUX,NATUR,Dairy,500g,https://images.openfoodfacts.org/images/products/006/658/100/1041/front_fr.44.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+3176580111911,Camembert ile de france. bn batouta.as,Ile de FranceSavencia,Dairy,250 g,https://images.openfoodfacts.org/images/products/317/658/011/1911/front_fr.52.400.jpg,false,weight,g,250.0,false,Open Food Facts,true
+0068100892314,Cheez Whiz,Kraft,Dairy,450g,https://images.openfoodfacts.org/images/products/006/810/089/2314/front_en.27.400.jpg,false,weight,g,450.0,false,Open Food Facts,true
+3497917000938,Chips Brets Saveur Cheddar Oignon de Roscoff,Brets,Dairy,125g,https://images.openfoodfacts.org/images/products/349/791/700/0938/front_fr.67.400.jpg,true,weight,g,125.0,false,Open Food Facts,true
+7622300590970,Choco biscuits,"Milka, Mondelez",Dairy,150 g,https://images.openfoodfacts.org/images/products/762/230/059/0970/front_en.46.400.jpg,true,weight,g,150.0,false,Open Food Facts,true
+3664346300148,Chocolat au lait,Poulain,Dairy,95 g,https://images.openfoodfacts.org/images/products/366/434/630/0148/front_fr.41.400.jpg,true,weight,g,95.0,false,Open Food Facts,true
+3245412211393,Chocolat lait,Carrefour,Dairy,100 g,https://images.openfoodfacts.org/images/products/324/541/221/1393/front_fr.51.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+7622200007332,Chocolate de leite dos Alpes Strawberry,Milka,Dairy,100 g,https://images.openfoodfacts.org/images/products/762/220/000/7332/front_en.90.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+0016229001711,Coconut Milk,"Aroy-D, Thai Agri Foods Public Company Limited",Dairy,400ml,https://images.openfoodfacts.org/images/products/001/622/900/1711/front_en.88.400.jpg,false,volume,ml,400.0,false,Open Food Facts,true
+0068100895971,Cream Cheese Product,Philadelphia,Dairy,227 g,https://images.openfoodfacts.org/images/products/006/810/089/5971/front_en.55.400.jpg,false,weight,g,227.0,false,Open Food Facts,true
+0068100896459,Cream Cheese Product,Philadelphia,Dairy,500 g,https://images.openfoodfacts.org/images/products/006/810/089/6459/front_en.73.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+0068100890556,Crunchy All Natural Peanut Butter,Only Peanuts,Dairy,750 g,https://images.openfoodfacts.org/images/products/006/810/089/0556/front_en.67.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0068100084238,Crunchy Peanut Butter,Kraft,Dairy,1 kg,https://images.openfoodfacts.org/images/products/006/810/008/4238/front_en.54.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0674491111752,Cuisine Bio Organic,belsoy,Dairy,250 ml,https://images.openfoodfacts.org/images/products/067/449/111/1752/front_fr.24.400.jpg,false,volume,ml,250.0,false,Open Food Facts,true
+0674491111776,Dessert Dark Chocolate,Belsoy,Dairy,4 x 125 g,https://images.openfoodfacts.org/images/products/067/449/111/1776/front_en.20.400.jpg,true,weight,g,500.0,false,Open Food Facts,true
+0068100083095,Extra Creamy Velouté,Kraft,Dairy,1 kg,https://images.openfoodfacts.org/images/products/006/810/008/3095/front_en.25.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+6111246721261,Fromage Blanc Nature,Milky Food Professional,Dairy,1 kg,https://images.openfoodfacts.org/images/products/611/124/672/1261/front_fr.118.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0079813000118,GARLIC & FINE HERBS SPREADABLE GOURMET CHEESE,Boursin,Dairy,150 g,https://images.openfoodfacts.org/images/products/007/981/300/0118/front_en.124.400.jpg,false,weight,g,150.0,false,Open Food Facts,true
+0096619553303,GREEK YOGURT,KIRKLAND Signature,Dairy,650 g,https://images.openfoodfacts.org/images/products/009/661/955/3303/front_fr.101.400.jpg,false,weight,g,650.0,false,Open Food Facts,true
+0065684005109,Greek Plain,LIBERTÉ,Dairy,750 g,https://images.openfoodfacts.org/images/products/006/568/400/5109/front_en.129.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0065684118045,Greek Yogurt Plain,Liberté Greek,Dairy,3 oz,https://images.openfoodfacts.org/images/products/006/568/411/8045/front_en.54.400.jpg,false,weight,g,85.048569375,false,Open Food Facts,true
+0096619673247,Lait de soya,Kirkland Signature,Dairy,946 ml,https://images.openfoodfacts.org/images/products/009/661/967/3247/front_en.73.400.jpg,false,volume,ml,946.0,false,Open Food Facts,true
+3560070475711,Lait frais demi-écrémé,"CMI (Carrefour Marchandises Internationales), Carrefour, Carrefour Extra",Dairy,1 L,https://images.openfoodfacts.org/images/products/356/007/047/5711/front_fr.93.400.jpg,false,volume,ml,1000.0,false,Open Food Facts,true
+3451790988677,Le Beurre Tendre,Elle&Vire,Dairy,250 g,https://images.openfoodfacts.org/images/products/345/179/098/8677/front_en.186.400.jpg,false,weight,g,250.0,false,Open Food Facts,true
+0621879007503,Le petit Crèmeux,Boivin,Dairy,400 g,https://images.openfoodfacts.org/images/products/062/187/900/7503/front_fr.52.400.jpg,false,weight,g,400.0,false,Open Food Facts,true
+0196633938084,MIXED NUT BUTTER WITH SEEDS,KIRKLAND signature,Dairy,,https://images.openfoodfacts.org/images/products/019/663/393/8084/front_en.39.400.jpg,false,each,each,,false,Open Food Facts,true
+0068100904826,Macaroni and Cheese,KD Original,Dairy,200 g,https://images.openfoodfacts.org/images/products/006/810/090/4826/front_en.36.400.jpg,false,weight,g,200.0,false,Open Food Facts,true
+8410109055795,Milk Chocolate,Valor,Dairy,18,https://images.openfoodfacts.org/images/products/841/010/905/5795/front_fr.33.400.jpg,true,each,each,,false,Open Food Facts,true
+0064042006420,Milk Chocolate Butter Cookie,Celebrations • 🇨🇦Leclerc,Dairy,240 g,https://images.openfoodfacts.org/images/products/006/404/200/6420/front_en.18.400.jpg,true,weight,g,240.0,false,Open Food Facts,true
+0064420320148,Milk protein shake made with ultrafiltered partly skimmed milk,Natrel,Dairy,2 L,https://images.openfoodfacts.org/images/products/006/442/032/0148/front_en.100.400.jpg,false,volume,ml,2000.0,false,Open Food Facts,true
+0096619225798,Mixed Nut Butter with Seeds,Kirkland,Dairy,765 g,https://images.openfoodfacts.org/images/products/009/661/922/5798/front_en.70.400.jpg,false,weight,g,765.0,false,Open Food Facts,true
+7613035587793,NESTLE DESSERT Lait,"Nestlé, NESTLE DESSERT, Tablettes",Dairy,170 g,https://images.openfoodfacts.org/images/products/761/303/558/7793/front_en.194.400.jpg,true,weight,g,170.0,false,Open Food Facts,true
+7613032471842,NESTLÉ DESSERT Caramel 170g,"Nestlé, NESTLE DESSERT, Tablettes",Dairy,170 g,https://images.openfoodfacts.org/images/products/761/303/247/1842/front_fr.217.400.jpg,true,weight,g,170.0,false,Open Food Facts,true
+0055742536652,Natural Peanut Butter,Compliments,Dairy,1 kg,https://images.openfoodfacts.org/images/products/005/574/253/6652/front_fr.24.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0628915641769,Natural Peanut Butter Smooth,Great Value,Dairy,1 and 750g,https://images.openfoodfacts.org/images/products/062/891/564/1769/front_en.47.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0096619237432,Oat,Kirkland Signature,Dairy,6 x 946 ml,https://images.openfoodfacts.org/images/products/009/661/923/7432/front_en.15.400.jpg,false,volume,ml,5676.0,false,Open Food Facts,true
+0626027814026,Oat Milk - Original,Earth's Own,Dairy,946 ml,https://images.openfoodfacts.org/images/products/062/602/781/4026/front_en.54.400.jpg,false,volume,ml,946.0,false,Open Food Facts,true
+0626027811025,Oat Original,Earth's Own,Dairy,1.75 L,https://images.openfoodfacts.org/images/products/062/602/781/1025/front_en.98.400.jpg,false,volume,ml,1750.0,false,Open Food Facts,true
+0063667201012,Organic Gluten-Free Oat Beverage,natura,Dairy,946 mL,https://images.openfoodfacts.org/images/products/006/366/720/1012/front_en.39.400.jpg,false,volume,ml,946.0,false,Open Food Facts,true
+0068200701066,Original,Yachtanita,Dairy,427g,https://images.openfoodfacts.org/images/products/006/820/070/1066/front_fr.22.400.jpg,false,weight,g,427.0,false,Open Food Facts,true
+0068200750156,Original Balkan Yogurt Natural Yogurt,Astro,Dairy,750 g,https://images.openfoodfacts.org/images/products/006/820/075/0156/front_en.39.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0064420010223,PARTLY SKIMMED MILK,Natrel,Dairy,2 L,https://images.openfoodfacts.org/images/products/006/442/001/0223/front_en.59.400.jpg,false,volume,ml,2000.0,false,Open Food Facts,true
+0068100084665,PEANUT BUTTER,ONLY PEANUTS Kraft,Dairy,750 g,https://images.openfoodfacts.org/images/products/006/810/008/4665/front_en.79.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+3245390084422,Palets Bretons Spécialité de Pont-Aven au beurre,"Reflets de France, Carrefour",Dairy,100 g,https://images.openfoodfacts.org/images/products/324/539/008/4422/front_fr.63.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+0064420010124,Partly Skimmed Milk 2% M.F.,Natrel,Dairy,2 l,https://images.openfoodfacts.org/images/products/006/442/001/0124/front_en.40.400.jpg,false,volume,ml,2000.0,false,Open Food Facts,true
+0060383860479,Peanut Butter,Blue Menu,Dairy,750 g,https://images.openfoodfacts.org/images/products/006/038/386/0479/front_en.69.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0068100899788,Peanut Butter,Kraft,Dairy,750 g,https://images.openfoodfacts.org/images/products/006/810/089/9788/front_fr.32.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0096619450008,Peanut Butter creamy natural,Kirkland Signature,Dairy,1 kg,https://images.openfoodfacts.org/images/products/009/661/945/0008/front_en.78.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0060383708825,Peanut butter,Organic,Dairy,500g,https://images.openfoodfacts.org/images/products/006/038/370/8825/front_en.36.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+7622210421968,Petit écolier Chocolat au lait,Mondelez International,Dairy,150 g (12x 12.5 g) e,https://images.openfoodfacts.org/images/products/762/221/042/1968/front_fr.219.400.jpg,true,weight,g,150.0,false,Open Food Facts,true
+8032523532456,Pisti pistachio spread,Pisti,Dairy,600 g,https://images.openfoodfacts.org/images/products/803/252/353/2456/front_en.121.400.jpg,true,weight,g,600.0,false,Open Food Facts,true
+0025293000735,Protein Soy Unsweetened,Silk,Dairy,1.89 L,https://images.openfoodfacts.org/images/products/002/529/300/0735/front_en.87.400.jpg,false,volume,ml,1890.0,false,Open Food Facts,true
+3179142787104,Pépites de chocolat au lait,"McCormick, Vahiné",Dairy,100 g e,https://images.openfoodfacts.org/images/products/317/914/278/7104/front_fr.40.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+0068200010120,PūrFiltre 2% Milk,Lactantia,Dairy,2 L,https://images.openfoodfacts.org/images/products/006/820/001/0120/front_en.43.400.jpg,false,volume,ml,2000.0,false,Open Food Facts,true
+3222110025149,Saint Agur (format familial) (33% MG),"Saint Agur, Savencia",Dairy,250 g,https://images.openfoodfacts.org/images/products/322/211/002/5149/front_fr.35.400.jpg,false,weight,g,250.0,false,Open Food Facts,true
+0064420255013,Sans Lactose Free Fine-Filtered 2% M.F. Dairy Product made with lactose free ultrafiltered partly skimmed milk,Natrel,Dairy,2 L,https://images.openfoodfacts.org/images/products/006/442/025/5013/front_en.78.400.jpg,false,volume,ml,2000.0,false,Open Food Facts,true
+0025293001817,Silk Zero sugar Almond,Silk,Dairy,946 mL,https://images.openfoodfacts.org/images/products/002/529/300/1817/front_en.57.400.jpg,false,volume,ml,946.0,false,Open Food Facts,true
+0068100083293,Smooth,Kraft,Dairy,1 kg,https://images.openfoodfacts.org/images/products/006/810/008/3293/front_en.72.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0068100084245,Smooth / Crémeux,Kraft,Dairy,1kg,https://images.openfoodfacts.org/images/products/006/810/008/4245/front_en.117.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0068100083286,Smooth Light Peanut Butter,Kraft,Dairy,,https://images.openfoodfacts.org/images/products/006/810/008/3286/front_fr.8.400.jpg,false,each,each,,false,Open Food Facts,true
+0068100084276,Smooth Peanut Butter,Kraft,Dairy,2 kg,https://images.openfoodfacts.org/images/products/006/810/008/4276/front_en.101.400.jpg,false,weight,g,2000.0,false,Open Food Facts,true
+0068100084214,Smooth Peanut Butter,Kraft,Dairy,500 g,https://images.openfoodfacts.org/images/products/006/810/008/4214/front_en.82.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+0063667511005,Unsweetened Organic Fortified Soy Beverage,Natura,Dairy,946 mL,https://images.openfoodfacts.org/images/products/006/366/751/1005/front_en.53.400.jpg,false,volume,ml,946.0,false,Open Food Facts,true
+0063667125066,Unsweetened Soy Milk,Natura,Dairy,"1,89 l",https://images.openfoodfacts.org/images/products/006/366/712/5066/front_en.36.400.jpg,false,volume,ml,1890.0,false,Open Food Facts,true
+0773948200008,Wowbutter Creamy,Wowbutter,Dairy,500g,https://images.openfoodfacts.org/images/products/077/394/820/0008/front_fr.17.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+0056800202465,Yogourt Grec Nature,Oikos,Dairy,750g,https://images.openfoodfacts.org/images/products/005/680/020/2465/front_en.40.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0056800202458,Yogourt Grec Nature,Oikos,Dairy,,https://images.openfoodfacts.org/images/products/005/680/020/2458/front_en.78.400.jpg,false,each,each,,false,Open Food Facts,true
+0056800634211,Yogourt grec nature,Oikos,Dairy,650g,https://images.openfoodfacts.org/images/products/005/680/063/4211/front_en.157.400.jpg,false,weight,g,650.0,false,Open Food Facts,true
+0626027841022,ZERO SUCRE AVOINE ORIGINALE NON SUCRÉE,EARTH'S OWN,Dairy,1.75 L,https://images.openfoodfacts.org/images/products/062/602/784/1022/front_en.123.400.jpg,false,volume,ml,1750.0,false,Open Food Facts,true
+0068200325095,creamy skyr plain,siggi's,Dairy,,https://images.openfoodfacts.org/images/products/006/820/032/5095/front_en.73.400.jpg,false,each,each,,false,Open Food Facts,true
+6111242106949,jben,Jaouda,Dairy,160g,https://images.openfoodfacts.org/images/products/611/124/210/6949/front_fr.77.400.jpg,false,weight,g,160.0,false,Open Food Facts,true
+0068200010229,lait lactantia 1%,lactantia,Dairy,2 l,https://images.openfoodfacts.org/images/products/006/820/001/0229/front_fr.22.400.jpg,false,volume,ml,2000.0,false,Open Food Facts,true
+0009800800056,nutella & GO! with Breadsticks,Nutella,Dairy,52 g (1.8 OZ),https://images.openfoodfacts.org/images/products/000/980/080/0056/front_en.141.400.jpg,true,weight,g,52.0,false,Open Food Facts,true
+0096619014415,oat milk,Kirkland Signature,Dairy,,https://images.openfoodfacts.org/images/products/009/661/901/4415/front_fr.36.400.jpg,false,each,each,,false,Open Food Facts,true
+0196633916280,organic Greek yogurt,Kirkland Signature,Dairy,1.3 kg,https://images.openfoodfacts.org/images/products/019/663/391/6280/front_en.27.400.jpg,false,weight,g,1300.0,false,Open Food Facts,true
+0096619338719,organic fortified almond beverage,Kirkland,Dairy,6 x 946 mL,https://images.openfoodfacts.org/images/products/009/661/933/8719/front_en.55.400.jpg,false,volume,ml,5676.0,false,Open Food Facts,true
+3045140280902,pl milka,Milka,Dairy,100g,https://images.openfoodfacts.org/images/products/304/514/028/0902/front_en.78.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+0056800249170,plain,Activia,Dairy,650 g,https://images.openfoodfacts.org/images/products/005/680/024/9170/front_fr.32.400.jpg,false,weight,g,650.0,false,Open Food Facts,true
+0068200325125,simple ingredient skyr,siggi's,Dairy,750g,https://images.openfoodfacts.org/images/products/006/820/032/5125/front_en.59.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0068200325118,skyr aux ingrédients simples,siggi's,Dairy,750 g,https://images.openfoodfacts.org/images/products/006/820/032/5118/front_en.132.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0060383376147,smooth peanut butter,No Name,Dairy,1 kg,https://images.openfoodfacts.org/images/products/006/038/337/6147/front_en.36.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0056800098297,vanilla,Activia,Dairy,650 g,https://images.openfoodfacts.org/images/products/005/680/009/8297/front_en.38.400.jpg,false,weight,g,650.0,false,Open Food Facts,true
+0065684004706,yogourt grec nature - liberté 2%,LIBERTÉ,Dairy,750 g,https://images.openfoodfacts.org/images/products/006/568/400/4706/front_fr.53.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+7613034965868,Extrême vanille de Madagascar,Nestlé,Frozen,6 * 120 ml,https://images.openfoodfacts.org/images/products/761/303/496/5868/front_fr.30.400.jpg,false,volume,ml,720.0,false,Open Food Facts,true
+3179142787203,Pépites chunk chocolat noir,Vahiné,Frozen,100 g,https://images.openfoodfacts.org/images/products/317/914/278/7203/front_fr.31.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+0063667201098,Avoine Simple,Natura,Grocery,946 ml,https://images.openfoodfacts.org/images/products/006/366/720/1098/front_en.22.400.jpg,false,volume,ml,946.0,false,Open Food Facts,true
+0898220009466,Bee propolis 2X,"LLC, Madre Labs",Grocery,240 × 500mg,https://images.openfoodfacts.org/images/products/089/822/000/9466/front_en.5.400.jpg,false,weight,g,0.5,false,Open Food Facts,true
+0096619516698,CHOCOLATEY CHUNKS COOKIE DOUGH PROTEIN BAR,Kirkland Signature,Grocery,20 x 2.12 oz,https://images.openfoodfacts.org/images/products/009/661/951/6698/front_en.91.400.jpg,false,weight,g,1202.0197805,false,Open Food Facts,true
+0096619859696,CREAMY ALMOND BUTTER,KIRKLAND Signature,Grocery,27 oz (765g),https://images.openfoodfacts.org/images/products/009/661/985/9696/front_en.98.400.jpg,false,weight,g,765.437124375,false,Open Food Facts,true
+0056951420497,Canapés Melba (12 Grains),Boulangerie Grissol,Grocery,150g,https://images.openfoodfacts.org/images/products/005/695/142/0497/front_fr.5.400.jpg,false,weight,g,150.0,false,Open Food Facts,true
+0067002307780,Chocolate Peanut Butter,Pure Protein,Grocery,18 x 50g,https://images.openfoodfacts.org/images/products/006/700/230/7780/front_en.18.400.jpg,false,weight,g,900.0,false,Open Food Facts,true
+0068932401234,Fancy Molasses,Grandma,Grocery,675g,https://images.openfoodfacts.org/images/products/006/893/240/1234/front_fr.42.400.jpg,false,weight,g,675.0,false,Open Food Facts,true
+0804642002442,LeanFit Whey Protein,leanfit,Grocery,2000 g,https://images.openfoodfacts.org/images/products/080/464/200/2442/front_en.150.400.jpg,false,weight,g,2000.0,false,Open Food Facts,true
+0096619679133,MAPLE SYRUP,KIRKLAND signature,Grocery,1L (33.8 FL OZ),https://images.openfoodfacts.org/images/products/009/661/967/9133/front_en.106.400.jpg,false,volume,ml,1000.0,false,Open Food Facts,true
+0733739012890,Magnesium Glycinate,Now Foods,Grocery,,https://images.openfoodfacts.org/images/products/073/373/901/2890/front_fr.3.400.jpg,false,each,each,,false,Open Food Facts,true
+0096619897001,Maple Syrup,Kirkland Signature,Grocery,1 L,https://images.openfoodfacts.org/images/products/009/661/989/7001/front_en.28.400.jpg,false,volume,ml,1000.0,false,Open Food Facts,true
+0859146006175,OH OH COOKIE DOUGH,TRUBAR,Grocery,50 g,https://images.openfoodfacts.org/images/products/085/914/600/6175/front_en.82.400.jpg,false,weight,g,50.0,false,Open Food Facts,true
+0838766101002,PROTEIN + SUPERGREENS,Vega,Grocery,,https://images.openfoodfacts.org/images/products/083/876/610/1002/front_en.37.400.jpg,false,each,each,,false,Open Food Facts,true
+0859162007620,Peanut Butter Chocolate,RXBAR,Grocery,52 g,https://images.openfoodfacts.org/images/products/085/916/200/7620/front_en.36.400.jpg,false,weight,g,52.0,false,Open Food Facts,true
+0733739025401,Propolis 1500,Now Foods,Grocery,100 capsule,https://images.openfoodfacts.org/images/products/073/373/902/5401/front_en.14.400.jpg,false,each,each,,false,Open Food Facts,true
+3144550013800,Pur sirop d'erable bio,maison Eric Bur,Grocery,330g,https://images.openfoodfacts.org/images/products/314/455/001/3800/front_fr.3.400.jpg,false,weight,g,330.0,false,Open Food Facts,true
+3165432640006,Sucre de glace,Daddy,Grocery,500 g,https://images.openfoodfacts.org/images/products/316/543/264/0006/front_en.267.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+26005058,Sucre en Morceaux,Sucandise,Grocery,1 kg,https://images.openfoodfacts.org/images/products/000/002/600/5058/front_fr.33.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+26005010,Sucre en poudre-Fine granulation,"Albona, SUCANDISE",Grocery,1 kg,https://images.openfoodfacts.org/images/products/000/002/600/5010/front_fr.64.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+0877971001752,Vegetable Spring Rolls with Edamame,Royal Asia,Grocery,1420 g,https://images.openfoodfacts.org/images/products/087/797/100/1752/front_en.93.400.jpg,false,weight,g,1420.0,false,Open Food Facts,true
+0096619915958,Vitamin D3 1000 iu,Kirkland Signature,Grocery,360 tablets,https://images.openfoodfacts.org/images/products/009/661/991/5958/front_en.24.400.jpg,false,each,each,,false,Open Food Facts,true
+0055653686040,garden vegetable crackers,Dare Breton,Grocery,,https://images.openfoodfacts.org/images/products/005/565/368/6040/front_en.18.400.jpg,false,each,each,,false,Open Food Facts,true
+0058891252220,granulated sugar,ROGERS Lantic,Grocery,2 kg,https://images.openfoodfacts.org/images/products/005/889/125/2220/front_en.29.400.jpg,false,weight,g,2000.0,false,Open Food Facts,true
+0770333021002,tofu spread and dip,fontaine santé,Grocery,250 g,https://images.openfoodfacts.org/images/products/077/033/302/1002/front_fr.9.400.jpg,false,weight,g,250.0,false,Open Food Facts,true
+0096619938759,Organic Chicken Broth,Kirkland Signature,Meat & Poultry,946,https://images.openfoodfacts.org/images/products/009/661/993/8759/front_en.44.400.jpg,false,each,each,,false,Open Food Facts,true
+0071757056428,Yakitori Chicken with Japanese-Style Fried Rice,Ajinomoto,Meat & Poultry,"1.53 kilograms, 54 ounces",https://images.openfoodfacts.org/images/products/007/175/705/6428/front_en.66.400.jpg,false,weight,g,1530.0,false,Open Food Facts,true
+0111121111121,tofou fumé,Soy,Meat & Poultry,400 g,https://images.openfoodfacts.org/images/products/011/112/111/1121/front_fr.19.400.jpg,false,weight,g,400.0,false,Open Food Facts,true
+0056200805020,Cayenne Pepper Sauce,Frank's RedHot,Pantry,354 mL,https://images.openfoodfacts.org/images/products/005/620/080/5020/front_en.42.400.jpg,false,volume,ml,354.0,false,Open Food Facts,true
+0815074020003,Chosen classic Mayo,Chosen Foods,Pantry,12 fl oz,https://images.openfoodfacts.org/images/products/081/507/402/0003/front_en.34.400.jpg,false,volume,ml,354.882,false,Open Food Facts,true
+0815074022809,Classic Mayo,Chosen Foods,Pantry,946 ml,https://images.openfoodfacts.org/images/products/081/507/402/2809/front_en.150.400.jpg,false,volume,ml,946.0,false,Open Food Facts,true
+0041500007007,Classic Yellow Mustard,French's,Pantry,226gm/bottle,https://images.openfoodfacts.org/images/products/004/150/000/7007/front_en.53.400.jpg,false,weight,g,226.0,false,Open Food Facts,true
+0056200824861,Classic Yellow Prepared Mustard,French's,Pantry,830ml,https://images.openfoodfacts.org/images/products/005/620/082/4861/front_fr.33.400.jpg,false,volume,ml,830.0,false,Open Food Facts,true
+0056200762170,Classic Yellow Prepared Mustard,French's,Pantry,400 ml,https://images.openfoodfacts.org/images/products/005/620/076/2170/front_en.32.400.jpg,false,volume,ml,400.0,false,Open Food Facts,true
+0043646242052,Dijon Originale Mustard,Maille,Pantry,800 ml,https://images.openfoodfacts.org/images/products/004/364/624/2052/front_en.27.400.jpg,false,volume,ml,800.0,false,Open Food Facts,true
+8850620888012,Fish Sauce,Squid,Pantry,300ml,https://images.openfoodfacts.org/images/products/885/062/088/8012/front_en.53.400.jpg,false,volume,ml,300.0,false,Open Food Facts,true
+0066019800109,Fresh Garlic Caesar Dressing & Dip,la maison,Pantry,1.4L,https://images.openfoodfacts.org/images/products/006/601/980/0109/front_en.55.400.jpg,false,volume,ml,1400.0,false,Open Food Facts,true
+8801052435015,Gochujang Brown Rice Red Pepper Paste,O'Food,Pantry,500 g,https://images.openfoodfacts.org/images/products/880/105/243/5015/front_en.106.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+0742812700616,Hoisin Sauce,Lee Kum Kee,Pantry,"443 mL, 567 g.",https://images.openfoodfacts.org/images/products/074/281/270/0616/front_en.108.400.jpg,false,volume,ml,443.0,false,Open Food Facts,true
+8853662056029,Hot Chilli Sauce,Flying Goose Brand,Pantry,730ml,https://images.openfoodfacts.org/images/products/885/366/205/6029/front_en.53.400.jpg,false,volume,ml,730.0,false,Open Food Facts,true
+0061308400107,Iodized Sea Salt,Kalas,Pantry,"1 bottle, 750 grams",https://images.openfoodfacts.org/images/products/006/130/840/0107/front_fr.4.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0068400259794,MAYONNAISE,Hellmann's,Pantry,1.8 L,https://images.openfoodfacts.org/images/products/006/840/025/9794/front_en.35.400.jpg,false,volume,ml,1800.0,false,Open Food Facts,true
+0068400662808,MAYONNAISE,Hellmann's,Pantry,890 ml,https://images.openfoodfacts.org/images/products/006/840/066/2808/front_fr.41.400.jpg,false,volume,ml,890.0,false,Open Food Facts,true
+0068400662600,Mayonnaise,Hellmann's,Pantry,890 mL,https://images.openfoodfacts.org/images/products/006/840/066/2600/front_en.68.400.jpg,false,volume,ml,890.0,false,Open Food Facts,true
+0068400662709,Mayonnaise Type Dressing,Hellmann's,Pantry,890 ml,https://images.openfoodfacts.org/images/products/006/840/066/2709/front_en.76.400.jpg,false,volume,ml,890.0,false,Open Food Facts,true
+0772643307784,Mayonnaise classique,MAG,Pantry,890 ml,https://images.openfoodfacts.org/images/products/077/264/330/7784/front_fr.6.400.jpg,false,volume,ml,890.0,false,Open Food Facts,true
+0068100048629,Miracle Whip,Kraft,Pantry,890ml,https://images.openfoodfacts.org/images/products/006/810/004/8629/front_en.48.400.jpg,false,volume,ml,890.0,false,Open Food Facts,true
+26044064,Moutarde de Dijon au Vinaigre,Regalo,Pantry,370 g,https://images.openfoodfacts.org/images/products/000/002/604/4064/front_en.45.400.jpg,false,weight,g,370.0,false,Open Food Facts,true
+0048001204362,Olive Oil Mayonnaise Dressing,Hellmann's,Pantry,,https://images.openfoodfacts.org/images/products/004/800/120/4362/front_en.20.400.jpg,false,each,each,,false,Open Food Facts,true
+0058854431105,Organic Herbamare Original,A.Vogel,Pantry,500g,https://images.openfoodfacts.org/images/products/005/885/443/1105/front_en.30.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+0043646201295,Original Dijon Mustard,Maille,Pantry,500 ml,https://images.openfoodfacts.org/images/products/004/364/620/1295/front_fr.14.400.jpg,false,volume,ml,500.0,false,Open Food Facts,true
+0073491510006,Original Recipe Rice Pudding,Kozy Shack,Pantry,22 oz,https://images.openfoodfacts.org/images/products/007/349/151/0006/front_en.10.400.jpg,false,weight,g,623.68950875,false,Open Food Facts,true
+0078895300017,PANDA BRAND OYSTER SAUCE,Lee Kum Kee,Pantry,255g,https://images.openfoodfacts.org/images/products/007/889/530/0017/front_en.64.400.jpg,false,weight,g,255.0,false,Open Food Facts,true
+8001250016522,PESTO alla GENOVESE,De Cecco,Pantry,190g,https://images.openfoodfacts.org/images/products/800/125/001/6522/front_en.46.400.jpg,false,weight,g,190.0,false,Open Food Facts,true
+0078895300024,Panda Brand Oyster Flavoured Sauce,Lee Kum Kee,Pantry,510g,https://images.openfoodfacts.org/images/products/007/889/530/0024/front_en.131.400.jpg,false,weight,g,510.0,false,Open Food Facts,true
+0078895100020,Premium oyster sauce,Lee Kum Kee,Pantry,510 g,https://images.openfoodfacts.org/images/products/007/889/510/0020/front_en.59.400.jpg,false,weight,g,510.0,false,Open Food Facts,true
+8801073115088,Quattro Cheese Ramen,"Buldak, Samyang",Pantry,145g,https://images.openfoodfacts.org/images/products/880/107/311/5088/front_en.42.400.jpg,false,weight,g,145.0,false,Open Food Facts,true
+0068400616207,Real Mayonnaise,Hellmann's,Pantry,,https://images.openfoodfacts.org/images/products/006/840/061/6207/front_en.50.400.jpg,false,each,each,,false,Open Food Facts,true
+0024463063167,SRIRACHA HOT CHILI SAUCE,"HUY FONG FOODS, INC.",Pantry,740 ml,https://images.openfoodfacts.org/images/products/002/446/306/3167/front_en.21.400.jpg,false,volume,ml,740.0,false,Open Food Facts,true
+0060410010976,Salsa Mild,Tostitos,Pantry,418 ml,https://images.openfoodfacts.org/images/products/006/041/001/0976/front_fr.34.400.jpg,false,volume,ml,418.0,false,Open Food Facts,true
+26020457,Sauce barbecue,Delicato,Pantry,350 g,https://images.openfoodfacts.org/images/products/000/002/602/0457/front_fr.133.400.jpg,false,weight,g,350.0,false,Open Food Facts,true
+3560071193133,Sauce bearnaise,Carrefour,Pantry,245 g,https://images.openfoodfacts.org/images/products/356/007/119/3133/front_fr.57.400.jpg,false,weight,g,245.0,false,Open Food Facts,true
+0066010001055,Sel de table,Windsor,Pantry,1 kg,https://images.openfoodfacts.org/images/products/006/601/000/1055/front_en.33.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+04139344,Soy Sauce,Kikkoman,Pantry,20 fl oz (591 mL),https://images.openfoodfacts.org/images/products/000/000/413/9344/front_en.40.400.jpg,false,volume,ml,591.47,false,Open Food Facts,true
+0041390001055,Soy Sauce,Kikkoman,Pantry,296ml,https://images.openfoodfacts.org/images/products/004/139/000/1055/front_en.95.400.jpg,false,volume,ml,296.0,false,Open Food Facts,true
+0041390001109,Soy Sauce,Kikkoman,Pantry,15 ml,https://images.openfoodfacts.org/images/products/004/139/000/1109/front_en.81.400.jpg,false,volume,ml,15.0,false,Open Food Facts,true
+0057000015992,Yellow Mustard,Heinz,Pantry,375 mL,https://images.openfoodfacts.org/images/products/005/700/001/5992/front_en.19.400.jpg,false,volume,ml,375.0,false,Open Food Facts,true
+0096619384730,sea SALT FINE GRAIN,KIRKLAND Signature,Pantry,30oz,https://images.openfoodfacts.org/images/products/009/661/938/4730/front_en.3.400.jpg,false,weight,g,850.48569375,false,Open Food Facts,true
+0815074022298,100% Pure Avocado Oil,Chosen Foods,Produce,67.6 Fl Oz 2 L,https://images.openfoodfacts.org/images/products/081/507/402/2298/front_en.99.400.jpg,false,volume,l,2.0,false,Open Food Facts,true
+5000108030539,Apple & Blueberry Flavour Microwaveable Oats with Apple & Blueberry Pieces,Quaker,Produce,360g,https://images.openfoodfacts.org/images/products/500/010/803/0539/front_en.33.400.jpg,false,weight,g,360.0,false,Open Food Facts,true
+0853807005163,"Avocado Oil - 100% Pure, Refined",Chosen Foods,Produce,1 L,https://images.openfoodfacts.org/images/products/085/380/700/5163/front_en.53.400.jpg,false,volume,ml,1000.0,false,Open Food Facts,true
+0815074022915,Avocado Oil Spray,Chosen Foods,Produce,13.5oz,https://images.openfoodfacts.org/images/products/081/507/402/2915/front_en.173.400.jpg,false,weight,g,382.7185621875,false,Open Food Facts,true
+0065633158184,Avoine Croquante,General Mills,Produce,,https://images.openfoodfacts.org/images/products/006/563/315/8184/front_fr.13.400.jpg,false,each,each,,false,Open Food Facts,true
+0068437389693,Açaí & blueberry flavours,BROOKSIDE,Produce,850 g,https://images.openfoodfacts.org/images/products/006/843/738/9693/front_en.61.400.jpg,true,weight,g,850.0,false,Open Food Facts,true
+0717524611109,"Bananas 3 lb bag, 30669",Delmonte Bag 30669,Produce,3 lb,https://images.openfoodfacts.org/images/products/071/752/461/1109/front_en.12.400.jpg,false,weight,g,1360.77711,false,Open Food Facts,true
+0715756100200,Blackberries,Driscoll's,Produce,170 g,https://images.openfoodfacts.org/images/products/071/575/610/0200/front_en.40.400.jpg,false,weight,g,170.0,false,Open Food Facts,true
+0812049006604,Blueberries,naturipe,Produce,510 g,https://images.openfoodfacts.org/images/products/081/204/900/6604/front_en.39.400.jpg,false,weight,g,510.0,false,Open Food Facts,true
+0898999010007,Coconut Water,Vita Coco,Produce,500 ml,https://images.openfoodfacts.org/images/products/089/899/901/0007/front_en.134.400.jpg,false,volume,ml,500.0,false,Open Food Facts,true
+26079523,Compotes,Baccara,Produce,400 g (4 * 100 g),https://images.openfoodfacts.org/images/products/000/002/607/9523/front_fr.80.400.jpg,false,weight,g,400.0,false,Open Food Facts,true
+0190569102601,Cream Style Corn,Green Giant,Produce,398 mL,https://images.openfoodfacts.org/images/products/019/056/910/2601/front_en.57.400.jpg,false,volume,ml,398.0,false,Open Food Facts,true
+0063211012613,Cream of Mushroom,Campbell's,Produce,284 mL,https://images.openfoodfacts.org/images/products/006/321/101/2613/front_en.32.400.jpg,false,volume,ml,284.0,false,Open Food Facts,true
+26043814,Desserts et Spécialité de Fruits,Baccara,Produce,"1,6 kg (16 x 100 g)",https://images.openfoodfacts.org/images/products/000/002/604/3814/front_fr.30.400.jpg,false,weight,g,1600.0,false,Open Food Facts,true
+0058807665618,Diced Tomatoes,AYLMER,Produce,796g,https://images.openfoodfacts.org/images/products/005/880/766/5618/front_en.27.400.jpg,false,weight,g,796.0,false,Open Food Facts,true
+0067800002061,Extra Virgin Olive Oil,Gallo,Produce,1l,https://images.openfoodfacts.org/images/products/006/780/000/2061/front_en.44.400.jpg,false,volume,ml,1000.0,false,Open Food Facts,true
+6191509903627,Extra Virgin Olive Oil,Terra Delyssa,Produce,1 L - 34 FL OZ,https://images.openfoodfacts.org/images/products/619/150/990/3627/front_en.58.400.jpg,false,volume,ml,1000.0,false,Open Food Facts,true
+6191509905058,First Cold Pressed Extra Virgin Olive Oil,Terra Delyssa,Produce,1 L,https://images.openfoodfacts.org/images/products/619/150/990/5058/front_en.161.400.jpg,false,volume,ml,1000.0,false,Open Food Facts,true
+0064200010122,Garden Select Six Vegetable Recipe Tomato & Basil,Catelli,Produce,125ml,,false,volume,ml,125.0,false,Open Food Facts,true
+0057000613280,Heinz Tomato Ketchup,Heinz,Produce,1 x 1.25 L,https://images.openfoodfacts.org/images/products/005/700/061/3280/front_en.40.400.jpg,false,volume,ml,1250.0,false,Open Food Facts,true
+0067311010333,Jus de Pomme fait de concentré,Oasis,Produce,960 ml,https://images.openfoodfacts.org/images/products/006/731/101/0333/front_fr.23.400.jpg,false,volume,ml,960.0,false,Open Food Facts,true
+0061148179010,Lentil & Vegetable Soup,Sprague Cannery,Produce,398 mL,https://images.openfoodfacts.org/images/products/006/114/817/9010/front_en.147.400.jpg,false,volume,ml,398.0,false,Open Food Facts,true
+3017760038409,Lulu La Barquette Fraise,LU,Produce,120 g,https://images.openfoodfacts.org/images/products/301/776/003/8409/front_en.134.400.jpg,true,weight,g,120.0,false,Open Food Facts,true
+0059950191009,MARGARINE,Becel,Produce,850g,https://images.openfoodfacts.org/images/products/005/995/019/1009/front_en.52.400.jpg,false,weight,g,850.0,false,Open Food Facts,true
+0011115001202,Margarine,Becel,Produce,1.22 kg,https://images.openfoodfacts.org/images/products/001/111/500/1202/front_en.19.400.jpg,false,weight,g,1220.0,false,Open Food Facts,true
+0059950190101,Margarine,Becel,Produce,,https://images.openfoodfacts.org/images/products/005/995/019/0101/front_en.23.400.jpg,false,each,each,,false,Open Food Facts,true
+0011115001356,Margarine with olive oil,Becel with Olive Oil,Produce,850 g,https://images.openfoodfacts.org/images/products/001/111/500/1356/front_en.63.400.jpg,false,weight,g,850.0,false,Open Food Facts,true
+0096619581870,Minced California Garlic,Kirkland,Produce,1.36kg,https://images.openfoodfacts.org/images/products/009/661/958/1870/front_en.3.400.jpg,false,weight,g,1360.0,false,Open Food Facts,true
+8901030831706,Mixed Fruit Jam,"Hindustan Unilever Limited, Kissan",Produce,500g,https://images.openfoodfacts.org/images/products/890/103/083/1706/front_en.14.400.jpg,false,weight,g,500.0,false,Open Food Facts,true
+0055712115344,Muesli Cereal No Sugar Added,"Alpen, Post",Produce,650 g,https://images.openfoodfacts.org/images/products/005/571/211/5344/front_en.46.400.jpg,false,weight,g,650.0,false,Open Food Facts,true
+0011115001189,Olive Oil,Becel,Produce,427 g,https://images.openfoodfacts.org/images/products/001/111/500/1189/front_en.59.400.jpg,false,weight,g,427.0,false,Open Food Facts,true
+0067311352204,Organic Orange,Grown Right,Produce,"1,89 L",https://images.openfoodfacts.org/images/products/006/731/135/2204/front_fr.5.400.jpg,false,volume,ml,1890.0,false,Open Food Facts,true
+0832650006008,Organic Pitted Dates,Terra Delyssa,Produce,44 oz,https://images.openfoodfacts.org/images/products/083/265/000/6008/front_en.54.400.jpg,false,weight,g,1247.3790175,false,Open Food Facts,true
+0096619104574,Organic Virgin Coconut Oil,Kirkland Signature,Produce,2.3 kg / 2.48 l (84 fl oz),https://images.openfoodfacts.org/images/products/009/661/910/4574/front_en.77.400.jpg,false,weight,g,2300.0,false,Open Food Facts,true
+0063211055702,Original V8,V8,Produce,156 ml (ou 6 * 156 ml),https://images.openfoodfacts.org/images/products/006/321/105/5702/front_fr.25.400.jpg,false,volume,ml,936.0,false,Open Food Facts,true
+5400101173224,Petits pois Extra-fins,Carrefour,Produce,800 g,https://images.openfoodfacts.org/images/products/540/010/117/3224/front_fr.44.400.jpg,false,weight,g,800.0,false,Open Food Facts,true
+0096619381609,Pitted Prunes,Kirkland Signature,Produce,1.6 kg,https://images.openfoodfacts.org/images/products/009/661/938/1609/front_en.36.400.jpg,false,weight,g,1600.0,false,Open Food Facts,true
+3564700441442,Poireaux en rondelles,"Marque Repère, Notre Jardin",Produce,1 kg,https://images.openfoodfacts.org/images/products/356/470/044/1442/front_fr.39.400.jpg,false,weight,g,1000.0,false,Open Food Facts,true
+3245412891175,Pomme Poire,1er Classic,Produce,400 g (4 x 100 g),https://images.openfoodfacts.org/images/products/324/541/289/1175/front_fr.64.400.jpg,false,weight,g,400.0,false,Open Food Facts,true
+3083681066852,Purée Délice,Bonduelle,Produce,780 g,https://images.openfoodfacts.org/images/products/308/368/106/6852/front_fr.58.400.jpg,false,weight,g,780.0,false,Open Food Facts,true
+0715756100019,Raspberries,Driscoll's,Produce,170 g,https://images.openfoodfacts.org/images/products/071/575/610/0019/front_en.38.400.jpg,false,weight,g,170.0,false,Open Food Facts,true
+0810019371592,Raspberry Fruit Spread 100% From Fruit,St. Dalfour,Produce,396 ml,https://images.openfoodfacts.org/images/products/081/001/937/1592/front_en.25.400.jpg,false,volume,ml,396.0,false,Open Food Facts,true
+26043241,Ratatouille,"Aldi, Fleurs des Champs",Produce,"750 g, 850 ml",https://images.openfoodfacts.org/images/products/000/002/604/3241/front_fr.59.400.jpg,false,weight,g,750.0,false,Open Food Facts,true
+0084380957741,Red Raspberry Spread,St. Dalfour,Produce,225 ml (284 g),https://images.openfoodfacts.org/images/products/008/438/095/7741/front_en.30.400.jpg,false,volume,ml,225.0,false,Open Food Facts,true
+8850025000026,Refresh Eau de Noix de Coco,UFC,Produce,1 L,https://images.openfoodfacts.org/images/products/885/002/500/0026/front_en.78.400.jpg,false,volume,ml,1000.0,false,Open Food Facts,true
+0853496008124,Shiitake Mushroom Crisps,D&J A,Produce,300 g,https://images.openfoodfacts.org/images/products/085/349/600/8124/front_en.18.400.jpg,true,weight,g,300.0,false,Open Food Facts,true
+3251510551002,Sorbet Pêche Pomme Framboise,Oasis,Produce,"500 ml, 400 g",https://images.openfoodfacts.org/images/products/325/151/055/1002/front_fr.36.400.jpg,false,volume,ml,500.0,false,Open Food Facts,true
+0715756200023,Strawberries,Driscoll's,Produce,16 oz,https://images.openfoodfacts.org/images/products/071/575/620/0023/front_en.59.400.jpg,false,weight,g,453.59237,false,Open Food Facts,true
+0084380957444,Strawberry Fruit Spread,ST DALFOUR,Produce,284g,https://images.openfoodfacts.org/images/products/008/438/095/7444/front_en.88.400.jpg,false,weight,g,284.0,false,Open Food Facts,true
+0088702024999,Strawberry Jam,Bonne Maman,Produce,750 ml,https://images.openfoodfacts.org/images/products/008/870/202/4999/front_en.32.400.jpg,false,volume,ml,750.0,false,Open Food Facts,true
+0889896931687,Sun-Dried Figs,Happy Village,Produce,,https://images.openfoodfacts.org/images/products/088/989/693/1687/front_en.10.400.jpg,false,each,each,,false,Open Food Facts,true
+0057000243760,TOMATO KETCHUP,Heinz,Produce,375 mL,https://images.openfoodfacts.org/images/products/005/700/024/3760/front_en.35.400.jpg,false,volume,ml,375.0,false,Open Food Facts,true
+0063211000115,Tomato,Campbell's,Produce,284 ml,https://images.openfoodfacts.org/images/products/006/321/100/0115/front_en.64.400.jpg,false,volume,ml,284.0,false,Open Food Facts,true
+0057000013165,Tomato Ketchup,Heinz,Produce,750 mL,https://images.openfoodfacts.org/images/products/005/700/001/3165/front_en.33.400.jpg,false,volume,ml,750.0,false,Open Food Facts,true
+0057000012861,Tomato Ketchup,Heinz,Produce,1.5L,https://images.openfoodfacts.org/images/products/005/700/001/2861/front_en.3.400.jpg,false,volume,ml,1500.0,false,Open Food Facts,true
+0057000002992,Tomato Ketchup,Heinz,Produce,1l,https://images.openfoodfacts.org/images/products/005/700/000/2992/front_en.60.400.jpg,false,volume,ml,1000.0,false,Open Food Facts,true
+0061202021200,Tomato soup,Aylmer,Produce,284 mL,https://images.openfoodfacts.org/images/products/006/120/202/1200/front_en.50.400.jpg,false,volume,ml,284.0,false,Open Food Facts,true
+0039978001290,Tvp a,Bob's Red Mill,Produce,,https://images.openfoodfacts.org/images/products/003/997/800/1290/front_en.11.400.jpg,false,each,each,,false,Open Food Facts,true
+0031200029836,Whole & Juicy Dried Cranberries,Ocean Spray,Produce,,https://images.openfoodfacts.org/images/products/003/120/002/9836/front_fr.11.400.jpg,false,each,each,,false,Open Food Facts,true
+94001129,yellow kiwi,Zespri,Produce,118 g,https://images.openfoodfacts.org/images/products/000/009/400/1129/front_en.55.400.jpg,false,weight,g,118.0,false,Open Food Facts,true
+0066613000097,Boneless Butterflied Sardine Fillets,Brunswick,Seafood,106 Gr,https://images.openfoodfacts.org/images/products/006/661/300/0097/front_en.105.400.jpg,false,weight,g,106.0,false,Open Food Facts,true
+9300633929169,Chunk Light Tuna,Woolworths,Seafood,,https://images.openfoodfacts.org/images/products/930/063/392/9169/front_en.27.400.jpg,false,each,each,,false,Open Food Facts,true
+0061362434704,Chunk Light Tuna,Clover Leaf,Seafood,120g,https://images.openfoodfacts.org/images/products/006/136/243/4704/front_en.55.400.jpg,false,weight,g,120.0,false,Open Food Facts,true
+8716793909735,Huile de saumon,,Seafood,250ml,https://images.openfoodfacts.org/images/products/871/679/390/9735/front_fr.3.400.jpg,false,volume,ml,250.0,false,Open Food Facts,true
+0066613000059,Sardines Soya Oil,Brunswick,Seafood,106 g,https://images.openfoodfacts.org/images/products/006/661/300/0059/front_fr.43.400.jpg,false,weight,g,106.0,false,Open Food Facts,true
+0061362433301,THÔN PÂLE ENTIER dans L'HUILE D'OLIVE PURE,CLOVER LEAF,Seafood,85g,https://images.openfoodfacts.org/images/products/006/136/243/3301/front_en.63.400.jpg,false,weight,g,85.0,false,Open Food Facts,true
+0066086094074,Thon,Pastene,Seafood,70g,https://images.openfoodfacts.org/images/products/006/608/609/4074/front_fr.22.400.jpg,false,weight,g,70.0,false,Open Food Facts,true
+3450971451856,Thon entier listao,Eco+,Seafood,140 g,https://images.openfoodfacts.org/images/products/345/097/145/1856/front_fr.8.400.jpg,false,weight,g,140.0,false,Open Food Facts,true
+0096619523900,Thon pâle entier,Kirkland Signature,Seafood,184 g,https://images.openfoodfacts.org/images/products/009/661/952/3900/front_en.70.400.jpg,false,weight,g,184.0,false,Open Food Facts,true
+3252755150005,20 madeleines longues aux œufs frais,Le Ster,Snacks,250g,https://images.openfoodfacts.org/images/products/325/275/515/0005/front_en.68.400.jpg,true,weight,g,250.0,false,Open Food Facts,true
+8410109104950,82% Cacao Supreme Dark,Valor,Snacks,100 g,https://images.openfoodfacts.org/images/products/841/010/910/4950/front_es.30.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+0856069005612,Almond Flour Crackers,Simple Mills,Snacks,482 g,https://images.openfoodfacts.org/images/products/085/606/900/5612/front_en.63.400.jpg,true,weight,g,482.0,false,Open Food Facts,true
+80757283,Apricot Cake Slice,Balconi,Snacks,28 g,https://images.openfoodfacts.org/images/products/000/008/075/7283/front_en.52.400.jpg,true,weight,g,28.0,false,Open Food Facts,true
+0731216103987,Aussie Bites,Universal Bakery,Snacks,30 oz,https://images.openfoodfacts.org/images/products/073/121/610/3987/front_en.57.400.jpg,true,weight,g,850.48569375,false,Open Food Facts,true
+26035291,Barre Pâtissière,Kergrist,Snacks,800 g,https://images.openfoodfacts.org/images/products/000/002/603/5291/front_fr.61.400.jpg,true,weight,g,800.0,false,Open Food Facts,true
+5410126716016,Biscoff,Lotus,Snacks,250g,https://images.openfoodfacts.org/images/products/541/012/671/6016/front_en.338.400.jpg,true,weight,g,250.0,false,Open Food Facts,true
+0859162007606,Blueberry,RXBar,Snacks,52 g,https://images.openfoodfacts.org/images/products/085/916/200/7606/front_en.68.400.jpg,true,weight,g,52.0,false,Open Food Facts,true
+3014680009175,Bonbons à la sève de pin,"La Vosgienne, Mondelez",Snacks,125 g,https://images.openfoodfacts.org/images/products/301/468/000/9175/front_en.135.400.jpg,true,weight,g,125.0,false,Open Food Facts,true
+0055653670247,Breton,Dare,Snacks,,https://images.openfoodfacts.org/images/products/005/565/367/0247/front_fr.50.400.jpg,true,each,each,,false,Open Food Facts,true
+0055653688006,Breton flax & sea salt crackers,Dare,Snacks,135 g,https://images.openfoodfacts.org/images/products/005/565/368/8006/front_en.5.400.jpg,true,weight,g,135.0,false,Open Food Facts,true
+0014100170952,CHEDDAR,Goldfish,Snacks,,https://images.openfoodfacts.org/images/products/001/410/017/0952/front_en.34.400.jpg,true,each,each,,false,Open Food Facts,true
+7622210406354,Chico Sticks милка,"Milka, Mondelez",Snacks,112g,https://images.openfoodfacts.org/images/products/762/221/040/6354/front_pl.163.400.jpg,true,weight,g,112.0,false,Open Food Facts,true
+3179140923061,Chocolat Noir Pépites,Vahiné,Snacks,100 g,https://images.openfoodfacts.org/images/products/317/914/092/3061/front_fr.116.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+0859162007583,Chocolate Sea Salt,"Insurgent Brands, RXBAR",Snacks,52 g,https://images.openfoodfacts.org/images/products/085/916/200/7583/front_en.50.400.jpg,true,weight,g,52.0,false,Open Food Facts,true
+1103749230000,Cookies with Raspberry-Flavored Filling,IKEA,Snacks,176g,https://images.openfoodfacts.org/images/products/110/374/923/0000/front_en.53.400.jpg,true,weight,g,176.0,false,Open Food Facts,true
+3336970711064,Curly cacahuète l'original,"Vico, Curly, Intersnack",Snacks,160 g,https://images.openfoodfacts.org/images/products/333/697/071/1064/front_en.87.400.jpg,true,weight,g,160.0,false,Open Food Facts,true
+0060410054406,Doritos Nacho Cheese,Doritos,Snacks,235 g,https://images.openfoodfacts.org/images/products/006/041/005/4406/front_fr.3.400.jpg,true,weight,g,235.0,false,Open Food Facts,true
+0037466018898,EXCELLENCE 70% CACAO DARK-NOIR Dark chocolate,Lindt,Snacks,100 g,https://images.openfoodfacts.org/images/products/003/746/601/8898/front_en.38.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+3046920022705,Excellence Noir Orange Intense Aux amandes effilées,Lindt,Snacks,100 g,https://images.openfoodfacts.org/images/products/304/692/002/2705/front_fr.137.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+3173281446595,Extra Dark Chocolate 82% Cocoa,Cemoi,Snacks,100 g,https://images.openfoodfacts.org/images/products/317/328/144/6595/front_en.17.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+0047495491531,Fig Bar Blueberry,Nature's Bakery,Snacks,,https://images.openfoodfacts.org/images/products/004/749/549/1531/front_en.38.400.jpg,true,each,each,,false,Open Food Facts,true
+0047495491555,Fig Bar Raspberry,Nature's Bakery,Snacks,57 g,https://images.openfoodfacts.org/images/products/004/749/549/1555/front_en.36.400.jpg,true,weight,g,57.0,false,Open Food Facts,true
+0034856003755,Fruit Snacks,Welch's,Snacks,22 g,https://images.openfoodfacts.org/images/products/003/485/600/3755/front_en.34.400.jpg,true,weight,g,22.0,false,Open Food Facts,true
+0829515321109,Garden Veggie Straws,Sensible Portions,Snacks,475 g,https://images.openfoodfacts.org/images/products/082/951/532/1109/front_en.40.400.jpg,true,weight,g,475.0,false,Open Food Facts,true
+0071146012455,HARVEST SNAPS ORIGINAL BAKED VEGGIE SNACKS,Calbee,Snacks,94 g,https://images.openfoodfacts.org/images/products/007/114/601/2455/front_en.46.400.jpg,true,weight,g,94.0,false,Open Food Facts,true
+0059290500677,Hobnobs Oats Biscuit,Mcvities,Snacks,250 g,https://images.openfoodfacts.org/images/products/005/929/050/0677/front_en.49.400.jpg,false,weight,g,250.0,false,Open Food Facts,true
+8901491100519,Kurkure,Kurkure,Snacks,78 g,https://images.openfoodfacts.org/images/products/890/149/110/0519/front_en.48.400.jpg,true,weight,g,78.0,false,Open Food Facts,true
+4823077634277,Lovita Jelly Cookies Strawberry Flavour,Roshen,Snacks,135,https://images.openfoodfacts.org/images/products/482/307/763/4277/front_fr.39.400.jpg,true,each,each,,false,Open Food Facts,true
+4823077634246,Lovita Jelly cookies,Roshen,Snacks,135,https://images.openfoodfacts.org/images/products/482/307/763/4246/front_ro.34.400.jpg,true,each,each,,false,Open Food Facts,true
+0066721007469,Low Sodium crackers,Triscuit,Snacks,200 g,https://images.openfoodfacts.org/images/products/006/672/100/7469/front_en.67.400.jpg,true,weight,g,200.0,false,Open Food Facts,true
+0064042001005,"Maple Leaf Sandwich, Celebration Cookies",Leclerc Celebration 🇨🇦,Snacks,350 g,https://images.openfoodfacts.org/images/products/006/404/200/1005/front_en.45.400.jpg,true,weight,g,350.0,false,Open Food Facts,true
+0853358000495,Multigrains Crackers,Crunchmaster,Snacks,567 g,https://images.openfoodfacts.org/images/products/085/335/800/0495/front_en.57.400.jpg,true,weight,g,567.0,false,Open Food Facts,true
+7613035040793,NESTLÉ DESSERT Noir 2x205g,"Nestlé, NESTLE DESSERT, Tablettes",Snacks,410 g,https://images.openfoodfacts.org/images/products/761/303/504/0793/front_fr.191.400.jpg,true,weight,g,410.0,false,Open Food Facts,true
+0065633502260,Nature Valley Sweet & Salty Peanut,Nature Valley,Snacks,35 g,https://images.openfoodfacts.org/images/products/006/563/350/2260/front_fr.36.400.jpg,true,weight,g,35.0,false,Open Food Facts,true
+0857549004309,Oatmeal Dark Chocolate Cookies,heavenly hunks,Snacks,567 g,https://images.openfoodfacts.org/images/products/085/754/900/4309/front_en.52.400.jpg,true,weight,g,567.0,false,Open Food Facts,true
+7622300744663,Original,"Mondelēz, Oreo",Snacks,220 g,https://images.openfoodfacts.org/images/products/762/230/074/4663/front_it.241.400.jpg,true,weight,g,220.0,false,Open Food Facts,true
+0897580000106,Original Crackers,Mary's Organic,Snacks,6.5 oz (184 g),https://images.openfoodfacts.org/images/products/089/758/000/0106/front_en.55.400.jpg,true,weight,g,184.2719003125,false,Open Food Facts,true
+0897580000595,Original Crackers,Mary's Organic,Snacks,566 g,https://images.openfoodfacts.org/images/products/089/758/000/0595/front_en.20.400.jpg,true,weight,g,566.0,false,Open Food Facts,true
+0605870000152,Original Finn Crisp,Finn Crisp,Snacks,200 g,https://images.openfoodfacts.org/images/products/060/587/000/0152/front_en.52.400.jpg,true,weight,g,200.0,false,Open Food Facts,true
+7616500943476,PETITS SUISSES DARK NOIR 72%,Swiss DELICE,Snacks,,https://images.openfoodfacts.org/images/products/761/650/094/3476/front_en.21.400.jpg,true,each,each,,false,Open Food Facts,true
+0743434012576,PURE DARK 100% CACAO,Lindt,Snacks,50 g,https://images.openfoodfacts.org/images/products/074/343/401/2576/front_en.14.400.jpg,true,weight,g,50.0,false,Open Food Facts,true
+8901719101038,Parle - G,Parle,Snacks,,https://images.openfoodfacts.org/images/products/890/171/910/1038/front_en.20.400.jpg,true,each,each,,false,Open Food Facts,true
+0096619336753,Peanut Butter Pretzels,Kirkland Signature,Snacks,55 oz,https://images.openfoodfacts.org/images/products/009/661/933/6753/front_en.193.400.jpg,true,weight,g,1559.223771875,false,Open Food Facts,true
+3800102719032,Plain Wafers Borovec 21PCS 630G,Боровец,Snacks,630 g,https://images.openfoodfacts.org/images/products/380/010/271/9032/front_en.30.400.jpg,true,weight,g,630.0,false,Open Food Facts,true
+0628233883100,Premium Cocoa/Cacao,FRY'S,Snacks,227g,https://images.openfoodfacts.org/images/products/062/823/388/3100/front_en.16.400.jpg,true,weight,g,227.0,false,Open Food Facts,true
+0066721007834,Premium Plus Salted Tops Crackers,Christie,Snacks,450 g,https://images.openfoodfacts.org/images/products/006/672/100/7834/front_en.49.400.jpg,true,weight,g,450.0,false,Open Food Facts,true
+0049508006923,Pretzel Crisps Original,Snack Factory,Snacks,28 g,https://images.openfoodfacts.org/images/products/004/950/800/6923/front_en.55.400.jpg,true,weight,g,28.0,false,Open Food Facts,true
+7622210450029,Prince - Goût Lait - Choco Au Blé Compet,LU,Snacks,300 g,https://images.openfoodfacts.org/images/products/762/221/045/0029/front_fr.75.400.jpg,true,weight,g,300.0,false,Open Food Facts,true
+0193908007926,Protein Bar,RXBAR,Snacks,14 x 52 g Net: 728 g,https://images.openfoodfacts.org/images/products/019/390/800/7926/front_en.39.400.jpg,true,weight,g,728.0,false,Open Food Facts,true
+0066721028419,RITZ original,Christie,Snacks,180 g,https://images.openfoodfacts.org/images/products/006/672/102/8419/front_en.13.400.jpg,true,weight,g,180.0,false,Open Food Facts,true
+0060410901205,Restaurant Style,Tostitos,Snacks,,https://images.openfoodfacts.org/images/products/006/041/090/1205/front_en.51.400.jpg,true,each,each,,false,Open Food Facts,true
+0037466041339,SUPREME DARK 90% CACAO,Lindt,Snacks,100 g,https://images.openfoodfacts.org/images/products/003/746/604/1339/front_en.70.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+5012035927592,Starmix,Haribo,Snacks,175 g,https://images.openfoodfacts.org/images/products/501/203/592/7592/front_en.62.400.jpg,true,weight,g,175.0,false,Open Food Facts,true
+0853665005091,Super Seed Everything Crackers,Mary's Organic,Snacks,5.5 oz (155 g),https://images.openfoodfacts.org/images/products/085/366/500/5091/front_en.50.400.jpg,true,weight,g,155.9223771875,false,Open Food Facts,true
+0036593031206,Sweet Potato Crackers,RW Garcia,Snacks,2 x 425 g,https://images.openfoodfacts.org/images/products/003/659/303/1206/front_en.27.400.jpg,true,weight,g,850.0,false,Open Food Facts,true
+0059290573220,TABLE WATER CRACKERS,Carr's,Snacks,120 g,https://images.openfoodfacts.org/images/products/005/929/057/3220/front_en.51.400.jpg,true,weight,g,120.0,false,Open Food Facts,true
+8690504081920,THINS Dark Chocolate,McVitie's,Snacks,150g,https://images.openfoodfacts.org/images/products/869/050/408/1920/front_en.28.400.jpg,true,weight,g,150.0,false,Open Food Facts,true
+0096619161553,Tortilla Chips,Kirkland Que Pasa,Snacks,908g,https://images.openfoodfacts.org/images/products/009/661/916/1553/front_en.47.400.jpg,true,weight,g,908.0,false,Open Food Facts,true
+0888849006656,Tortilla Style Protein Chips Chili Lime Flavor,Quest,Snacks,1.1 oz (32g),https://images.openfoodfacts.org/images/products/088/884/900/6656/front_en.404.400.jpg,true,weight,g,31.1844754375,false,Open Food Facts,true
+0060410901243,Tostitos Rounds,Tostitos,Snacks,295 g,https://images.openfoodfacts.org/images/products/006/041/090/1243/front_en.33.400.jpg,true,weight,g,295.0,false,Open Food Facts,true
+0055653170259,Ultimate Maple Creme Filled Cookies,Dare,Snacks,300 g,https://images.openfoodfacts.org/images/products/005/565/317/0259/front_en.16.400.jpg,true,weight,g,300.0,false,Open Food Facts,true
+0065172939503,Variety Pack,Vel Bars,Snacks,,https://images.openfoodfacts.org/images/products/006/517/293/9503/front_en.6.400.jpg,true,each,each,,false,Open Food Facts,true
+0066721028358,Vegetable Thins Original,Wheat Thins,Snacks,180g,https://images.openfoodfacts.org/images/products/006/672/102/8358/front_en.28.400.jpg,true,weight,g,180.0,false,Open Food Facts,true
+0055653645801,Veggie Crisps sea salt,Dare,Snacks,100 g,https://images.openfoodfacts.org/images/products/005/565/364/5801/front_en.37.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+0055653645900,Veggie Crisps zesty ranch,Dare,Snacks,100g,https://images.openfoodfacts.org/images/products/005/565/364/5900/front_en.13.400.jpg,true,weight,g,100.0,false,Open Food Facts,true
+0055653632146,Vinta Original,Dare,Snacks,225g,https://images.openfoodfacts.org/images/products/005/565/363/2146/front_en.22.400.jpg,true,weight,g,225.0,false,Open Food Facts,true
+0068826176033,Volcanic Stone Ground Tortilla Chips,QUE PASA,Snacks,350 g,https://images.openfoodfacts.org/images/products/006/882/617/6033/front_en.96.400.jpg,true,weight,g,350.0,false,Open Food Facts,true
+5410041010800,Véritable Petit écolier Chocolat noir Pur beurre de cacao,LU,Snacks,150 g,https://images.openfoodfacts.org/images/products/541/004/101/0800/front_fr.266.400.jpg,true,weight,g,150.0,false,Open Food Facts,true
+0066721028426,Wheat Thins original,Christie,Snacks,,https://images.openfoodfacts.org/images/products/006/672/102/8426/front_en.23.400.jpg,true,each,each,,false,Open Food Facts,true
+0066721007421,triscuit,Mondelez,Snacks,200g,https://images.openfoodfacts.org/images/products/006/672/100/7421/front_en.49.400.jpg,true,weight,g,200.0,false,Open Food Facts,true
+0066721007438,triscuit seasoned with cracked pepper and olive oil,Triscuit,Snacks,200 g,https://images.openfoodfacts.org/images/products/006/672/100/7438/front_en.45.400.jpg,true,weight,g,200.0,false,Open Food Facts,true
+7622300331283,Вафла МОРЕНИ maxx,"Mondelez, МОРЕНИ",Snacks,49 г,https://images.openfoodfacts.org/images/products/762/230/033/1283/front_en.62.400.jpg,true,weight,g,49.0,false,Open Food Facts,true
+8410000810004,اوريو اوريجنال ١٧٦ جرام,Oreo,Snacks,176g,https://images.openfoodfacts.org/images/products/841/000/081/0004/front_da.163.400.jpg,true,weight,g,176.0,false,Open Food Facts,true

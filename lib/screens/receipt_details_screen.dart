@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
 import '../models/receipt.dart';
+import '../service/receipt_service.dart';
+import '../service/shopping_trip_service.dart';
 import 'receipt_items_screen.dart';
 
 class ReceiptDetailsScreen extends StatelessWidget {
@@ -24,6 +26,92 @@ class ReceiptDetailsScreen extends StatelessWidget {
       context,
       MaterialPageRoute(builder: (_) => ReceiptItemsScreen(receipt: receipt)),
     );
+  }
+
+  String? _extractShoppingTripId() {
+    const prefix = 'Shopping trip: ';
+
+    final prefixIndex = receipt.notes.indexOf(prefix);
+
+    if (prefixIndex == -1) {
+      return null;
+    }
+
+    final idStart = prefixIndex + prefix.length;
+    final idEnd = receipt.notes.indexOf('.', idStart);
+
+    final extractedId = idEnd == -1
+        ? receipt.notes.substring(idStart).trim()
+        : receipt.notes.substring(idStart, idEnd).trim();
+
+    return extractedId.isEmpty ? null : extractedId;
+  }
+
+  Future<void> _deleteReceipt(BuildContext context) async {
+        debugPrint('========== DELETE RECEIPT ==========');
+    debugPrint('Receipt ID: ${receipt.id}');
+    debugPrint('Store: ${receipt.storeName}');
+    debugPrint('Notes: ${receipt.notes}');
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete Receipt?'),
+          content: const Text(
+            'This will permanently delete the receipt, its saved receipt '
+            'items, and its linked shopping trip. Historical product price '
+            'observations will be preserved.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton.icon(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              icon: const Icon(Icons.delete_outline),
+              label: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldDelete != true || !context.mounted) {
+      return;
+    }
+
+    final messenger = ScaffoldMessenger.of(context);
+
+    try {
+      final shoppingTripId = _extractShoppingTripId();
+
+      if (shoppingTripId != null) {
+        await ShoppingTripService.deleteShoppingTrip(shoppingTripId);
+      }
+
+      await ReceiptService.deleteReceipt(receipt.id);
+
+      if (!context.mounted) {
+        return;
+      }
+
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Receipt deleted successfully.')),
+      );
+
+      Navigator.pop(context, true);
+    } catch (error) {
+      if (!context.mounted) {
+        return;
+      }
+
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Receipt could not be deleted: $error'),
+        ),
+      );
+    }
   }
 
   Widget infoCard({
@@ -54,7 +142,8 @@ class ReceiptDetailsScreen extends StatelessWidget {
             const SizedBox(height: 12),
             Text('Status: ${receipt.processingStatus}'),
             Text(
-              'Personal data redacted: ${receipt.personalDataRedacted ? "Yes" : "No"}',
+              'Personal data redacted: '
+              '${receipt.personalDataRedacted ? "Yes" : "No"}',
             ),
             Text('Raw image stored: ${receipt.rawImageStored ? "Yes" : "No"}'),
           ],
@@ -137,11 +226,7 @@ class ReceiptDetailsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           OutlinedButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Delete receipt coming soon.')),
-              );
-            },
+            onPressed: () => _deleteReceipt(context),
             icon: const Icon(Icons.delete_outline),
             label: const Text('Delete Receipt'),
           ),

@@ -11,6 +11,7 @@ import 'screens/receipt_upload_screen.dart';
 import 'screens/scan_screen.dart';
 import 'screens/store_selection_screen.dart';
 import 'service/shopping_session_service.dart';
+import 'widgets/auth_gate.dart';
 
 class SmartCartCanadaApp extends StatelessWidget {
   const SmartCartCanadaApp({super.key});
@@ -19,23 +20,36 @@ class SmartCartCanadaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<CartProvider>(
       create: (_) => CartProvider(),
-      child: const _SmartCartApp(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'SmartCart Canada',
+        theme: AppTheme.lightTheme,
+        home: const AuthGate(signedInApp: SmartCartMainShell()),
+      ),
     );
   }
 }
 
-class _SmartCartApp extends StatefulWidget {
-  const _SmartCartApp();
+class SmartCartMainShell extends StatefulWidget {
+  const SmartCartMainShell({super.key});
 
   @override
-  State<_SmartCartApp> createState() => _SmartCartAppState();
+  State<SmartCartMainShell> createState() {
+    return _SmartCartMainShellState();
+  }
 }
 
-class _SmartCartAppState extends State<_SmartCartApp> {
+class _SmartCartMainShellState extends State<SmartCartMainShell> {
   int selectedIndex = 0;
 
   void handleStoreSelected() {
     setState(() {});
+  }
+
+  void startShoppingFromDashboard() {
+    setState(() {
+      selectedIndex = 1;
+    });
   }
 
   Widget buildScanScreen() {
@@ -49,7 +63,7 @@ class _SmartCartAppState extends State<_SmartCartApp> {
   @override
   Widget build(BuildContext context) {
     final screens = <Widget>[
-      const DashboardScreen(),
+      DashboardScreen(onStartShopping: startShoppingFromDashboard),
       buildScanScreen(),
       const ProductCatalogScreen(),
       const CartScreen(),
@@ -57,46 +71,41 @@ class _SmartCartAppState extends State<_SmartCartApp> {
       const AdminScreen(),
     ];
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'SmartCart Canada',
-      theme: AppTheme.lightTheme,
-      home: Scaffold(
-        body: IndexedStack(index: selectedIndex, children: screens),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: selectedIndex,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.red,
-          unselectedItemColor: Colors.grey,
-          onTap: (index) {
-            setState(() {
-              selectedIndex = index;
-            });
-          },
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Home'),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.qr_code_scanner),
-              label: 'Scan',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.inventory_2),
-              label: 'Products',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart),
-              label: 'Cart',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.receipt_long),
-              label: 'Receipts',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.admin_panel_settings),
-              label: 'Admin',
-            ),
-          ],
-        ),
+    return Scaffold(
+      body: IndexedStack(index: selectedIndex, children: screens),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: selectedIndex,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.red,
+        unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          setState(() {
+            selectedIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Home'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.qr_code_scanner),
+            label: 'Scan',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.inventory_2),
+            label: 'Products',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long),
+            label: 'Receipts',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.admin_panel_settings),
+            label: 'Admin',
+          ),
+        ],
       ),
     );
   }

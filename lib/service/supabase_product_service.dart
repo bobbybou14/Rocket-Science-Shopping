@@ -2,6 +2,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/cart_item.dart';
 import '../models/product.dart';
+import '../models/product_import_result.dart';
+import 'product_import_service.dart';
 
 class SupabaseProductService {
   static final _client = Supabase.instance.client;
@@ -36,11 +38,204 @@ class SupabaseProductService {
     }
   }
 
-  static Future<void> saveProduct(Product product) async {
-    try {
-      await _client.from('products').upsert(product.toMap());
-    } catch (_) {
-      return;
+  static Future<bool> saveProduct(Product product) async {
+    if (product.barcode.trim().isEmpty || product.name.trim().isEmpty) {
+      return false;
     }
+
+    try {
+      await _client
+          .from('products')
+          .upsert(product.toMap(), onConflict: 'barcode');
+
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static Future<ProductImportResult> previewProductImport(
+    List<Product> importedProducts,
+  ) async {
+    final validation = ProductImportService.validateProducts(importedProducts);
+    final validProducts = validation.products;
+    final validationReport = validation.report;
+
+    if (validProducts.isEmpty) {
+      return validationReport;
+    }
+
+    final existingBarcodes = <String>{};
+
+    try {
+      final response = await _client.from('products').select('barcode');
+
+      for (final row in response) {
+        final barcode = row['barcode']?.toString().trim() ?? '';
+
+        if (barcode.isNotEmpty) {
+          existingBarcodes.add(barcode);
+        }
+      }
+    } catch (error) {
+      return ProductImportResult(
+        totalRows: validationReport.totalRows,
+        validRows: validationReport.validRows,
+        added: 0,
+        updated: 0,
+        skipped: validationReport.skipped,
+        failed: validationReport.failed + validProducts.length,
+        errors: [
+          ...validationReport.errors,
+          ProductImportError(
+            rowNumber: 0,
+            message:
+                'Unable to compare the import with the existing catalogue: '
+                '$error',
+            rowData: const {},
+          ),
+        ],
+      );
+    }
+
+    var productsToAdd = 0;
+    var productsToUpdate = 0;
+
+    for (final product in validProducts) {
+      if (existingBarcodes.contains(product.barcode)) {
+        productsToUpdate++;
+      } else {
+        productsToAdd++;
+      }
+    }
+
+    return ProductImportResult(
+      totalRows: validationReport.totalRows,
+      validRows: validationReport.validRows,
+      added: productsToAdd,
+      updated: productsToUpdate,
+      skipped: validationReport.skipped,
+      failed: validationReport.failed,
+      errors: validationReport.errors,
+    );
+  }
+
+  static Future<ProductImportResult> importProducts(
+    List<Product> importedProducts, {
+    int batchSize = 500,
+  }) async {
+    final validation = ProductImportService.validateProducts(importedProducts);
+    final validProducts = validation.products;
+    final validationReport = validation.report;
+
+    if (validProducts.isEmpty) {
+      return validationReport;
+    }
+
+    final errors = <ProductImportError>[...validationReport.errors];
+
+    final normalizedBatchSize = batchSize <= 0 ? 500 : batchSize;
+    final existingBarcodes = <String>{};
+
+    try {
+      final response = await _client.from('products').select('barcode');
+
+      for (final row in response) {
+        final barcode = row['barcode']?.toString().trim() ?? '';
+
+        if (barcode.isNotEmpty) {
+          existingBarcodes.add(barcode);
+        }
+      }
+    } catch (error) {
+      return ProductImportResult(
+        totalRows: validationReport.totalRows,
+        validRows: validationReport.validRows,
+        added: 0,
+        updated: 0,
+        skipped: validationReport.skipped,
+        failed: validationReport.failed + validProducts.length,
+        errors: [
+          ...errors,
+          ProductImportError(
+            rowNumber: 0,
+            message: 'Unable to read the existing product catalogue: $error',
+            rowData: const {},
+          ),
+        ],
+      );
+    }
+
+    var added = 0;
+    var updated = 0;
+    var importFailures = 0;
+
+    for (
+      var start = 0;
+      start < validProducts.length;
+      start += normalizedBatchSize
+    ) {
+      final end = start + normalizedBatchSize > validProducts.length
+          ? validProducts.length
+          : start + normalizedBatchSize;
+
+      final batch = validProducts.sublist(start, end);
+
+      try {
+        await _client
+            .from('products')
+            .upsert(
+              batch.map((product) => product.toMap()).toList(),
+              onConflict: 'barcode',
+            );
+
+        for (final product in batch) {
+          if (existingBarcodes.contains(product.barcode)) {
+            updated++;
+          } else {
+            added++;
+            existingBarcodes.add(product.barcode);
+          }
+        }
+      } catch (_) {
+        for (var batchIndex = 0; batchIndex < batch.length; batchIndex++) {
+          final product = batch[batchIndex];
+          final importRowNumber = start + batchIndex + 1;
+
+          try {
+            await _client
+                .from('products')
+                .upsert(product.toMap(), onConflict: 'barcode');
+
+            if (existingBarcodes.contains(product.barcode)) {
+              updated++;
+            } else {
+              added++;
+              existingBarcodes.add(product.barcode);
+            }
+          } catch (error) {
+            importFailures++;
+
+            errors.add(
+              ProductImportError(
+                rowNumber: importRowNumber,
+                message: 'Supabase import failed: $error',
+                rowData: product.toMap(),
+              ),
+            );
+          }
+        }
+      }
+    }
+
+    return ProductImportResult(
+      totalRows: validationReport.totalRows,
+      validRows: validationReport.validRows,
+      added: added,
+      updated: updated,
+      skipped: validationReport.skipped,
+      failed: validationReport.failed + importFailures,
+      errors: errors,
+    );
   }
 }

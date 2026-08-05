@@ -4,11 +4,13 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 
 import '../models/cart_item.dart';
+import '../models/product_suggestion.dart';
 import '../providers/cart_provider.dart';
 import '../service/product_service.dart';
 import '../service/shopping_session_service.dart';
 import '../service/supabase_product_service.dart';
 import '../service/upc_lookup_service.dart';
+import '../widgets/create_product_dialog.dart';
 
 class ScanScreen extends StatefulWidget {
   const ScanScreen({super.key});
@@ -112,6 +114,40 @@ class _ScanScreenState extends State<ScanScreen> {
     if (!mounted) return;
 
     resetScanner();
+  }
+
+  Future<void> createMissingProduct() async {
+    final barcode = barcodeController.text.trim();
+
+    if (barcode.isEmpty || isLoading) {
+      return;
+    }
+
+    final suggestion = ProductSuggestion(
+      sourceReceiptName: barcode,
+      barcode: barcode,
+      name: '',
+      confidenceScore: 35,
+      reasons: const [
+        'The barcode was scanned during a live shopping trip.',
+        'Review and complete the product details before saving.',
+      ],
+    );
+
+    final createdProduct = await CreateProductDialog.show(
+      context: context,
+      suggestion: suggestion,
+      receiptItemName: barcode,
+    );
+
+    if (!mounted || createdProduct == null) {
+      return;
+    }
+
+    lastBarcode = null;
+    lastScanTime = null;
+
+    await lookupBarcode(createdProduct.barcode);
   }
 
   void resetScanner() {
@@ -263,11 +299,30 @@ class _ScanScreenState extends State<ScanScreen> {
                           style: const TextStyle(fontSize: 17),
                         ),
                         if (hasScanned) ...[
-                          const SizedBox(height: 14),
-                          OutlinedButton.icon(
-                            onPressed: resetScanner,
-                            icon: const Icon(Icons.refresh),
-                            label: const Text('Scan Another Item'),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            child: FilledButton.icon(
+                              onPressed: createMissingProduct,
+                              icon: const Icon(Icons.add_business_outlined),
+                              label: const Text('Create This Product'),
+                              style: FilledButton.styleFrom(
+                                backgroundColor: Colors.green.shade700,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              onPressed: resetScanner,
+                              icon: const Icon(Icons.refresh),
+                              label: const Text('Skip and Scan Another Item'),
+                            ),
                           ),
                         ],
                       ],

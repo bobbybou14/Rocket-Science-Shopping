@@ -4,11 +4,13 @@ import '../../providers/cart_provider.dart';
 
 class CartTotals extends StatelessWidget {
   final CartProvider cart;
+  final VoidCallback onFinishShopping;
   final VoidCallback onCompareStores;
 
   const CartTotals({
     super.key,
     required this.cart,
+    required this.onFinishShopping,
     required this.onCompareStores,
   });
 
@@ -66,12 +68,24 @@ class CartTotals extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton.icon(
-                  onPressed: onCompareStores,
+                  onPressed: onFinishShopping,
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFFD6001C),
+                    backgroundColor: Colors.green.shade700,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
+                  icon: const Icon(Icons.check_circle_outline),
+                  label: const Text(
+                    'Finish Shopping',
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: onCompareStores,
                   icon: const Icon(Icons.compare_arrows),
                   label: const Text(
                     'Compare This Basket',
