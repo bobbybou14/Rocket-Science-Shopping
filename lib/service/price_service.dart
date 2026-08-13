@@ -71,6 +71,44 @@ class PriceService {
     return prices.first;
   }
 
+  /// Returns the newest known price for a product at one exact store.
+  static Future<Price?> getLatestPriceForStore({
+    required String barcode,
+    required String storeId,
+  }) async {
+    final cleanBarcode = barcode.trim();
+    final cleanStoreId = storeId.trim();
+
+    if (cleanBarcode.isEmpty || cleanStoreId.isEmpty) {
+      return null;
+    }
+
+    try {
+      final response = await _client
+          .from('prices')
+          .select()
+          .eq('barcode', cleanBarcode)
+          .eq('store_id', cleanStoreId)
+          .order('created_at', ascending: false)
+          .limit(1)
+          .maybeSingle();
+
+      if (response == null) {
+        return null;
+      }
+
+      return Price.fromMap(response);
+    } catch (error, stackTrace) {
+      debugPrint(
+        'Could not load store price for barcode '
+        '$cleanBarcode at store $cleanStoreId: $error',
+      );
+      debugPrintStack(stackTrace: stackTrace);
+
+      return null;
+    }
+  }
+
   /// Returns the newest known price for a product.
   static Future<Price?> getLatestPrice(String barcode) async {
     try {

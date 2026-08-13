@@ -4,8 +4,10 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 
 import '../models/cart_item.dart';
+import '../models/measurement_unit.dart';
 import '../models/product_suggestion.dart';
 import '../providers/cart_provider.dart';
+import '../service/price_service.dart';
 import '../service/product_service.dart';
 import '../service/shopping_session_service.dart';
 import '../service/supabase_product_service.dart';
@@ -44,6 +46,95 @@ class _ScanScreenState extends State<ScanScreen> {
     }
 
     return DateTime.now().difference(previousTime).inMilliseconds < 1500;
+  }
+
+  Future<double?> requestVariableMeasurement({
+    required String productName,
+    required MeasurementUnit unit,
+    required double unitPrice,
+  }) async {
+    final controller = TextEditingController();
+
+    final result = await showDialog<double>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        String? errorText;
+
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Enter Package Weight'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    productName,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 6),
+                  Text('\$${unitPrice.toStringAsFixed(2)} / ${unit.symbol}'),
+                  const SizedBox(height: 18),
+                  TextField(
+                    controller: controller,
+                    autofocus: true,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'Package weight',
+                      suffixText: unit.symbol,
+                      errorText: errorText,
+                      border: const OutlineInputBorder(),
+                    ),
+                    onSubmitted: (_) {
+                      final value = double.tryParse(controller.text.trim());
+
+                      if (value == null || value <= 0) {
+                        setDialogState(() {
+                          errorText = 'Enter a valid weight.';
+                        });
+                        return;
+                      }
+
+                      Navigator.pop(dialogContext, value);
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                  },
+                  child: const Text('Cancel'),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    final value = double.tryParse(controller.text.trim());
+
+                    if (value == null || value <= 0) {
+                      setDialogState(() {
+                        errorText = 'Enter a valid weight.';
+                      });
+                      return;
+                    }
+
+                    Navigator.pop(dialogContext, value);
+                  },
+                  child: const Text('Add to Cart'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    controller.dispose();
+
+    return result;
   }
 
   Future<void> lookupBarcode(String barcode) async {
@@ -90,12 +181,60 @@ class _ScanScreenState extends State<ScanScreen> {
       return;
     }
 
-    context.read<CartProvider>().addItem(product);
+    final storeId = ShoppingSessionService.currentStoreId.trim();
+
+    final storePrice = storeId.isEmpty
+        ? null
+        : await PriceService.getLatestPriceForStore(
+            barcode: cleanBarcode,
+            storeId: storeId,
+          );
+
+    if (!mounted) return;
+
+    double finalPrice = storePrice?.price ?? product.price;
+
+    final isVariableWeightProduct =
+        product.product.variableMeasurement &&
+        product.product.isWeight &&
+        storePrice != null &&
+        storePrice.advertisedUnit.isWeight;
+
+    if (isVariableWeightProduct) {
+      final enteredWeight = await requestVariableMeasurement(
+        productName: product.name,
+        unit: storePrice.advertisedUnit,
+        unitPrice: storePrice.price,
+      );
+
+      if (!mounted) return;
+
+      if (enteredWeight == null) {
+        setState(() {
+          scannedItem = null;
+          isLoading = false;
+          message = 'Package weight entry cancelled.';
+        });
+
+        resetScanner();
+        return;
+      }
+
+      finalPrice = storePrice.price * enteredWeight;
+    }
+
+    final pricedProduct = CartItem(
+      product: product.product,
+      price: finalPrice,
+      quantity: product.quantity,
+    );
+
+    context.read<CartProvider>().addItem(pricedProduct);
 
     HapticFeedback.mediumImpact();
 
     setState(() {
-      scannedItem = product;
+      scannedItem = pricedProduct;
       isLoading = false;
       message = '';
     });
@@ -105,7 +244,7 @@ class _ScanScreenState extends State<ScanScreen> {
       ..showSnackBar(
         SnackBar(
           duration: const Duration(milliseconds: 900),
-          content: Text('${product.name} added to cart'),
+          content: Text('${pricedProduct.name} added to cart'),
         ),
       );
 

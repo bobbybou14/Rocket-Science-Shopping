@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
+import '../models/store.dart';
 import '../service/shopping_session_service.dart';
+import '../service/store_service.dart';
 
 class StoreSelectionScreen extends StatefulWidget {
   final VoidCallback onStoreSelected;
@@ -13,30 +15,20 @@ class StoreSelectionScreen extends StatefulWidget {
 }
 
 class _StoreSelectionScreenState extends State<StoreSelectionScreen> {
-  static const List<String> stores = [
-    'Walmart',
-    'No Frills',
-    'Food Basics',
-    'Metro',
-    'Sobeys',
-    'Costco',
-    'FreshCo',
-    'Real Canadian Superstore',
-    'Loblaws',
-    'Zehrs',
-    'Giant Tiger',
-    'Independent Grocer',
-    'Farm Boy',
-    'Longo\'s',
-    'Other',
-  ];
+  final TextEditingController searchController = TextEditingController();
 
-  String? selectedStore;
+  List<Store> stores = [];
+  List<Store> filteredStores = [];
+
+  Store? selectedStore;
+
+  bool isLoading = true;
+  String searchText = '';
 
   void startShopping() {
     final store = selectedStore;
 
-    if (store == null || store.isEmpty) {
+    if (store == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please select a store before continuing.'),
@@ -45,7 +37,10 @@ class _StoreSelectionScreenState extends State<StoreSelectionScreen> {
       return;
     }
 
-    ShoppingSessionService.startSession(storeName: store);
+    ShoppingSessionService.startSession(
+      storeId: store.id,
+      storeName: store.name,
+    );
 
     widget.onStoreSelected();
   }
@@ -53,12 +48,55 @@ class _StoreSelectionScreenState extends State<StoreSelectionScreen> {
   @override
   void initState() {
     super.initState();
+    loadStores();
+  }
 
-    final activeStore = ShoppingSessionService.currentStoreName;
+  Future<void> loadStores() async {
+    final loadedStores = await StoreService.getStores();
 
-    if (activeStore.isNotEmpty) {
-      selectedStore = activeStore;
+    if (!mounted) return;
+
+    final activeStoreName = ShoppingSessionService.currentStoreName.trim();
+
+    Store? activeStore;
+
+    if (activeStoreName.isNotEmpty) {
+      for (final store in loadedStores) {
+        if (store.name.toLowerCase() == activeStoreName.toLowerCase()) {
+          activeStore = store;
+          break;
+        }
+      }
     }
+
+    setState(() {
+      stores = loadedStores;
+      filteredStores = loadedStores;
+      selectedStore = activeStore;
+      isLoading = false;
+    });
+  }
+
+  void filterStores(String value) {
+    final query = value.toLowerCase().trim();
+
+    setState(() {
+      searchText = query;
+
+      if (query.isEmpty) {
+        filteredStores = stores;
+        return;
+      }
+
+      filteredStores = stores.where((store) {
+        final searchableText =
+            '${store.name} ${store.storeName} ${store.chainName} '
+                    '${store.address} ${store.city} ${store.province}'
+                .toLowerCase();
+
+        return searchableText.contains(query);
+      }).toList();
+    });
   }
 
   @override
@@ -89,18 +127,75 @@ class _StoreSelectionScreenState extends State<StoreSelectionScreen> {
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
                   ),
-                  const SizedBox(height: 28),
-                  ...stores.map(
-                    (store) => _StoreOption(
-                      storeName: store,
-                      selected: selectedStore == store,
-                      onTap: () {
-                        setState(() {
-                          selectedStore = store;
-                        });
-                      },
+                  const SizedBox(height: 24),
+
+                  TextField(
+                    controller: searchController,
+                    onChanged: filterStores,
+                    decoration: InputDecoration(
+                      labelText: 'Search stores',
+                      hintText: 'Store name, city, or province',
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: searchText.isEmpty
+                          ? null
+                          : IconButton(
+                              tooltip: 'Clear search',
+                              onPressed: () {
+                                searchController.clear();
+                                filterStores('');
+                              },
+                              icon: const Icon(Icons.clear),
+                            ),
+                      border: const OutlineInputBorder(),
                     ),
                   ),
+
+                  const SizedBox(height: 18),
+
+                  if (isLoading)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 32),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else if (filteredStores.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.store_mall_directory_outlined,
+                            size: 48,
+                            color: Colors.grey.shade500,
+                          ),
+                          const SizedBox(height: 12),
+                          const Text(
+                            'No stores found',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Try another store name or city.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.grey.shade700),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    ...filteredStores.map(
+                      (store) => _StoreOption(
+                        store: store,
+                        selected: selectedStore?.id == store.id,
+                        onTap: () {
+                          setState(() {
+                            selectedStore = store;
+                          });
+                        },
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -125,15 +220,21 @@ class _StoreSelectionScreenState extends State<StoreSelectionScreen> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 }
 
 class _StoreOption extends StatelessWidget {
-  final String storeName;
+  final Store store;
   final bool selected;
   final VoidCallback onTap;
 
   const _StoreOption({
-    required this.storeName,
+    required this.store,
     required this.selected,
     required this.onTap,
   });
@@ -159,12 +260,37 @@ class _StoreOption extends StatelessWidget {
               ),
               const SizedBox(width: 14),
               Expanded(
-                child: Text(
-                  storeName,
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: selected ? FontWeight.bold : FontWeight.w500,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      store.name,
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: selected
+                            ? FontWeight.bold
+                            : FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      '${store.city}, ${store.province}',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                    if (store.address.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        store.address,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
               Icon(

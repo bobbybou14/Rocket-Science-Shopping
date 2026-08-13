@@ -5,6 +5,7 @@ import '../models/cart_item.dart';
 import '../models/product.dart';
 import '../providers/cart_provider.dart';
 import '../service/product_service.dart';
+import 'edit_product_screen.dart';
 import 'product_details_screen.dart';
 
 class ProductCatalogScreen extends StatefulWidget {
@@ -132,6 +133,27 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
     if (!mounted) return;
 
     setState(() {});
+  }
+
+  Future<void> editProduct(Product product) async {
+    final updatedProduct = await Navigator.push<Product>(
+      context,
+      MaterialPageRoute(builder: (_) => EditProductScreen(product: product)),
+    );
+
+    if (updatedProduct == null || !mounted) {
+      return;
+    }
+
+    await loadProducts();
+
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${updatedProduct.name} updated successfully.')),
+    );
   }
 
   void clearSearch() {
@@ -280,6 +302,9 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                       onTap: () {
                         openProductDetails(product);
                       },
+                      onEdit: () {
+                        editProduct(product);
+                      },
                     );
                   },
                 ),
@@ -338,12 +363,14 @@ class _ProductCard extends StatelessWidget {
   final String displayName;
   final int cartQuantity;
   final VoidCallback onTap;
+  final VoidCallback onEdit;
 
   const _ProductCard({
     required this.product,
     required this.displayName,
     required this.cartQuantity,
     required this.onTap,
+    required this.onEdit,
   });
 
   @override
@@ -425,6 +452,14 @@ class _ProductCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
+              IconButton(
+                tooltip: 'Edit product',
+                onPressed: onEdit,
+                icon: const Icon(
+                  Icons.edit_outlined,
+                  color: _ProductCatalogScreenState.smartCartRed,
+                ),
+              ),
               const Icon(Icons.chevron_right),
             ],
           ),

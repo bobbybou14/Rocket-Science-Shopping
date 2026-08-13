@@ -8,6 +8,10 @@ class ShoppingSessionService {
   static bool get hasActiveSession =>
       _activeSession != null && _activeSession!.active;
 
+  static String get currentStoreId {
+    return _activeSession?.storeId ?? '';
+  }
+
   static String get currentStoreName {
     return _activeSession?.storeName ?? '';
   }
@@ -16,22 +20,31 @@ class ShoppingSessionService {
     return _activeSession?.currency ?? 'CAD';
   }
 
-  static ShoppingSession startSession({required String storeName}) {
-    final session = ShoppingSession.newSession(storeName: storeName);
+  static ShoppingSession startSession({
+    required String storeId,
+    required String storeName,
+  }) {
+    final session = ShoppingSession.newSession(
+      storeId: storeId,
+      storeName: storeName,
+    );
 
     _activeSession = session;
 
     return session;
   }
 
-  static ShoppingSession? updateStore(String storeName) {
+  static ShoppingSession? updateStore({
+    required String storeId,
+    required String storeName,
+  }) {
     final session = _activeSession;
 
     if (session == null) {
-      return startSession(storeName: storeName);
+      return startSession(storeId: storeId, storeName: storeName);
     }
 
-    _activeSession = session.copyWith(storeName: storeName);
+    _activeSession = session.copyWith(storeId: storeId, storeName: storeName);
 
     return _activeSession;
   }

@@ -48,4 +48,15 @@ class ProductService {
       return null;
     }
   }
+
+  static Future<Product> updateProduct(Product product) async {
+    final response = await _supabase
+        .from('products')
+        .update(product.toMap())
+        .eq('barcode', product.barcode)
+        .select()
+        .single();
+
+    return Product.fromMap(response);
+  }
 }

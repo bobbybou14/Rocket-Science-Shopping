@@ -1,10 +1,12 @@
 class ShoppingSession {
+  final String storeId;
   final String storeName;
   final DateTime startedAt;
   final String currency;
   final bool active;
 
   const ShoppingSession({
+    this.storeId = '',
     required this.storeName,
     required this.startedAt,
     this.currency = 'CAD',
@@ -12,12 +14,14 @@ class ShoppingSession {
   });
 
   ShoppingSession copyWith({
+    String? storeId,
     String? storeName,
     DateTime? startedAt,
     String? currency,
     bool? active,
   }) {
     return ShoppingSession(
+      storeId: storeId ?? this.storeId,
       storeName: storeName ?? this.storeName,
       startedAt: startedAt ?? this.startedAt,
       currency: currency ?? this.currency,
@@ -38,25 +42,26 @@ class ShoppingSession {
     return '${duration.inMinutes} min';
   }
 
-  factory ShoppingSession.newSession({required String storeName}) {
-    return ShoppingSession(storeName: storeName, startedAt: DateTime.now());
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'store_name': storeName,
-      'started_at': startedAt.toIso8601String(),
-      'currency': currency,
-      'active': active,
-    };
+  factory ShoppingSession.newSession({
+    required String storeId,
+    required String storeName,
+  }) {
+    return ShoppingSession(
+      storeId: storeId,
+      storeName: storeName,
+      startedAt: DateTime.now(),
+    );
   }
 
   factory ShoppingSession.fromMap(Map<String, dynamic> map) {
     return ShoppingSession(
-      storeName: map['store_name'] ?? '',
-      startedAt: DateTime.parse(map['started_at']),
-      currency: map['currency'] ?? 'CAD',
-      active: map['active'] ?? true,
+      storeId: map['store_id']?.toString() ?? '',
+      storeName: map['store_name']?.toString() ?? '',
+      startedAt:
+          DateTime.tryParse(map['started_at']?.toString() ?? '') ??
+          DateTime.now(),
+      currency: map['currency']?.toString() ?? 'CAD',
+      active: map['active'] as bool? ?? true,
     );
   }
 }

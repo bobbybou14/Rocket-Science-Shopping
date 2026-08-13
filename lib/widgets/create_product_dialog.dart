@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/constants/product_categories.dart';
 import '../models/product.dart';
 import '../models/product_suggestion.dart';
 import '../service/product_learning_service.dart';
@@ -40,8 +41,9 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
 
   late final TextEditingController _nameController;
   late final TextEditingController _brandController;
-  late final TextEditingController _categoryController;
   late final TextEditingController _barcodeController;
+
+  late String _selectedCategory;
   late final TextEditingController _sizeController;
 
   late bool _taxable;
@@ -58,8 +60,8 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
 
     _brandController = TextEditingController(text: _originalSuggestion.brand);
 
-    _categoryController = TextEditingController(
-      text: _originalSuggestion.category,
+    _selectedCategory = ProductCategories.normalize(
+      _originalSuggestion.category,
     );
 
     _barcodeController = TextEditingController(
@@ -75,7 +77,6 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
   void dispose() {
     _nameController.dispose();
     _brandController.dispose();
-    _categoryController.dispose();
     _barcodeController.dispose();
     _sizeController.dispose();
 
@@ -112,7 +113,7 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
     return _originalSuggestion.copyWith(
       name: _nameController.text.trim(),
       brand: _brandController.text.trim(),
-      category: _categoryController.text.trim(),
+      category: _selectedCategory,
       barcode: _barcodeController.text.trim(),
       size: _sizeController.text.trim(),
       taxable: _taxable,
@@ -238,16 +239,29 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _categoryController,
-                      enabled: !_isSaving,
-                      textCapitalization: TextCapitalization.words,
+                    DropdownButtonFormField<String>(
+                      initialValue: _selectedCategory,
+                      isExpanded: true,
                       decoration: const InputDecoration(
                         labelText: 'Category',
-                        hintText: 'Example: Frozen Desserts',
                         prefixIcon: Icon(Icons.category_outlined),
                         border: OutlineInputBorder(),
                       ),
+                      items: ProductCategories.all.map((category) {
+                        return DropdownMenuItem<String>(
+                          value: category,
+                          child: Text(category),
+                        );
+                      }).toList(),
+                      onChanged: _isSaving
+                          ? null
+                          : (value) {
+                              if (value == null) return;
+
+                              setState(() {
+                                _selectedCategory = value;
+                              });
+                            },
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
