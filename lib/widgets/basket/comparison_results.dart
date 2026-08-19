@@ -334,7 +334,7 @@ class _ComparisonResultsState extends State<ComparisonResults> {
 
       case BuyRecommendation.insufficientData:
         return '${item.productName} needs more price '
-            'history before SmartCart can recommend '
+            'history before Rocket Science Shopping can recommend '
             'buying or waiting.';
     }
   }
@@ -548,7 +548,7 @@ class _ComparisonResultsState extends State<ComparisonResults> {
               ),
               const SizedBox(height: 10),
               const Text(
-                'SmartCart Shopping Advisor',
+               'Rocket Science Shopping Advisor', 
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
@@ -615,7 +615,7 @@ class _ComparisonResultsState extends State<ComparisonResults> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'SmartCart Shopping Advisor',
+                          'Rocket Science Shopping Advisor',
                           style: TextStyle(
                             fontSize: 21,
                             fontWeight: FontWeight.bold,

@@ -120,7 +120,7 @@ class _ReceiptParserTestScreenState extends State<ReceiptParserTestScreen> {
           ),
           const SizedBox(height: 10),
           const Text(
-            'Paste raw OCR receipt text below and SmartCart will try to extract store, date, items, prices, and totals.',
+            'Paste raw OCR receipt text below and Rocket Science Shopping will try to extract store, date, items, prices, and totals.',
             style: TextStyle(fontSize: 18),
           ),
           const SizedBox(height: 20),

@@ -4,21 +4,21 @@ import '../models/app_settings.dart';
 import '../models/budget_intelligence.dart';
 import '../models/savings_summary.dart';
 import '../models/shopping_trip.dart';
-import '../models/smartcart_score.dart';
+import '../models/shopping_score.dart';
 import '../models/spending_analytics.dart';
 import '../service/budget_intelligence_service.dart';
 import '../service/dashboard_intelligence_service.dart';
 import '../service/savings_summary_service.dart';
 import '../service/settings_service.dart';
 import '../service/shopping_trip_service.dart';
-import '../service/smartcart_score_service.dart';
+import '../service/shopping_score_service.dart';
 import '../service/spending_analytics_service.dart';
 import '../widgets/dashboard/best_store_card.dart';
 import '../widgets/dashboard/budget_intelligence_card.dart';
 import '../widgets/dashboard/price_alerts_card.dart';
 import '../widgets/dashboard/recent_trip_card.dart';
 import '../widgets/dashboard/savings_summary_card.dart';
-import '../widgets/dashboard/smartcart_score_card.dart';
+import '../widgets/dashboard/shopping_score_card.dart';
 import '../widgets/dashboard/spending_analytics_card.dart';
 import '../widgets/dashboard/stats_grid.dart';
 import 'basket_comparison_screen.dart';
@@ -45,7 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   SavingsSummary savingsSummary = const SavingsSummary.empty();
 
-  SmartCartScore smartCartScore = const SmartCartScore.empty();
+  ShoppingScore shoppingScore = const ShoppingScore.empty();
 
   SpendingAnalytics spendingAnalytics = const SpendingAnalytics.empty();
 
@@ -79,7 +79,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final loadedSavingsSummary = results[2] as SavingsSummary;
       final loadedSettings = results[3] as AppSettings;
 
-      final loadedSmartCartScore = SmartCartScoreService.calculate(
+      final loadedShoppingScore = ShoppingScoreService.calculate(
         trips: loadedTrips,
         savingsSummary: loadedSavingsSummary,
         intelligence: loadedIntelligence,
@@ -100,7 +100,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         trips = loadedTrips;
         intelligence = loadedIntelligence;
         savingsSummary = loadedSavingsSummary;
-        smartCartScore = loadedSmartCartScore;
+        shoppingScore = loadedShoppingScore;
         spendingAnalytics = loadedSpendingAnalytics;
         budgetIntelligence = loadedBudgetIntelligence;
         isLoading = false;
@@ -170,7 +170,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
 
     if (tripCountThisMonth < 4) {
-      return 'SmartCart is learning from your recent shopping trips.';
+      return 'Rocket Science Shopping is learning from your recent shopping trips.';
     }
 
     return 'Your grocery intelligence is active and growing.';
@@ -276,7 +276,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(width: 14),
                 Expanded(
                   child: Text(
-                    'SmartCart Intelligence',
+                    'Rocket Science Shopping Intelligence',
                     style: TextStyle(
                       color: colorScheme.onPrimary,
                       fontSize: 23,
@@ -680,7 +680,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
           const SizedBox(height: 18),
 
-          SmartCartScoreCard(score: smartCartScore),
+          ShoppingScoreCard(score: shoppingScore),
 
           const SizedBox(height: 18),
 
@@ -690,7 +690,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
           buildSectionHeader(
             title: 'Savings Opportunities',
-            subtitle: 'See where SmartCart can help you save more.',
+            subtitle: 'See where Rocket Science Shopping can help you save more.',
           ),
 
           const SizedBox(height: 12),

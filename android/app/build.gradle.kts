@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "ca.bouldapps.smartcart"
+    namespace = "ca.bouldcanada.rocketscienceshopping"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -27,7 +27,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "ca.bouldapps.smartcart"
+        applicationId = "ca.bouldcanada.rocketscienceshopping"
 
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion

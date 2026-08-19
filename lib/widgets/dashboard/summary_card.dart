@@ -80,7 +80,7 @@ class SummaryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'SmartCart Canada',
+                      'Rocket Science Shopping',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 25,

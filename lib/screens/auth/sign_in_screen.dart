@@ -186,7 +186,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                         const SizedBox(height: 18),
                         const Text(
-                          'SmartCart Canada',
+                          'Rocket Science Shopping',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 29,
@@ -284,7 +284,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 horizontal: 12,
                               ),
                               child: Text(
-                                'New to SmartCart?',
+                                'New to Rocket Science Shopping?',
                                 style: TextStyle(color: Colors.grey.shade700),
                               ),
                             ),

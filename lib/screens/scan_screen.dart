@@ -22,7 +22,7 @@ class ScanScreen extends StatefulWidget {
 }
 
 class _ScanScreenState extends State<ScanScreen> {
-  static const Color smartCartRed = Color(0xFFD6001C);
+  static const Color primaryRed = Color(0xFFD6001C);
 
   final TextEditingController barcodeController = TextEditingController();
 
@@ -315,7 +315,7 @@ class _ScanScreenState extends State<ScanScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Live Shopping'),
-        backgroundColor: smartCartRed,
+        backgroundColor: primaryRed,
         foregroundColor: Colors.white,
       ),
       body: Column(
@@ -407,7 +407,7 @@ class _ScanScreenState extends State<ScanScreen> {
                           ? null
                           : () => lookupBarcode(barcodeController.text.trim()),
                       style: FilledButton.styleFrom(
-                        backgroundColor: smartCartRed,
+                        backgroundColor: primaryRed,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
@@ -486,7 +486,7 @@ class _ScanScreenState extends State<ScanScreen> {
       color: Colors.white,
       child: Row(
         children: [
-          const Icon(Icons.storefront, color: smartCartRed, size: 30),
+          const Icon(Icons.storefront, color: primaryRed, size: 30),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -519,7 +519,7 @@ class _ScanScreenState extends State<ScanScreen> {
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: smartCartRed,
+                  color: primaryRed,
                 ),
               ),
             ],

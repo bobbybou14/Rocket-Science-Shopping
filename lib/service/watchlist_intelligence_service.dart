@@ -55,7 +55,7 @@ class WatchlistInsight {
 
   String get recommendationMessage {
     return intelligence?.recommendationMessage ??
-        'SmartCart needs more price history before making a recommendation.';
+        'Rocket Science Shopping needs more price history before making a recommendation.';
   }
 
   String get confidenceLabel {
@@ -335,7 +335,7 @@ class WatchlistIntelligenceService {
         intelligence: intelligence,
         headline: 'More price data needed',
         message: summary.hasData
-            ? 'SmartCart has recorded a price for this '
+            ? 'Rocket Science Shopping has recorded a price for this '
                   'product, but more observations are needed '
                   'before it can provide reliable buying advice.'
             : 'Add a price or scan a receipt containing this '
@@ -438,7 +438,7 @@ class WatchlistIntelligenceService {
           intelligence: intelligence,
           headline: 'More price data needed',
           message:
-              'SmartCart needs more recorded prices before '
+              'Rocket Science Shopping needs more recorded prices before '
               'it can confidently recommend buying or waiting.',
           type: WatchlistInsightType.notEnoughData,
           intelligenceScore: 0,

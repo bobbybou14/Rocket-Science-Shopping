@@ -478,7 +478,7 @@ class _ReceiptIntelligenceScreenState extends State<ReceiptIntelligenceScreen> {
           ),
           const SizedBox(height: 10),
           const Text(
-            'Paste raw receipt text and SmartCart will parse it, '
+            'Paste raw receipt text and Rocket Science Shopping will parse it, '
             'match products, identify items requiring review, create '
             'a shopping trip, and update verified prices.',
             style: TextStyle(fontSize: 18),

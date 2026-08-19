@@ -15,7 +15,7 @@ class ImportCatalogueScreen extends StatefulWidget {
 
 class _ImportCatalogueScreenState extends State<ImportCatalogueScreen> {
   static const String _catalogueAssetPath =
-      'assets/catalogues/smartcart_canada_seed_500.csv';
+      'assets/catalogues/shopping_seed_500.csv';
 
   List<Product> _parsedProducts = const [];
   List<ProductImportError> _parseErrors = const [];
@@ -322,7 +322,7 @@ class _ImportCatalogueScreenState extends State<ImportCatalogueScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'SmartCart Canada Seed Catalogue',
+                    'Rocket Science Shopping Seed Catalogue',
                     style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 5),

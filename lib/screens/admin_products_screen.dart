@@ -13,7 +13,7 @@ class AdminProductsScreen extends StatefulWidget {
 }
 
 class _AdminProductsScreenState extends State<AdminProductsScreen> {
-  static const Color smartCartRed = Color(0xFFD6001C);
+  static const Color primaryRed = Color(0xFFD6001C);
 
   final barcodeController = TextEditingController();
   final nameController = TextEditingController();
@@ -128,7 +128,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Admin - Products'),
-        backgroundColor: smartCartRed,
+        backgroundColor: primaryRed,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -147,7 +147,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                 suffixIcon: IconButton(
                   tooltip: 'Scan barcode',
                   onPressed: isSaving ? null : scanBarcode,
-                  icon: const Icon(Icons.qr_code_scanner, color: smartCartRed),
+                  icon: const Icon(Icons.qr_code_scanner, color: primaryRed),
                 ),
                 border: const OutlineInputBorder(),
               ),
@@ -160,7 +160,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
               icon: const Icon(Icons.qr_code_scanner),
               label: const Text('Scan Product Barcode'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: smartCartRed,
+                foregroundColor: primaryRed,
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
@@ -206,7 +206,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
               contentPadding: EdgeInsets.zero,
               title: const Text('Ontario HST applies'),
               value: taxable,
-              activeThumbColor: smartCartRed,
+              activeThumbColor: primaryRed,
               onChanged: isSaving
                   ? null
                   : (value) {
@@ -225,7 +225,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                 icon: const Icon(Icons.save),
                 label: Text(isSaving ? 'Saving...' : 'Save Product'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: smartCartRed,
+                  backgroundColor: primaryRed,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),

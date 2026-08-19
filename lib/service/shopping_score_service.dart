@@ -1,10 +1,10 @@
 import '../models/savings_summary.dart';
 import '../models/shopping_trip.dart';
-import '../models/smartcart_score.dart';
+import '../models/shopping_score.dart';
 import 'dashboard_intelligence_service.dart';
 
-class SmartCartScoreService {
-  static SmartCartScore calculate({
+class ShoppingScoreService {
+  static ShoppingScore calculate({
     required List<ShoppingTrip> trips,
     required SavingsSummary savingsSummary,
     required DashboardIntelligence intelligence,
@@ -52,7 +52,7 @@ class SmartCartScoreService {
       opportunityPoints,
     ].fold<int>(0, (total, points) => total + points).clamp(0, 100);
 
-    return SmartCartScore(
+    return ShoppingScore(
       score: score,
       grade: _grade(score),
       title: _title(score),

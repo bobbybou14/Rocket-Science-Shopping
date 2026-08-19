@@ -1,6 +1,6 @@
-# 🇨🇦 SmartCart Canada Vision
+# 🇨🇦 Rocket Science Shopping Vision
 
-## Why SmartCart Exists
+## Why Rocket Science Shopping Exists
 
 Buying groceries has become one of the largest monthly expenses for Canadian families.
 
@@ -10,7 +10,7 @@ Despite all the technology available today, there is still no single place that 
 
 > "Where should I shop today?"
 
-SmartCart Canada exists to answer that question.
+Rocket Science Shopping exists to answer that question.
 
 ---
 
@@ -44,7 +44,7 @@ Instead of saying:
 
 Milk costs $5.29.
 
-SmartCart should answer:
+Rocket Science Shopping should answer:
 
 > Buying your entire grocery list at Costco will save you $14.82 today.
 
@@ -54,7 +54,7 @@ SmartCart should answer:
 
 Manual price entry is only the beginning.
 
-Eventually SmartCart should collect pricing automatically using:
+Eventually Rocket Science Shopping should collect pricing automatically using:
 
 - Receipt scanning
 - Digital receipts
@@ -68,7 +68,7 @@ Users should contribute naturally while simply doing their regular grocery shopp
 
 ## 4. Privacy Leadership
 
-SmartCart should become known as the grocery app that respects user privacy.
+Rocket Science Shopping should become known as the grocery app that respects user privacy.
 
 Personal financial information should never be required to help users save money.
 
@@ -79,7 +79,7 @@ Receipt processing should prioritize:
 - Minimal data collection
 - Transparency
 
-Privacy should be one of SmartCart's competitive advantages.
+Privacy should be one of Rocket Science Shopping's competitive advantages.
 
 ---
 
@@ -118,7 +118,7 @@ Our goal is not simply to build an app.
 
 Our goal is to help Canadian families reduce the cost of living.
 
-If SmartCart can save an average family even $20–30 per week, that could mean over $1,000 per year.
+If Rocket Science Shopping can save an average family even $20–30 per week, that could mean over $1,000 per year.
 
 Small savings create meaningful financial impact.
 
@@ -126,7 +126,7 @@ Small savings create meaningful financial impact.
 
 # Success
 
-SmartCart will be successful when grocery shoppers trust it before they trust advertisements.
+Rocket Science Shopping will be successful when grocery shoppers trust it before they trust advertisements.
 
 When families use it before every grocery trip.
 

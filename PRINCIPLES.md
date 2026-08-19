@@ -1,8 +1,8 @@
-# 🇨🇦 SmartCart Canada Principles
+# 🇨🇦 Rocket Science Shopping Principles
 
 ## Our Mission
 
-SmartCart Canada exists to help Canadians make smarter grocery shopping decisions while respecting their privacy.
+Rocket Science Shopping exists to help Canadians make smarter grocery shopping decisions while respecting their privacy.
 
 Our goal is simple:
 
@@ -16,7 +16,7 @@ Privacy is not a feature.
 
 It is a requirement.
 
-SmartCart is designed so that sensitive personal information is never required to provide value.
+Rocket Science Shopping is designed so that sensitive personal information is never required to provide value.
 
 Whenever possible:
 
@@ -24,7 +24,7 @@ Whenever possible:
 - Sensitive information is removed before any upload.
 - Only grocery-related information is stored.
 
-SmartCart will never intentionally collect or retain:
+Rocket Science Shopping will never intentionally collect or retain:
 
 - Credit card numbers
 - Debit card numbers
@@ -42,7 +42,7 @@ If we don't need it, we don't store it.
 
 # 2. Community Powered
 
-The SmartCart database improves because Canadians help Canadians.
+The Rocket Science Shopping database improves because Canadians help Canadians.
 
 Every receipt submitted...
 
@@ -52,7 +52,7 @@ Every product added...
 
 ...helps every other shopper make better decisions.
 
-Community contributions are the foundation of SmartCart.
+Community contributions are the foundation of Rocket Science Shopping.
 
 ---
 
@@ -74,7 +74,7 @@ Nothing should ever be a "black box."
 
 It is better to display no price than an incorrect price.
 
-SmartCart values trustworthy information over having the largest database.
+Rocket Science Shopping values trustworthy information over having the largest database.
 
 Prices become more reliable as they are confirmed by additional shoppers.
 
@@ -84,7 +84,7 @@ Prices become more reliable as they are confirmed by additional shoppers.
 
 Saving $0.20 is not always worth driving across town.
 
-SmartCart will recommend shopping trips based on:
+Rocket Science Shopping will recommend shopping trips based on:
 
 - Lowest total cost
 - Number of stores required
@@ -98,7 +98,7 @@ The goal is smarter shopping—not simply cheaper shopping.
 
 # 6. Canadian First
 
-SmartCart is built specifically for Canadian shoppers.
+Rocket Science Shopping is built specifically for Canadian shoppers.
 
 Features will prioritize:
 
@@ -131,7 +131,7 @@ Trust is earned through honesty.
 
 # 8. Minimal Data Collection
 
-SmartCart collects the minimum information necessary to provide value.
+Rocket Science Shopping collects the minimum information necessary to provide value.
 
 We believe less data collected means better privacy.
 
@@ -143,7 +143,7 @@ Every feature should answer at least one question:
 
 Does this make grocery shopping easier?
 
-If not, it probably doesn't belong in SmartCart.
+If not, it probably doesn't belong in Rocket Science Shopping.
 
 ---
 
@@ -151,12 +151,12 @@ If not, it probably doesn't belong in SmartCart.
 
 We believe every Canadian should know the best place to buy groceries before they leave home.
 
-By combining community pricing, receipt intelligence, barcode scanning, and smart recommendations, SmartCart aims to become Canada's most trusted grocery shopping companion.
+By combining community pricing, receipt intelligence, barcode scanning, and smart recommendations, Rocket Science Shopping aims to become Canada's most trusted grocery shopping companion.
 
 ---
 
 # One Promise
 
-SmartCart will always put shoppers before advertisers.
+Rocket Science Shopping will always put shoppers before advertisers.
 
 Always.

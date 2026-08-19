@@ -366,7 +366,7 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
         padding: EdgeInsets.all(16),
         child: Text(
           'Privacy Notice\n\n'
-          'SmartCart only stores grocery-related information.\n\n'
+          'Rocket Science Shopping only stores grocery-related information.\n\n'
           'At this stage, the receipt image is not uploaded or stored. '
           'Only a receipt processing record is saved.\n\n'
           'Credit card numbers, loyalty numbers, authorization codes, and other '

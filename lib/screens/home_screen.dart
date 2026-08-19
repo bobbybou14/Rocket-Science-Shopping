@@ -420,7 +420,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SmartCart Canada'),
+        title: const Text('Rocket Science Shopping'),
         actions: [
           IconButton(
             onPressed: loadDashboardInsights,

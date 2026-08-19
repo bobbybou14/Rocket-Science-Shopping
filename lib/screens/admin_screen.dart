@@ -17,7 +17,7 @@ class AdminScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('SmartCart Admin')),
+      appBar: AppBar(title: const Text('Rocket Science Shopping Admin')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -79,7 +79,7 @@ class AdminScreen extends StatelessWidget {
             context,
             Icons.psychology,
             'Product Matcher Test',
-            'Match receipt items to your SmartCart products',
+            'Match receipt items to your Rocket Science Shopping products',
             const ProductMatcherTestScreen(),
           ),
 

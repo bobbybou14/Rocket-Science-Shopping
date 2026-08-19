@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>SmartCart Canada</string>
+	<string>Rocket Science Shopping</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>smartcart_canada</string>
+    <string>rocket_science_shopping</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -28,10 +28,10 @@
 	<true/>
 
 	<key>NSCameraUsageDescription</key>
-	<string>SmartCart uses your camera to scan grocery barcodes and capture receipt images while you shop.</string>
+<string>Rocket Science Shopping uses your camera to scan grocery barcodes and capture receipt images while you shop.</string>
 
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>SmartCart uses your photo library so you can select and upload grocery receipt images.</string>
+    <string>Rocket Science Shopping uses your photo library so you can select and upload grocery receipt images.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

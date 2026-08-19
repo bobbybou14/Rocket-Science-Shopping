@@ -11,7 +11,7 @@ Future<void> main(List<String> arguments) async {
 
   final csvPath = arguments.isNotEmpty
       ? arguments.first
-      : 'assets/catalogues/smartcart_canada_seed_500.csv';
+      : 'assets/catalogues/shopping_seed_500.csv';
 
   final csvFile = File(csvPath);
 

@@ -16,8 +16,7 @@ class AdminPricesScreen extends StatefulWidget {
 }
 
 class _AdminPricesScreenState extends State<AdminPricesScreen> {
-  static const Color smartCartRed = Color(0xFFD6001C);
-
+  static const Color primaryRed = Color(0xFFD6001C);
   List<Product> products = [];
   List<Store> stores = [];
 
@@ -210,7 +209,7 @@ class _AdminPricesScreenState extends State<AdminPricesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Admin - Prices'),
-        backgroundColor: smartCartRed,
+        backgroundColor: primaryRed,
         foregroundColor: Colors.white,
       ),
       body: loading
@@ -309,15 +308,15 @@ class _AdminPricesScreenState extends State<AdminPricesScreen> {
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: smartCartRed.withValues(alpha: 0.06),
+                        color: primaryRed.withValues(alpha: 0.06),
                         border: Border.all(
-                          color: smartCartRed.withValues(alpha: 0.35),
+                          color: primaryRed.withValues(alpha: 0.35),
                         ),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.check_circle, color: smartCartRed),
+                          const Icon(Icons.check_circle, color: primaryRed),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Column(
@@ -440,7 +439,7 @@ class _AdminPricesScreenState extends State<AdminPricesScreen> {
                       icon: const Icon(Icons.save),
                       label: Text(saving ? 'Saving...' : 'Save Price'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: smartCartRed,
+                        backgroundColor: primaryRed,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),

@@ -207,7 +207,7 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
                     const SizedBox(height: 6),
                     Text(
                       'Review the suggested information before saving it to '
-                      'the SmartCart catalogue.',
+                      'the Rocket Science Shopping catalogue.',
                       style: theme.textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 18),
@@ -408,7 +408,7 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  'Add this product and teach SmartCart how to recognize it.',
+                  'Add this product and teach Rocket Science Shopping how to recognize it.',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onPrimaryContainer,
                   ),
@@ -492,7 +492,7 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
               const Icon(Icons.auto_awesome_outlined, size: 20),
               const SizedBox(width: 8),
               Text(
-                'Why SmartCart suggested this',
+                'Why Rocket Science Shopping suggested this',
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

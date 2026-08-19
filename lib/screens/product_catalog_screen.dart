@@ -16,7 +16,7 @@ class ProductCatalogScreen extends StatefulWidget {
 }
 
 class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
-  static const Color smartCartRed = Color(0xFFD6001C);
+  static const Color primaryRed = Color(0xFFD6001C);
 
   final TextEditingController searchController = TextEditingController();
 
@@ -177,7 +177,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product Catalog'),
-        backgroundColor: smartCartRed,
+        backgroundColor: primaryRed,
         foregroundColor: Colors.white,
         actions: [
           Padding(
@@ -335,7 +335,7 @@ class _CatalogHeader extends StatelessWidget {
         children: [
           const Icon(
             Icons.inventory_2_outlined,
-            color: _ProductCatalogScreenState.smartCartRed,
+            color: _ProductCatalogScreenState.primaryRed,
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -443,7 +443,7 @@ class _ProductCard extends StatelessWidget {
                         '$cartQuantity '
                         '${cartQuantity == 1 ? "item" : "items"} in cart',
                         style: const TextStyle(
-                          color: _ProductCatalogScreenState.smartCartRed,
+                          color: _ProductCatalogScreenState.primaryRed,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -457,7 +457,7 @@ class _ProductCard extends StatelessWidget {
                 onPressed: onEdit,
                 icon: const Icon(
                   Icons.edit_outlined,
-                  color: _ProductCatalogScreenState.smartCartRed,
+                  color: _ProductCatalogScreenState.primaryRed,
                 ),
               ),
               const Icon(Icons.chevron_right),
@@ -486,7 +486,7 @@ class _ErrorState extends StatelessWidget {
             const Icon(
               Icons.error_outline,
               size: 64,
-              color: _ProductCatalogScreenState.smartCartRed,
+              color: _ProductCatalogScreenState.primaryRed,
             ),
             const SizedBox(height: 16),
             Text(message, textAlign: TextAlign.center),

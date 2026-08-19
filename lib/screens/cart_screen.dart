@@ -16,7 +16,7 @@ import 'basket_comparison_screen.dart';
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
-  static const Color smartCartRed = Color(0xFFD6001C);
+  static const Color primaryRed = Color(0xFFD6001C);
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -49,7 +49,7 @@ class _CartScreenState extends State<CartScreen> {
                 Navigator.pop(dialogContext, true);
               },
               style: FilledButton.styleFrom(
-                backgroundColor: CartScreen.smartCartRed,
+                backgroundColor: CartScreen.primaryRed,
               ),
               child: const Text('Clear Cart'),
             ),
@@ -226,7 +226,7 @@ class _CartScreenState extends State<CartScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shopping Cart'),
-        backgroundColor: CartScreen.smartCartRed,
+        backgroundColor: CartScreen.primaryRed,
         foregroundColor: Colors.white,
         actions: [
           if (cart.isNotEmpty)

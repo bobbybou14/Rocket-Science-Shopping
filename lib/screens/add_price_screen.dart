@@ -16,7 +16,7 @@ class AddPriceScreen extends StatefulWidget {
 }
 
 class _AddPriceScreenState extends State<AddPriceScreen> {
-  static const Color smartCartRed = Color(0xFFD6001C);
+  static const Color primaryRed = Color(0xFFD6001C);
 
   List<Store> stores = [];
   Store? selectedStore;
@@ -90,7 +90,7 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Price"),
-        backgroundColor: smartCartRed,
+        backgroundColor: primaryRed,
         foregroundColor: Colors.white,
       ),
       body: loading
@@ -151,7 +151,7 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
                       icon: const Icon(Icons.save),
                       label: Text(saving ? 'Saving...' : 'Save Price'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: smartCartRed,
+                        backgroundColor: primaryRed,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),

@@ -10,7 +10,7 @@ class BarcodeCaptureScreen extends StatefulWidget {
 }
 
 class _BarcodeCaptureScreenState extends State<BarcodeCaptureScreen> {
-  static const Color smartCartRed = Color(0xFFD6001C);
+  static const Color primaryRed = Color(0xFFD6001C);
 
   final MobileScannerController scannerController = MobileScannerController();
 
@@ -47,7 +47,7 @@ class _BarcodeCaptureScreenState extends State<BarcodeCaptureScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Scan Product Barcode'),
-        backgroundColor: smartCartRed,
+        backgroundColor: primaryRed,
         foregroundColor: Colors.white,
       ),
       body: Stack(
@@ -79,7 +79,7 @@ class _BarcodeCaptureScreenState extends State<BarcodeCaptureScreen> {
               ),
               child: const Text(
                 'Place the product barcode inside the frame.\n'
-                'SmartCart will copy it into the Add Product form.',
+                'Rocket Science Shopping will copy it into the Add Product form.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,

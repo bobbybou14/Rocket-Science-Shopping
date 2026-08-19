@@ -83,7 +83,7 @@ class SavingsCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'As SmartCart learns more prices, your estimated grocery savings will appear here.',
+                        'As Rocket Science Shopping learns more prices, your estimated grocery savings will appear here.',
                         style: TextStyle(fontSize: 15),
                       ),
                     ],

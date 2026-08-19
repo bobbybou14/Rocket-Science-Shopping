@@ -212,7 +212,7 @@ class _BasketComparisonScreenState extends State<BasketComparisonScreen> {
             ),
             SizedBox(height: 8),
             Text(
-              'Add products to SmartCart before building a basket comparison.',
+              'Add products to Rocket Science Shopping before building a basket comparison.',
               textAlign: TextAlign.center,
             ),
           ],

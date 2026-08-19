@@ -1,0 +1,154 @@
+[35mPRINCIPLES.md[m[36m:[m[32m19[m[36m:[m[1;31mSmartCart[m is designed so that sensitive personal information is never required to provide value.
+[35mPRINCIPLES.md[m[36m:[m[32m27[m[36m:[m[1;31mSmartCart[m will never intentionally collect or retain:
+[35mPRINCIPLES.md[m[36m:[m[32m45[m[36m:[mThe [1;31mSmartCart[m database improves because Canadians help Canadians.
+[35mPRINCIPLES.md[m[36m:[m[32m55[m[36m:[mCommunity contributions are the foundation of [1;31mSmartCart[m.
+[35mPRINCIPLES.md[m[36m:[m[32m77[m[36m:[m[1;31mSmartCart[m values trustworthy information over having the largest database.
+[35mPRINCIPLES.md[m[36m:[m[32m87[m[36m:[m[1;31mSmartCart[m will recommend shopping trips based on:
+[35mPRINCIPLES.md[m[36m:[m[32m101[m[36m:[m[1;31mSmartCart[m is built specifically for Canadian shoppers.
+[35mPRINCIPLES.md[m[36m:[m[32m134[m[36m:[m[1;31mSmartCart[m collects the minimum information necessary to provide value.
+[35mPRINCIPLES.md[m[36m:[m[32m146[m[36m:[mIf not, it probably doesn't belong in [1;31mSmartCart[m.
+[35mPRINCIPLES.md[m[36m:[m[32m154[m[36m:[mBy combining community pricing, receipt intelligence, barcode scanning, and smart recommendations, [1;31mSmartCart[m aims to become Canada's most trusted grocery shopping companion.
+[35mPRINCIPLES.md[m[36m:[m[32m160[m[36m:[m[1;31mSmartCart[m will always put shoppers before advertisers.
+[35mREADME.md[m[36m:[m[32m192[m[36m:[mgit clone https://github.com/YOUR_USERNAME/[1;31msmartcart[m_canada.git
+[35mREADME.md[m[36m:[m[32m211[m[36m:[m[1;31mSmartCart[m Canada aims to become the most comprehensive grocery price comparison platform in Canada by combining community pricing, barcode scanning, receipt OCR, and intelligent shopping recommendations into one easy-to-use mobile application.
+[35mVISION.md[m[36m:[m[32m3[m[36m:[m## Why [1;31mSmartCart[m Exists
+[35mVISION.md[m[36m:[m[32m47[m[36m:[m[1;31mSmartCart[m should answer:
+[35mVISION.md[m[36m:[m[32m57[m[36m:[mEventually [1;31mSmartCart[m should collect pricing automatically using:
+[35mVISION.md[m[36m:[m[32m71[m[36m:[m[1;31mSmartCart[m should become known as the grocery app that respects user privacy.
+[35mVISION.md[m[36m:[m[32m82[m[36m:[mPrivacy should be one of [1;31mSmartCart[m's competitive advantages.
+[35mVISION.md[m[36m:[m[32m121[m[36m:[mIf [1;31mSmartCart[m can save an average family even $20–30 per week, that could mean over $1,000 per year.
+[35mVISION.md[m[36m:[m[32m129[m[36m:[m[1;31mSmartCart[m will be successful when grocery shoppers trust it before they trust advertisements.
+[35mandroid/app/build.gradle.kts[m[36m:[m[32m20[m[36m:[m    namespace = "ca.bouldapps.[1;31msmartcart[m"
+[35mandroid/app/build.gradle.kts[m[36m:[m[32m30[m[36m:[m        applicationId = "ca.bouldapps.[1;31msmartcart[m"
+[35mandroid/app/proguard-rules.pro[m[36m:[m[32m2[m[36m:[m# [1;31mSmartCart[m uses the default Latin recognizer.
+[35mandroid/app/src/main/kotlin/ca/bouldapps/smartcart/MainActivity.kt[m[36m:[m[32m1[m[36m:[mpackage ca.bouldapps.[1;31msmartcart[m
+[35mios/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m385[m[36m:[m				PRODUCT_BUNDLE_IDENTIFIER = ca.bouldapps.[1;31msmartcart[m;
+[35mios/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m401[m[36m:[m				PRODUCT_BUNDLE_IDENTIFIER = ca.bouldapps.[1;31msmartcart[m.RunnerTests;
+[35mios/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m418[m[36m:[m				PRODUCT_BUNDLE_IDENTIFIER = ca.bouldapps.[1;31msmartcart[m.RunnerTests;
+[35mios/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m433[m[36m:[m				PRODUCT_BUNDLE_IDENTIFIER = ca.bouldapps.[1;31msmartcart[m.RunnerTests;
+[35mios/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m564[m[36m:[m				PRODUCT_BUNDLE_IDENTIFIER = ca.bouldapps.[1;31msmartcart[m;
+[35mios/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m586[m[36m:[m				PRODUCT_BUNDLE_IDENTIFIER = ca.bouldapps.[1;31msmartcart[m;
+[35mios/Runner/Info.plist[m[36m:[m[32m18[m[36m:[m	<string>[1;31msmartcart[m_canada</string>
+[35mlib/app.dart[m[36m:[m[32m16[m[36m:[mclass [1;31mSmartCart[mCanadaApp extends StatelessWidget {
+[35mlib/app.dart[m[36m:[m[32m17[m[36m:[m  const [1;31mSmartCart[mCanadaApp({super.key});
+[35mlib/app.dart[m[36m:[m[32m27[m[36m:[m        home: const AuthGate(signedInApp: [1;31mSmartCart[mMainShell()),
+[35mlib/app.dart[m[36m:[m[32m33[m[36m:[mclass [1;31mSmartCart[mMainShell extends StatefulWidget {
+[35mlib/app.dart[m[36m:[m[32m34[m[36m:[m  const [1;31mSmartCart[mMainShell({super.key});
+[35mlib/app.dart[m[36m:[m[32m37[m[36m:[m  State<[1;31mSmartCart[mMainShell> createState() {
+[35mlib/app.dart[m[36m:[m[32m38[m[36m:[m    return _[1;31mSmartCart[mMainShellState();
+[35mlib/app.dart[m[36m:[m[32m42[m[36m:[mclass _[1;31mSmartCart[mMainShellState extends State<[1;31mSmartCart[mMainShell> {
+[35mlib/core/widgets/product_card.dart[m[36m:[m[32m11[m[36m:[m  static const Color [1;31msmartCart[mRed = Color(0xFFD6001C);
+[35mlib/core/widgets/product_card.dart[m[36m:[m[32m40[m[36m:[m                            color: [1;31msmartCart[mRed,
+[35mlib/core/widgets/product_card.dart[m[36m:[m[32m51[m[36m:[m                          color: [1;31msmartCart[mRed,
+[35mlib/main.dart[m[36m:[m[32m18[m[36m:[m    runApp(const [1;31mSmartCart[mCanadaApp());
+[35mlib/models/smartcart_score.dart[m[36m:[m[32m1[m[36m:[mclass [1;31mSmartCart[mScore {
+[35mlib/models/smartcart_score.dart[m[36m:[m[32m20[m[36m:[m  const [1;31mSmartCart[mScore({
+[35mlib/models/smartcart_score.dart[m[36m:[m[32m38[m[36m:[m  const [1;31mSmartCart[mScore.empty()
+[35mlib/screens/add_price_screen.dart[m[36m:[m[32m19[m[36m:[m  static const Color [1;31msmartCart[mRed = Color(0xFFD6001C);
+[35mlib/screens/add_price_screen.dart[m[36m:[m[32m93[m[36m:[m        backgroundColor: [1;31msmartCart[mRed,
+[35mlib/screens/add_price_screen.dart[m[36m:[m[32m154[m[36m:[m                        backgroundColor: [1;31msmartCart[mRed,
+[35mlib/screens/admin/import_catalogue_screen.dart[m[36m:[m[32m18[m[36m:[m      'assets/catalogues/[1;31msmartcart[m_canada_seed_500.csv';
+[35mlib/screens/admin_prices_screen.dart[m[36m:[m[32m19[m[36m:[m  static const Color [1;31msmartCart[mRed = Color(0xFFD6001C);
+[35mlib/screens/admin_prices_screen.dart[m[36m:[m[32m213[m[36m:[m        backgroundColor: [1;31msmartCart[mRed,
+[35mlib/screens/admin_prices_screen.dart[m[36m:[m[32m312[m[36m:[m                        color: [1;31msmartCart[mRed.withValues(alpha: 0.06),
+[35mlib/screens/admin_prices_screen.dart[m[36m:[m[32m314[m[36m:[m                          color: [1;31msmartCart[mRed.withValues(alpha: 0.35),
+[35mlib/screens/admin_prices_screen.dart[m[36m:[m[32m320[m[36m:[m                          const Icon(Icons.check_circle, color: [1;31msmartCart[mRed),
+[35mlib/screens/admin_prices_screen.dart[m[36m:[m[32m443[m[36m:[m                        backgroundColor: [1;31msmartCart[mRed,
+[35mlib/screens/admin_products_screen.dart[m[36m:[m[32m16[m[36m:[m  static const Color [1;31msmartCart[mRed = Color(0xFFD6001C);
+[35mlib/screens/admin_products_screen.dart[m[36m:[m[32m131[m[36m:[m        backgroundColor: [1;31msmartCart[mRed,
+[35mlib/screens/admin_products_screen.dart[m[36m:[m[32m150[m[36m:[m                  icon: const Icon(Icons.qr_code_scanner, color: [1;31msmartCart[mRed),
+[35mlib/screens/admin_products_screen.dart[m[36m:[m[32m163[m[36m:[m                foregroundColor: [1;31msmartCart[mRed,
+[35mlib/screens/admin_products_screen.dart[m[36m:[m[32m209[m[36m:[m              activeThumbColor: [1;31msmartCart[mRed,
+[35mlib/screens/admin_products_screen.dart[m[36m:[m[32m228[m[36m:[m                  backgroundColor: [1;31msmartCart[mRed,
+[35mlib/screens/auth/sign_in_screen.dart[m[36m:[m[32m287[m[36m:[m                                'New to [1;31mSmartCart[m?',
+[35mlib/screens/barcode_capture_screen.dart[m[36m:[m[32m13[m[36m:[m  static const Color [1;31msmartCart[mRed = Color(0xFFD6001C);
+[35mlib/screens/barcode_capture_screen.dart[m[36m:[m[32m50[m[36m:[m        backgroundColor: [1;31msmartCart[mRed,
+[35mlib/screens/cart_screen.dart[m[36m:[m[32m19[m[36m:[m  static const Color [1;31msmartCart[mRed = Color(0xFFD6001C);
+[35mlib/screens/cart_screen.dart[m[36m:[m[32m52[m[36m:[m                backgroundColor: CartScreen.[1;31msmartCart[mRed,
+[35mlib/screens/cart_screen.dart[m[36m:[m[32m229[m[36m:[m        backgroundColor: CartScreen.[1;31msmartCart[mRed,
+[35mlib/screens/dashboard_screen.dart[m[36m:[m[32m7[m[36m:[mimport '../models/[1;31msmartcart[m_score.dart';
+[35mlib/screens/dashboard_screen.dart[m[36m:[m[32m14[m[36m:[mimport '../service/[1;31msmartcart[m_score_service.dart';
+[35mlib/screens/dashboard_screen.dart[m[36m:[m[32m21[m[36m:[mimport '../widgets/dashboard/[1;31msmartcart[m_score_card.dart';
+[35mlib/screens/dashboard_screen.dart[m[36m:[m[32m48[m[36m:[m  [1;31mSmartCart[mScore [1;31msmartCart[mScore = const [1;31mSmartCart[mScore.empty();
+[35mlib/screens/dashboard_screen.dart[m[36m:[m[32m82[m[36m:[m      final loaded[1;31mSmartCart[mScore = [1;31mSmartCart[mScoreService.calculate(
+[35mlib/screens/dashboard_screen.dart[m[36m:[m[32m103[m[36m:[m        [1;31msmartCart[mScore = loaded[1;31mSmartCart[mScore;
+[35mlib/screens/dashboard_screen.dart[m[36m:[m[32m683[m[36m:[m          [1;31mSmartCart[mScoreCard(score: [1;31msmartCart[mScore),
+[35mlib/screens/edit_product_screen.dart[m[36m:[m[32m19[m[36m:[m  static const Color [1;31msmartCart[mRed = Color(0xFFD6001C);
+[35mlib/screens/edit_product_screen.dart[m[36m:[m[32m235[m[36m:[m        backgroundColor: [1;31msmartCart[mRed,
+[35mlib/screens/edit_product_screen.dart[m[36m:[m[32m430[m[36m:[m                  backgroundColor: [1;31msmartCart[mRed,
+[35mlib/screens/product_catalog_screen.dart[m[36m:[m[32m19[m[36m:[m  static const Color [1;31msmartCart[mRed = Color(0xFFD6001C);
+[35mlib/screens/product_catalog_screen.dart[m[36m:[m[32m180[m[36m:[m        backgroundColor: [1;31msmartCart[mRed,
+[35mlib/screens/product_catalog_screen.dart[m[36m:[m[32m338[m[36m:[m            color: _ProductCatalogScreenState.[1;31msmartCart[mRed,
+[35mlib/screens/product_catalog_screen.dart[m[36m:[m[32m446[m[36m:[m                          color: _ProductCatalogScreenState.[1;31msmartCart[mRed,
+[35mlib/screens/product_catalog_screen.dart[m[36m:[m[32m460[m[36m:[m                  color: _ProductCatalogScreenState.[1;31msmartCart[mRed,
+[35mlib/screens/product_catalog_screen.dart[m[36m:[m[32m489[m[36m:[m              color: _ProductCatalogScreenState.[1;31msmartCart[mRed,
+[35mlib/screens/scan_screen.dart[m[36m:[m[32m25[m[36m:[m  static const Color [1;31msmartCart[mRed = Color(0xFFD6001C);
+[35mlib/screens/scan_screen.dart[m[36m:[m[32m318[m[36m:[m        backgroundColor: [1;31msmartCart[mRed,
+[35mlib/screens/scan_screen.dart[m[36m:[m[32m410[m[36m:[m                        backgroundColor: [1;31msmartCart[mRed,
+[35mlib/screens/scan_screen.dart[m[36m:[m[32m489[m[36m:[m          const Icon(Icons.storefront, color: [1;31msmartCart[mRed, size: 30),
+[35mlib/screens/scan_screen.dart[m[36m:[m[32m522[m[36m:[m                  color: [1;31msmartCart[mRed,
+[35mlib/service/smartcart_score_service.dart[m[36m:[m[32m3[m[36m:[mimport '../models/[1;31msmartcart[m_score.dart';
+[35mlib/service/smartcart_score_service.dart[m[36m:[m[32m6[m[36m:[mclass [1;31mSmartCart[mScoreService {
+[35mlib/service/smartcart_score_service.dart[m[36m:[m[32m7[m[36m:[m  static [1;31mSmartCart[mScore calculate({
+[35mlib/service/smartcart_score_service.dart[m[36m:[m[32m55[m[36m:[m    return [1;31mSmartCart[mScore(
+[35mlib/service/smartcart_score_service.dart[m[36m:[m[32m206[m[36m:[m      return '[1;31mSmartCart[m has strong shopping history and price intelligence to work with.';
+[35mlib/service/watchlist_intelligence_service.dart[m[36m:[m[32m58[m[36m:[m        '[1;31mSmartCart[m needs more price history before making a recommendation.';
+[35mlib/service/watchlist_intelligence_service.dart[m[36m:[m[32m338[m[36m:[m            ? '[1;31mSmartCart[m has recorded a price for this '
+[35mlib/service/watchlist_intelligence_service.dart[m[36m:[m[32m441[m[36m:[m              '[1;31mSmartCart[m needs more recorded prices before '
+[35mlib/widgets/basket/comparison_results.dart[m[36m:[m[32m337[m[36m:[m            'history before [1;31mSmartCart[m can recommend '
+[35mlib/widgets/basket/comparison_results.dart[m[36m:[m[32m551[m[36m:[m                '[1;31mSmartCart[m Shopping Advisor',
+[35mlib/widgets/basket/comparison_results.dart[m[36m:[m[32m618[m[36m:[m                          '[1;31mSmartCart[m Shopping Advisor',
+[35mlib/widgets/cart/cart_item_card.dart[m[36m:[m[32m8[m[36m:[m  static const Color [1;31msmartCart[mRed = Color(0xFFD6001C);
+[35mlib/widgets/cart/cart_item_card.dart[m[36m:[m[32m210[m[36m:[m                        color: [1;31msmartCart[mRed,
+[35mlib/widgets/cart/cart_item_card.dart[m[36m:[m[32m224[m[36m:[m                color: [1;31msmartCart[mRed,
+[35mlib/widgets/create_product_dialog.dart[m[36m:[m[32m210[m[36m:[m                      'the [1;31mSmartCart[m catalogue.',
+[35mlib/widgets/create_product_dialog.dart[m[36m:[m[32m411[m[36m:[m                  'Add this product and teach [1;31mSmartCart[m how to recognize it.',
+[35mlib/widgets/create_product_dialog.dart[m[36m:[m[32m495[m[36m:[m                'Why [1;31mSmartCart[m suggested this',
+[35mlib/widgets/dashboard/hero_card.dart[m[36m:[m[32m75[m[36m:[m                      '[1;31mSmartCart[m',
+[35mlib/widgets/dashboard/price_alerts_card.dart[m[36m:[m[32m184[m[36m:[m            '[1;31mSmartCart[m needs at least two recorded prices for a product before it can detect a meaningful change.',
+[35mlib/widgets/dashboard/savings_card.dart[m[36m:[m[32m86[m[36m:[m                        'As [1;31mSmartCart[m learns more prices, your estimated grocery savings will appear here.',
+[35mlib/widgets/dashboard/smartcart_score_card.dart[m[36m:[m[32m3[m[36m:[mimport '../../models/[1;31msmartcart[m_score.dart';
+[35mlib/widgets/dashboard/smartcart_score_card.dart[m[36m:[m[32m5[m[36m:[mclass [1;31mSmartCart[mScoreCard extends StatelessWidget {
+[35mlib/widgets/dashboard/smartcart_score_card.dart[m[36m:[m[32m6[m[36m:[m  final [1;31mSmartCart[mScore score;
+[35mlib/widgets/dashboard/smartcart_score_card.dart[m[36m:[m[32m8[m[36m:[m  const [1;31mSmartCart[mScoreCard({super.key, required this.score});
+[35mlib/widgets/dashboard/smartcart_score_card.dart[m[36m:[m[32m79[m[36m:[m  final [1;31mSmartCart[mScore score;
+[35mlib/widgets/dashboard/smartcart_score_card.dart[m[36m:[m[32m149[m[36m:[m  final [1;31mSmartCart[mScore score;
+[35mlib/widgets/dashboard/smartcart_score_card.dart[m[36m:[m[32m164[m[36m:[m              '[1;31mSMARTCART[m SCORE',
+[35mlib/widgets/dashboard/smartcart_score_card.dart[m[36m:[m[32m197[m[36m:[m  final [1;31mSmartCart[mScore score;
+[35mlib/widgets/dashboard/smartcart_score_card.dart[m[36m:[m[32m268[m[36m:[m  final [1;31mSmartCart[mScore score;
+[35mlib/widgets/favorites/watchlist_empty_state.dart[m[36m:[m[32m28[m[36m:[m            'Browse products and tap the star to build your watchlist. Once you start tracking products, [1;31mSmartCart[m will show price trends and shopping insights here.',
+[35mlinux/CMakeLists.txt[m[36m:[m[32m7[m[36m:[mset(BINARY_NAME "[1;31msmartcart[m_canada")
+[35mlinux/CMakeLists.txt[m[36m:[m[32m10[m[36m:[mset(APPLICATION_ID "com.example.[1;31msmartcart[m_canada")
+[35mlinux/runner/my_application.cc[m[36m:[m[32m48[m[36m:[m    gtk_header_bar_set_title(header_bar, "[1;31msmartcart[m_canada");
+[35mlinux/runner/my_application.cc[m[36m:[m[32m52[m[36m:[m    gtk_window_set_title(window, "[1;31msmartcart[m_canada");
+[35mmacos/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m68[m[36m:[m		33CC10ED2044A3C60003C045 /* [1;31msmartcart[m_canada.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "[1;31msmartcart[m_canada.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+[35mmacos/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m137[m[36m:[m				33CC10ED2044A3C60003C045 /* [1;31msmartcart[m_canada.app */,
+[35mmacos/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m227[m[36m:[m			productReference = 33CC10ED2044A3C60003C045 /* [1;31msmartcart[m_canada.app */;
+[35mmacos/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m398[m[36m:[m				PRODUCT_BUNDLE_IDENTIFIER = com.example.[1;31msmartcart[mCanada.RunnerTests;
+[35mmacos/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m401[m[36m:[m				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/[1;31msmartcart[m_canada.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/[1;31msmartcart[m_canada";
+[35mmacos/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m412[m[36m:[m				PRODUCT_BUNDLE_IDENTIFIER = com.example.[1;31msmartcart[mCanada.RunnerTests;
+[35mmacos/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m415[m[36m:[m				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/[1;31msmartcart[m_canada.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/[1;31msmartcart[m_canada";
+[35mmacos/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m426[m[36m:[m				PRODUCT_BUNDLE_IDENTIFIER = com.example.[1;31msmartcart[mCanada.RunnerTests;
+[35mmacos/Runner.xcodeproj/project.pbxproj[m[36m:[m[32m429[m[36m:[m				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/[1;31msmartcart[m_canada.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/[1;31msmartcart[m_canada";
+[35mmacos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme[m[36m:[m[32m18[m[36m:[m                     BuildableName = "[1;31msmartcart[m_canada.app"
+[35mmacos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme[m[36m:[m[32m36[m[36m:[m               BuildableName = "[1;31msmartcart[m_canada.app"
+[35mmacos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme[m[36m:[m[32m52[m[36m:[m            BuildableName = "[1;31msmartcart[m_canada.app"
+[35mmacos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme[m[36m:[m[32m87[m[36m:[m            BuildableName = "[1;31msmartcart[m_canada.app"
+[35mmacos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme[m[36m:[m[32m104[m[36m:[m            BuildableName = "[1;31msmartcart[m_canada.app"
+[35mmacos/Runner/Configs/AppInfo.xcconfig[m[36m:[m[32m8[m[36m:[mPRODUCT_NAME = [1;31msmartcart[m_canada
+[35mmacos/Runner/Configs/AppInfo.xcconfig[m[36m:[m[32m11[m[36m:[mPRODUCT_BUNDLE_IDENTIFIER = com.example.[1;31msmartcart[mCanada
+[35mtool/archive/preview_product_catalogue_import.txt[m[36m:[m[32m14[m[36m:[m      : 'assets/catalogues/[1;31msmartcart[m_canada_seed_500.csv';
+[35mtool/build_canadian_seed_catalogue.dart[m[36m:[m[32m14[m[36m:[m      : 'assets/catalogues/[1;31msmartcart[m_canada_seed_500.csv';
+[35mtool/build_canadian_seed_catalogue.dart[m[36m:[m[32m221[m[36m:[m                  '[1;31mSmartCart[mCanada/1.0 catalogue-bootstrap '
+[35mtool/build_canadian_seed_catalogue.dart[m[36m:[m[32m222[m[36m:[m                  '(contact: [1;31msmartcart[m-canada)',
+[35mweb/index.html[m[36m:[m[32m26[m[36m:[m  <meta name="apple-mobile-web-app-title" content="[1;31msmartcart[m_canada">
+[35mweb/index.html[m[36m:[m[32m32[m[36m:[m  <title>[1;31msmartcart[m_canada</title>
+[35mweb/manifest.json[m[36m:[m[32m2[m[36m:[m    "name": "[1;31msmartcart[m_canada",
+[35mweb/manifest.json[m[36m:[m[32m3[m[36m:[m    "short_name": "[1;31msmartcart[m_canada",
+[35mwindows/CMakeLists.txt[m[36m:[m[32m3[m[36m:[mproject([1;31msmartcart[m_canada LANGUAGES CXX)
+[35mwindows/CMakeLists.txt[m[36m:[m[32m7[m[36m:[mset(BINARY_NAME "[1;31msmartcart[m_canada")
+[35mwindows/runner/Runner.rc[m[36m:[m[32m93[m[36m:[m            VALUE "FileDescription", "[1;31msmartcart[m_canada" "\0"
+[35mwindows/runner/Runner.rc[m[36m:[m[32m95[m[36m:[m            VALUE "InternalName", "[1;31msmartcart[m_canada" "\0"
+[35mwindows/runner/Runner.rc[m[36m:[m[32m97[m[36m:[m            VALUE "OriginalFilename", "[1;31msmartcart[m_canada.exe" "\0"
+[35mwindows/runner/Runner.rc[m[36m:[m[32m98[m[36m:[m            VALUE "ProductName", "[1;31msmartcart[m_canada" "\0"
+[35mwindows/runner/main.cpp[m[36m:[m[32m30[m[36m:[m  if (!window.Create(L"[1;31msmartcart[m_canada", origin, size)) {

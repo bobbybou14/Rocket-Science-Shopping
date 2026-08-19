@@ -11,7 +11,7 @@ const Duration delayBetweenPages = Duration(seconds: 3);
 Future<void> main(List<String> arguments) async {
   final outputPath = arguments.isNotEmpty
       ? arguments.first
-      : 'assets/catalogues/smartcart_canada_seed_500.csv';
+      : 'assets/catalogues/shopping_seed_500.csv';
 
   final outputFile = File(outputPath);
   await outputFile.parent.create(recursive: true);
@@ -218,8 +218,8 @@ Future<List<dynamic>?> _downloadProductPage(int page) async {
             uri,
             headers: const {
               'User-Agent':
-                  'SmartCartCanada/1.0 catalogue-bootstrap '
-                  '(contact: smartcart-canada)',
+                  'RocketScienceShopping/1.0 catalogue-bootstrap '
+                  '(contact: rocket-science-shopping)',
               'Accept': 'application/json',
             },
           )

@@ -182,7 +182,7 @@ class _EmptyBestStoreCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Upload a few grocery receipts and SmartCart Canada will discover where you shop most often and provide personalized shopping insights.',
+              'Upload a few grocery receipts and Rocket Science Shopping will discover where you shop most often and provide personalized shopping insights.',
               textAlign: TextAlign.center,
             ),
           ],

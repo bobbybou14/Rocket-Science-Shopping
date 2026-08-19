@@ -61,7 +61,7 @@ class _OcrTestScreenState extends State<OcrTestScreen> {
           ),
           const SizedBox(height: 10),
           const Text(
-            'Choose a receipt image and SmartCart will attempt to read the text.',
+            'Choose a receipt image and Rocket Science Shopping will attempt to read the text.',
             style: TextStyle(fontSize: 18),
           ),
           const SizedBox(height: 24),

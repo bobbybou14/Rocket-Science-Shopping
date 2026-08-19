@@ -243,7 +243,7 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                                 ),
                                 SizedBox(height: 3),
                                 Text(
-                                  'Create it now and teach SmartCart how to '
+                                  'Create it now and teach Rocket Science Shopping how to '
                                   'recognize this receipt wording.',
                                 ),
                               ],
@@ -384,7 +384,7 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'SmartCart can use this correction to recognize the same '
+                  'Rocket Science Shopping can use this correction to recognize the same '
                   'receipt wording automatically in the future.',
                 ),
                 const SizedBox(height: 16),
@@ -460,7 +460,7 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Create a new product below to add it to the SmartCart '
+              'Create a new product below to add it to the Rocket Science Shopping '
               'catalogue and match it to this receipt item.',
               textAlign: TextAlign.center,
             ),

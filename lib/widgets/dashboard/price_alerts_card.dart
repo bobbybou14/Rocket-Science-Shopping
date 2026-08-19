@@ -181,7 +181,7 @@ class _EmptyAlertsState extends StatelessWidget {
           ),
           SizedBox(height: 8),
           Text(
-            'SmartCart needs at least two recorded prices for a product before it can detect a meaningful change.',
+            'Rocket Science Shopping needs at least two recorded prices for a product before it can detect a meaningful change.',
             textAlign: TextAlign.center,
           ),
         ],

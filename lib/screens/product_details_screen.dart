@@ -300,7 +300,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         ),
         subtitle: Text(
           isFavorite
-              ? 'SmartCart will keep this product on your watchlist.'
+              ? 'Rocket Science Shopping will keep this product on your watchlist.'
               : 'Save this product to track it more easily.',
         ),
         trailing: isUpdatingFavorite

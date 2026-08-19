@@ -165,7 +165,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return AlertDialog(
           title: const Text('Sign Out?'),
           content: const Text(
-            'You will need to sign in again to access your SmartCart information.',
+            'You will need to sign in again to access your Rocket Science Shopping information.',
           ),
           actions: [
             TextButton(
@@ -385,7 +385,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: Text(
               displayName != null && displayName.isNotEmpty
                   ? displayName
-                  : 'SmartCart Account',
+                  : 'Rocket Science Shopping Account',
             ),
             subtitle: Text(user?.email ?? 'Signed-in user'),
           ),
@@ -393,7 +393,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Sign Out'),
-            subtitle: const Text('Sign out of SmartCart on this device'),
+            subtitle: const Text('Sign out of Rocket Science Shopping on this device'),
             trailing: const Icon(Icons.chevron_right),
             enabled: !isSaving,
             onTap: isSaving ? null : signOut,
@@ -409,7 +409,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           const ListTile(
             leading: Icon(Icons.info_outline),
-            title: Text('SmartCart Canada'),
+            title: Text('Rocket Science Shopping'),
             subtitle: Text('Version 1.0.0'),
           ),
           const Divider(height: 1),
@@ -460,7 +460,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         buildErrorBanner(),
         if (errorMessage != null) const SizedBox(height: 14),
         Text(
-          'Personalize how SmartCart tracks and analyzes your grocery spending.',
+          'Personalize how Rocket Science Shopping tracks and analyzes your grocery spending.',
           style: TextStyle(
             color: Colors.grey.shade700,
             fontSize: 15,

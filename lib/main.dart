@@ -15,7 +15,7 @@ Future<void> main() async {
       publishableKey: dotenv.env['SUPABASE_ANON_KEY']!,
     );
 
-    runApp(const SmartCartCanadaApp());
+    runApp(const RocketScienceShoppingApp());
   } catch (e, stackTrace) {
     debugPrint('Startup failed: $e');
     debugPrintStack(stackTrace: stackTrace);
@@ -28,7 +28,7 @@ Future<void> main() async {
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Text(
-                'Unable to start SmartCart Canada.\n\n'
+                'Unable to start Rocket Science Shopping.\n\n'
                 'Please verify your configuration and try again.',
                 textAlign: TextAlign.center,
               ),

@@ -1,5 +1,5 @@
 # Google ML Kit optional text-recognition language modules.
-# SmartCart uses the default Latin recognizer.
+# Rocket Science Shopping uses the default Latin recognizer.
 
 -dontwarn com.google.mlkit.vision.text.chinese.ChineseTextRecognizerOptions$Builder
 -dontwarn com.google.mlkit.vision.text.chinese.ChineseTextRecognizerOptions

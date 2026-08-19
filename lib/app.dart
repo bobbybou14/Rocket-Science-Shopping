@@ -13,8 +13,8 @@ import 'screens/store_selection_screen.dart';
 import 'service/shopping_session_service.dart';
 import 'widgets/auth_gate.dart';
 
-class SmartCartCanadaApp extends StatelessWidget {
-  const SmartCartCanadaApp({super.key});
+class RocketScienceShoppingApp extends StatelessWidget {
+  const RocketScienceShoppingApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,24 +22,25 @@ class SmartCartCanadaApp extends StatelessWidget {
       create: (_) => CartProvider(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'SmartCart Canada',
+        title: 'Rocket Science Shopping',
         theme: AppTheme.lightTheme,
-        home: const AuthGate(signedInApp: SmartCartMainShell()),
+        home: const AuthGate(signedInApp: RocketScienceShoppingMainShell()),
       ),
     );
   }
 }
 
-class SmartCartMainShell extends StatefulWidget {
-  const SmartCartMainShell({super.key});
+class RocketScienceShoppingMainShell extends StatefulWidget {
+  const RocketScienceShoppingMainShell({super.key});
 
   @override
-  State<SmartCartMainShell> createState() {
-    return _SmartCartMainShellState();
+  State<RocketScienceShoppingMainShell> createState() {
+    return _RocketScienceShoppingMainShellState();
   }
 }
 
-class _SmartCartMainShellState extends State<SmartCartMainShell> {
+class _RocketScienceShoppingMainShellState
+    extends State<RocketScienceShoppingMainShell> {
   int selectedIndex = 0;
 
   void handleStoreSelected() {

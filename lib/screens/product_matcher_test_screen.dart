@@ -123,7 +123,7 @@ class _ProductMatcherTestScreenState extends State<ProductMatcherTestScreen> {
           ),
           const SizedBox(height: 10),
           const Text(
-            'Paste receipt text, parse it, and match each item against your SmartCart product database.',
+            'Paste receipt text, parse it, and match each item against your Rocket Science Shopping product database.',
             style: TextStyle(fontSize: 18),
           ),
           const SizedBox(height: 20),

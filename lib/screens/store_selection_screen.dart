@@ -123,7 +123,7 @@ class _StoreSelectionScreenState extends State<StoreSelectionScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Select your current store so SmartCart can use the right prices and build an accurate running total.',
+                    'Select your current store so Rocket Science Shopping can use the right prices and build an accurate running total.',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
                   ),

@@ -5,8 +5,7 @@ import '../../models/cart_item.dart';
 import '../../providers/cart_provider.dart';
 
 class CartItemCard extends StatelessWidget {
-  static const Color smartCartRed = Color(0xFFD6001C);
-
+  static const Color primaryRed = Color(0xFFD6001C);
   final CartItem item;
   final VoidCallback onIncrease;
   final VoidCallback onDecrease;
@@ -207,7 +206,7 @@ class CartItemCard extends StatelessWidget {
                       IconButton(
                         tooltip: 'Remove item',
                         onPressed: onRemove,
-                        color: smartCartRed,
+                        color: primaryRed,
                         icon: const Icon(Icons.delete_outline),
                       ),
                     ],
@@ -221,7 +220,7 @@ class CartItemCard extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: smartCartRed,
+                color: primaryRed,
               ),
             ),
           ],

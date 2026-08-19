@@ -1,4 +1,4 @@
-# 🇨🇦 SmartCart Canada
+# 🇨🇦 Rocket Science Shopping
 
 > **Helping Canadians save money on groceries through community-powered price intelligence.**
 
@@ -8,7 +8,7 @@
 
 **Current Version:** v0.6.0
 
-SmartCart Canada is an actively developed Flutter application designed to help Canadian shoppers compare grocery prices, track spending, and make smarter purchasing decisions.
+Rocket Science Shopping is an actively developed Flutter application designed to help Canadian shoppers compare grocery prices, track spending, and make smarter purchasing decisions.
 
 The project is currently focused on building a robust cloud-based grocery price database and an intuitive shopping experience.
 
@@ -208,7 +208,7 @@ flutter run
 
 # Vision
 
-SmartCart Canada aims to become the most comprehensive grocery price comparison platform in Canada by combining community pricing, barcode scanning, receipt OCR, and intelligent shopping recommendations into one easy-to-use mobile application.
+Rocket Science Shopping aims to become the most comprehensive grocery price comparison platform in Canada by combining community pricing, barcode scanning, receipt OCR, and intelligent shopping recommendations into one easy-to-use mobile application.
 
 ---
 

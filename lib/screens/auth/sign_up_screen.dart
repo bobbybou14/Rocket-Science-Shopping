@@ -214,7 +214,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         const Text(
-                          'Join SmartCart Canada',
+                          'Join Rocket Science Shopping',
                           style: TextStyle(
                             fontSize: 27,
                             fontWeight: FontWeight.bold,

@@ -8,7 +8,7 @@ class ProductCard extends StatelessWidget {
 
   const ProductCard({super.key, required this.product, this.onTap});
 
-  static const Color smartCartRed = Color(0xFFD6001C);
+  static const Color primaryRed = Color(0xFFD6001C);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class ProductCard extends StatelessWidget {
                           color: Colors.grey.shade200,
                           child: const Icon(
                             Icons.shopping_bag,
-                            color: smartCartRed,
+                            color: primaryRed,
                             size: 34,
                           ),
                         ),
@@ -48,7 +48,7 @@ class ProductCard extends StatelessWidget {
                         color: Colors.grey.shade200,
                         child: const Icon(
                           Icons.shopping_bag,
-                          color: smartCartRed,
+                          color: primaryRed,
                           size: 34,
                         ),
                       ),

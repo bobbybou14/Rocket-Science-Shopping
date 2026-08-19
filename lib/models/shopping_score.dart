@@ -1,4 +1,4 @@
-class SmartCartScore {
+class ShoppingScore {
   final int score;
   final String grade;
   final String title;
@@ -17,7 +17,7 @@ class SmartCartScore {
   final int priceDropCount;
   final double savingsPotential;
 
-  const SmartCartScore({
+  const ShoppingScore({
     required this.score,
     required this.grade,
     required this.title,
@@ -35,12 +35,12 @@ class SmartCartScore {
     required this.savingsPotential,
   });
 
-  const SmartCartScore.empty()
+  const ShoppingScore.empty()
     : score = 0,
       grade = '—',
       title = 'Getting Started',
       summary =
-          'Upload receipts and track products to build your SmartCart Score.',
+          'Upload receipts and track products to build your Shopping Score.',
       historyPoints = 0,
       activityPoints = 0,
       priceCoveragePoints = 0,

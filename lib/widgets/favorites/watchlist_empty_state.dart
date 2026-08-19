@@ -25,8 +25,7 @@ class WatchlistEmptyState extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Text(
-            'Browse products and tap the star to build your watchlist. Once you start tracking products, SmartCart will show price trends and shopping insights here.',
-            textAlign: TextAlign.center,
+            'Browse products and tap the star to build your watchlist. Once you start tracking products, Rocket Science Shopping will show price trends and shopping insights here.',
             style: TextStyle(fontSize: 16, height: 1.4),
           ),
         ],

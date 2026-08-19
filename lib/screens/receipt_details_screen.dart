@@ -83,14 +83,20 @@ class ReceiptDetailsScreen extends StatelessWidget {
 
     final messenger = ScaffoldMessenger.of(context);
 
-    try {
+        try {
       final shoppingTripId = _extractShoppingTripId();
 
+      // Delete the receipt and its receipt-item snapshot first.
+      // The database relationship may automatically remove the linked
+      // shopping trip when the receipt is deleted.
+      await ReceiptService.deleteReceipt(receipt.id);
+
+      // Explicitly remove the shopping trip if it still exists.
+      // Supabase delete operations safely affect zero rows if it was
+      // already removed by a database cascade.
       if (shoppingTripId != null) {
         await ShoppingTripService.deleteShoppingTrip(shoppingTripId);
       }
-
-      await ReceiptService.deleteReceipt(receipt.id);
 
       if (!context.mounted) {
         return;
@@ -158,7 +164,7 @@ class ReceiptDetailsScreen extends StatelessWidget {
         padding: EdgeInsets.all(16),
         child: Text(
           'Privacy Protection\n\n'
-          'SmartCart is currently saving only cleaned receipt metadata. '
+          'Rocket Science Shopping is currently saving only cleaned receipt metadata. '
           'The original receipt image is not stored at this stage.',
           style: TextStyle(fontSize: 16),
         ),

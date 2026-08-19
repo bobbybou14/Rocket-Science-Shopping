@@ -16,7 +16,7 @@ class EditProductScreen extends StatefulWidget {
 }
 
 class _EditProductScreenState extends State<EditProductScreen> {
-  static const Color smartCartRed = Color(0xFFD6001C);
+  static const Color primaryRed = Color(0xFFD6001C);
 
   final _formKey = GlobalKey<FormState>();
 
@@ -232,7 +232,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Product'),
-        backgroundColor: smartCartRed,
+        backgroundColor: primaryRed,
         foregroundColor: Colors.white,
       ),
       body: SafeArea(
@@ -427,7 +427,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               FilledButton.icon(
                 onPressed: isSaving ? null : saveProduct,
                 style: FilledButton.styleFrom(
-                  backgroundColor: smartCartRed,
+                  backgroundColor: primaryRed,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),

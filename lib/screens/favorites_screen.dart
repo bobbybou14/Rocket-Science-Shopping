@@ -63,7 +63,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       setState(() {
         isLoading = false;
         errorMessage =
-            'SmartCart could not load your watchlist right now. '
+            'Rocket Science Shopping could not load your watchlist right now. '
             'Check your connection and try again.';
       });
     }
@@ -90,7 +90,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           title: const Text('Remove from favourites?'),
           content: Text(
             '${displayProductName(insight)} will be removed '
-            'from your SmartCart watchlist.',
+            'from your Rocket Science Shopping watchlist.',
           ),
           actions: [
             TextButton(
@@ -139,7 +139,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'SmartCart could not remove this favourite. '
+            'Rocket Science Shopping could not remove this favourite. '
             'Please try again.',
           ),
           behavior: SnackBarBehavior.floating,
@@ -327,7 +327,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   String get watchlistGuidance {
     if (result.analyzedProducts == 0) {
-      return 'SmartCart is collecting price history for your '
+      return 'Rocket Science Shopping is collecting price history for your '
           'favourites. More observations will unlock personalized '
           'buying recommendations.';
     }
@@ -350,7 +350,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       final label = result.waitRecommendations == 1 ? 'item is' : 'items are';
 
       return '${result.waitRecommendations} $label priced higher than '
-          'SmartCart would normally recommend paying.';
+          'Rocket Science Shopping would normally recommend paying.';
     }
 
     return 'Most watched products are currently close to their '
@@ -415,7 +415,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'SmartCart Intelligence',
+                      'Rocket Science Shopping Intelligence',
                       style: TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.bold,
@@ -696,7 +696,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         Expanded(
           child: Text(
             '$count $productLabel more recorded prices before '
-            'SmartCart can provide confident buying advice.',
+            'Rocket Science Shopping can provide confident buying advice.',
             style: const TextStyle(
               color: Colors.black54,
               fontSize: 11,

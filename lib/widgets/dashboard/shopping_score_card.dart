@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../models/smartcart_score.dart';
+import '../../models/shopping_score.dart';
 
-class SmartCartScoreCard extends StatelessWidget {
-  final SmartCartScore score;
+class ShoppingScoreCard extends StatelessWidget {
+  final ShoppingScore score;
 
-  const SmartCartScoreCard({super.key, required this.score});
+  const ShoppingScoreCard({super.key, required this.score});
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class SmartCartScoreCard extends StatelessWidget {
 }
 
 class _ScoreIndicator extends StatelessWidget {
-  final SmartCartScore score;
+  final ShoppingScore score;
   final Color color;
 
   const _ScoreIndicator({required this.score, required this.color});
@@ -146,7 +146,7 @@ class _ScoreIndicator extends StatelessWidget {
 }
 
 class _ScoreDetails extends StatelessWidget {
-  final SmartCartScore score;
+  final ShoppingScore score;
   final Color color;
 
   const _ScoreDetails({required this.score, required this.color});
@@ -194,7 +194,7 @@ class _ScoreDetails extends StatelessWidget {
 }
 
 class _MetricsGrid extends StatelessWidget {
-  final SmartCartScore score;
+  final ShoppingScore score;
 
   const _MetricsGrid({required this.score});
 
@@ -265,7 +265,7 @@ class _MetricChip extends StatelessWidget {
 }
 
 class _ScoreBreakdown extends StatelessWidget {
-  final SmartCartScore score;
+  final ShoppingScore score;
   final Color color;
 
   const _ScoreBreakdown({required this.score, required this.color});

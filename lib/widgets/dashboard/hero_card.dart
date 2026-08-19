@@ -72,7 +72,7 @@ class HeroCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'SmartCart',
+                      'Rocket Science Shopping',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 28,
