@@ -203,7 +203,7 @@ class ShoppingScoreService {
     }
 
     if (score >= 80) {
-      return 'SmartCart has strong shopping history and price intelligence to work with.';
+      return 'Rocket Science Shopping has strong shopping history and price intelligence to work with.';
     }
 
     if (score >= 55) {

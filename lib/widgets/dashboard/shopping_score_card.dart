@@ -161,7 +161,7 @@ class _ScoreDetails extends StatelessWidget {
             Icon(Icons.auto_awesome),
             SizedBox(width: 8),
             Text(
-              'SMARTCART SCORE',
+              'SHOPPING SCORE',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,

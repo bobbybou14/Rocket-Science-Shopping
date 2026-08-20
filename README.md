@@ -189,7 +189,7 @@ Supabase
 Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/smartcart_canada.git
+git clone https://github.com/bobbybou14/Rocket-Science-Shopping.git
 ```
 
 Install dependencies
