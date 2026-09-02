@@ -17,7 +17,6 @@ class FavoriteProduct {
 
   factory FavoriteProduct.fromMap(Map<String, dynamic> map) {
     Product? product;
-
     final productData = map['products'];
 
     if (productData is Map<String, dynamic>) {
@@ -40,8 +39,20 @@ class FavoriteProduct {
 class FavoritesService {
   static final SupabaseClient _supabase = Supabase.instance.client;
 
+  static String _requireUserId() {
+    final userId = _supabase.auth.currentUser?.id;
+
+    if (userId == null || userId.isEmpty) {
+      throw StateError('A signed-in user is required to access favorites.');
+    }
+
+    return userId;
+  }
+
   static Future<List<FavoriteProduct>> getFavorites() async {
     try {
+      final userId = _requireUserId();
+
       final response = await _supabase
           .from('favorites')
           .select('''
@@ -58,6 +69,7 @@ class FavoritesService {
               taxable
             )
           ''')
+          .eq('user_id', userId)
           .order('created_at', ascending: false);
 
       return List<Map<String, dynamic>>.from(
@@ -76,9 +88,12 @@ class FavoritesService {
     }
 
     try {
+      final userId = _requireUserId();
+
       final response = await _supabase
           .from('favorites')
           .select('id')
+          .eq('user_id', userId)
           .eq('barcode', cleanedBarcode)
           .limit(1);
 
@@ -89,6 +104,7 @@ class FavoritesService {
   }
 
   static Future<void> addFavorite(Product product) async {
+    final userId = _requireUserId();
     final barcode = product.barcode.trim();
 
     if (barcode.isEmpty) {
@@ -101,7 +117,10 @@ class FavoritesService {
       return;
     }
 
-    await _supabase.from('favorites').insert({'barcode': barcode});
+    await _supabase.from('favorites').insert({
+      'user_id': userId,
+      'barcode': barcode,
+    });
   }
 
   static Future<void> removeFavorite(String barcode) async {
@@ -112,7 +131,13 @@ class FavoritesService {
     }
 
     try {
-      await _supabase.from('favorites').delete().eq('barcode', cleanedBarcode);
+      final userId = _requireUserId();
+
+      await _supabase
+          .from('favorites')
+          .delete()
+          .eq('user_id', userId)
+          .eq('barcode', cleanedBarcode);
     } catch (_) {
       return;
     }
@@ -127,6 +152,7 @@ class FavoritesService {
     }
 
     await addFavorite(product);
+
     return true;
   }
 }

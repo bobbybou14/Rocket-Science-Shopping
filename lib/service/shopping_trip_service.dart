@@ -7,12 +7,26 @@ import '../models/shopping_trip.dart';
 class ShoppingTripService {
   static final SupabaseClient _supabase = Supabase.instance.client;
 
+  static String _requireUserId() {
+    final userId = _supabase.auth.currentUser?.id;
+
+    if (userId == null || userId.isEmpty) {
+      throw StateError(
+        'A signed-in user is required to access shopping trips.',
+      );
+    }
+
+    return userId;
+  }
+
   static Future<ShoppingTrip> saveShoppingTrip(
     ShoppingTrip shoppingTrip,
   ) async {
+    final userId = _requireUserId();
+
     final tripResponse = await _supabase
         .from('shopping_trips')
-        .insert(shoppingTrip.toMap())
+        .insert({...shoppingTrip.toMap(), 'user_id': userId})
         .select()
         .single();
 
@@ -30,9 +44,12 @@ class ShoppingTripService {
   }
 
   static Future<List<ShoppingTrip>> getShoppingTrips() async {
+    final userId = _requireUserId();
+
     final response = await _supabase
         .from('shopping_trips')
         .select()
+        .eq('user_id', userId)
         .order('purchase_date', ascending: false);
 
     final loadedTrips = response
@@ -62,10 +79,13 @@ class ShoppingTripService {
   }
 
   static Future<ShoppingTrip> getShoppingTrip(String shoppingTripId) async {
+    final userId = _requireUserId();
+
     final tripResponse = await _supabase
         .from('shopping_trips')
         .select()
         .eq('id', shoppingTripId)
+        .eq('user_id', userId)
         .single();
 
     final itemResponse = await _supabase
@@ -111,19 +131,19 @@ class ShoppingTripService {
   static Future<List<ShoppingTrip>> findPossibleDuplicates(
     ShoppingTrip shoppingTrip,
   ) async {
+    final userId = _requireUserId();
     final purchaseDate = shoppingTrip.purchaseDate;
-
     final startOfDay = DateTime(
       purchaseDate.year,
       purchaseDate.month,
       purchaseDate.day,
     );
-
     final startOfNextDay = startOfDay.add(const Duration(days: 1));
 
     var query = _supabase
         .from('shopping_trips')
         .select()
+        .eq('user_id', userId)
         .eq('store_id', shoppingTrip.storeId)
         .gte('purchase_date', startOfDay.toIso8601String())
         .lt('purchase_date', startOfNextDay.toIso8601String())
@@ -172,14 +192,15 @@ class ShoppingTripService {
   }
 
   static Future<void> deleteShoppingTrip(String shoppingTripId) async {
+    final userId = _requireUserId();
     final cleanedShoppingTripId = shoppingTripId.trim();
 
     if (cleanedShoppingTripId.isEmpty) {
       throw ArgumentError('A shopping trip ID is required for deletion.');
     }
 
-    // Delete child rows first so deletion does not depend on the database
-    // foreign key being configured with ON DELETE CASCADE.
+    // RLS permits deleting child rows only when the signed-in user owns
+    // the corresponding shopping trip.
     await _supabase
         .from('shopping_trip_items')
         .delete()
@@ -188,7 +209,8 @@ class ShoppingTripService {
     await _supabase
         .from('shopping_trips')
         .delete()
-        .eq('id', cleanedShoppingTripId);
+        .eq('id', cleanedShoppingTripId)
+        .eq('user_id', userId);
   }
 
   static bool _moneyMatches(double first, double second) {
