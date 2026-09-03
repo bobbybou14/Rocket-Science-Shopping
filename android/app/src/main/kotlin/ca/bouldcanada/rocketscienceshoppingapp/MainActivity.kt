@@ -1,4 +1,4 @@
-package ca.bouldcanada.rocketscienceshopping
+package ca.bouldcanada.rocketscienceshoppingapp
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "ca.bouldcanada.rocketscienceshopping"
+    namespace = "ca.bouldcanada.rocketscienceshoppingapp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -27,7 +27,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "ca.bouldcanada.rocketscienceshopping"
+        applicationId = "ca.bouldcanada.rocketscienceshoppingapp"
 
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
