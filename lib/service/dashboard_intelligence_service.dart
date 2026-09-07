@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'favorites_service.dart';
+
 class DashboardPriceAlert {
   final String barcode;
   final String productName;
@@ -73,12 +75,19 @@ class DashboardIntelligenceService {
   }
 
   static Future<DashboardBestStore> _loadBestStore() async {
+    final userId = _supabase.auth.currentUser?.id;
+
+    if (userId == null || userId.isEmpty) {
+      return const DashboardBestStore.empty();
+    }
+
     final now = DateTime.now();
     final monthStart = DateTime(now.year, now.month, 1);
 
     final response = await _supabase
         .from('shopping_trips')
         .select('store_name, total, purchase_date')
+        .eq('user_id', userId)
         .gte('purchase_date', monthStart.toIso8601String());
 
     final rows = List<Map<String, dynamic>>.from(response);
@@ -148,6 +157,17 @@ class DashboardIntelligenceService {
   }
 
   static Future<List<DashboardPriceAlert>> _loadPriceAlerts() async {
+    final favorites = await FavoritesService.getFavorites();
+    final favoriteBarcodes = favorites
+        .map((favorite) => favorite.barcode.trim())
+        .where((barcode) => barcode.isNotEmpty)
+        .toSet()
+        .toList();
+
+    if (favoriteBarcodes.isEmpty) {
+      return [];
+    }
+
     final response = await _supabase
         .from('prices')
         .select('''
@@ -160,7 +180,8 @@ class DashboardIntelligenceService {
             brand,
             size
           )
-        ''')
+                ''')
+        .inFilter('barcode', favoriteBarcodes)
         .order('created_at', ascending: false)
         .limit(250);
 
