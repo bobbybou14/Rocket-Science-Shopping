@@ -392,11 +392,25 @@ class _ScanScreenState extends State<ScanScreen> {
                   TextField(
                     controller: barcodeController,
                     keyboardType: TextInputType.number,
-                    onSubmitted: lookupBarcode,
-                    decoration: const InputDecoration(
+                    textInputAction: TextInputAction.done,
+                    onTapOutside: (_) {
+                      FocusScope.of(context).unfocus();
+                    },
+                    onSubmitted: (barcode) {
+                      FocusScope.of(context).unfocus();
+                      lookupBarcode(barcode);
+                    },
+                    decoration: InputDecoration(
                       labelText: 'Enter barcode manually',
-                      prefixIcon: Icon(Icons.numbers),
-                      border: OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.numbers),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          FocusScope.of(context).unfocus();
+                        },
+                        icon: const Icon(Icons.keyboard_hide),
+                        tooltip: 'Hide keyboard',
+                      ),
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -405,7 +419,10 @@ class _ScanScreenState extends State<ScanScreen> {
                     child: FilledButton.icon(
                       onPressed: isLoading
                           ? null
-                          : () => lookupBarcode(barcodeController.text.trim()),
+                          : () {
+                              FocusScope.of(context).unfocus();
+                              lookupBarcode(barcodeController.text.trim());
+                            },
                       style: FilledButton.styleFrom(
                         backgroundColor: primaryRed,
                         foregroundColor: Colors.white,
