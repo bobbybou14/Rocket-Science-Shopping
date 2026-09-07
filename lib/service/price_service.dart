@@ -34,6 +34,27 @@ class PriceService {
     }
   }
 
+  /// Returns only the newest known price for each exact store.
+  ///
+  /// Historical records remain available through [getPricesForProduct].
+  static Future<List<Price>> getCurrentPricesForProduct(String barcode) async {
+    final allPrices = await getPricesForProduct(barcode);
+    final latestPriceByStore = <String, Price>{};
+
+    for (final price in allPrices) {
+      final storeKey = _storeKey(price);
+      final existingPrice = latestPriceByStore[storeKey];
+
+      if (existingPrice == null || _isNewerPrice(price, existingPrice)) {
+        latestPriceByStore[storeKey] = price;
+      }
+    }
+
+    final currentPrices = latestPriceByStore.values.toList();
+    currentPrices.sort(_comparePrices);
+    return currentPrices;
+  }
+
   /// Saves a new price.
   ///
   /// If normalized pricing was not already supplied, this method
@@ -186,6 +207,35 @@ class PriceService {
 
       return price;
     }
+  }
+
+  static String _storeKey(Price price) {
+    final storeId = price.storeId?.trim();
+
+    if (storeId != null && storeId.isNotEmpty) {
+      return 'id:$storeId';
+    }
+
+    final store = price.store.trim().toLowerCase();
+    final city = price.city.trim().toLowerCase();
+    final province = price.province.trim().toLowerCase();
+
+    return 'legacy:$store|$city|$province';
+  }
+
+  static bool _isNewerPrice(Price candidate, Price existing) {
+    final candidateDate = candidate.createdAt;
+    final existingDate = existing.createdAt;
+
+    if (candidateDate == null) {
+      return false;
+    }
+
+    if (existingDate == null) {
+      return true;
+    }
+
+    return candidateDate.isAfter(existingDate);
   }
 
   static int _comparePrices(Price first, Price second) {

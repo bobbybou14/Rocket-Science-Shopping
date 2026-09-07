@@ -63,7 +63,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     });
 
     try {
-      final results = await PriceService.getPricesForProduct(
+      final results = await PriceService.getCurrentPricesForProduct(
         widget.product.barcode,
       );
 
