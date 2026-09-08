@@ -20,7 +20,6 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
 
   List<Store> stores = [];
   Store? selectedStore;
-
   final priceController = TextEditingController();
 
   bool loading = true;
@@ -41,14 +40,33 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
   Future<void> loadStores() async {
     final results = await StoreService.getStores();
 
+    if (!mounted) return;
+
     setState(() {
       stores = results;
       loading = false;
     });
   }
 
+  Future<void> selectStore() async {
+    FocusScope.of(context).unfocus();
+
+    final result = await Navigator.push<Store>(
+      context,
+      MaterialPageRoute(builder: (_) => _StoreSearchScreen(stores: stores)),
+    );
+
+    if (result == null || !mounted) return;
+
+    setState(() {
+      selectedStore = result;
+    });
+  }
+
   Future<void> save() async {
-    if (selectedStore == null) {
+    final store = selectedStore;
+
+    if (store == null) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Please select a store.')));
@@ -57,12 +75,14 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
 
     final amount = double.tryParse(priceController.text);
 
-    if (amount == null) {
+    if (amount == null || amount <= 0) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Enter a valid price.')));
       return;
     }
+
+    FocusScope.of(context).unfocus();
 
     setState(() {
       saving = true;
@@ -72,10 +92,10 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
       Price(
         id: '',
         barcode: widget.product.barcode,
-        storeId: selectedStore!.id,
-        store: selectedStore!.name,
-        province: selectedStore!.province,
-        city: selectedStore!.city,
+        storeId: store.id,
+        store: store.name,
+        province: store.province,
+        city: store.city,
         price: amount,
       ),
     );
@@ -89,77 +109,202 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Price"),
+        title: const Text('Add Price'),
         backgroundColor: primaryRed,
         foregroundColor: Colors.white,
       ),
       body: loading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
+          : SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: const EdgeInsets.all(20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
                     widget.product.name,
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   const SizedBox(height: 25),
-
-                  DropdownButtonFormField<Store>(
-                    decoration: const InputDecoration(
-                      labelText: 'Store',
-                      border: OutlineInputBorder(),
+                  InkWell(
+                    onTap: saving ? null : selectStore,
+                    borderRadius: BorderRadius.circular(4),
+                    child: InputDecorator(
+                      decoration: const InputDecoration(
+                        labelText: 'Store',
+                        prefixIcon: Icon(Icons.search),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size: 18),
+                        border: OutlineInputBorder(),
+                      ),
+                      isEmpty: false,
+                      child: Text(
+                        selectedStore?.toString() ??
+                            'Search by name, address, or city',
+                      ),
                     ),
-                    initialValue: selectedStore,
-                    items: stores.map((store) {
-                      return DropdownMenuItem(
-                        value: store,
-                        child: Text('${store.name} (${store.city})'),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedStore = value;
-                      });
-                    },
                   ),
-
                   const SizedBox(height: 20),
-
                   TextField(
                     controller: priceController,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
+                    textInputAction: TextInputAction.done,
+                    onTapOutside: (_) {
+                      FocusScope.of(context).unfocus();
+                    },
                     decoration: const InputDecoration(
                       labelText: 'Price',
                       prefixText: '\$',
                       border: OutlineInputBorder(),
                     ),
                   ),
-
                   const SizedBox(height: 30),
-
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: saving ? null : save,
-                      icon: const Icon(Icons.save),
-                      label: Text(saving ? 'Saving...' : 'Save Price'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryRed,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
+                  ElevatedButton.icon(
+                    onPressed: saving ? null : save,
+                    icon: const Icon(Icons.save),
+                    label: Text(saving ? 'Saving...' : 'Save Price'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryRed,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                   ),
                 ],
               ),
             ),
+    );
+  }
+}
+
+class _StoreSearchScreen extends StatefulWidget {
+  final List<Store> stores;
+
+  const _StoreSearchScreen({required this.stores});
+
+  @override
+  State<_StoreSearchScreen> createState() => _StoreSearchScreenState();
+}
+
+class _StoreSearchScreenState extends State<_StoreSearchScreen> {
+  final searchController = TextEditingController();
+  late List<Store> filteredStores;
+
+  @override
+  void initState() {
+    super.initState();
+    filteredStores = List<Store>.from(widget.stores);
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void filterStores(String value) {
+    final queryTerms = value
+        .toLowerCase()
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((term) => term.isNotEmpty)
+        .toList();
+
+    setState(() {
+      if (queryTerms.isEmpty) {
+        filteredStores = List<Store>.from(widget.stores);
+        return;
+      }
+
+      filteredStores = widget.stores.where((store) {
+        final searchableText =
+            '${store.name} ${store.storeName} ${store.chainName} '
+                    '${store.address} ${store.city} '
+                    '${store.province} ${store.postalCode}'
+                .toLowerCase();
+
+        return queryTerms.every(searchableText.contains);
+      }).toList();
+    });
+  }
+
+  void clearSearch() {
+    searchController.clear();
+    filterStores('');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Select Store'),
+        backgroundColor: _AddPriceScreenState.primaryRed,
+        foregroundColor: Colors.white,
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: TextField(
+                controller: searchController,
+                autofocus: true,
+                onChanged: filterStores,
+                textInputAction: TextInputAction.search,
+                onTapOutside: (_) {
+                  FocusScope.of(context).unfocus();
+                },
+                decoration: InputDecoration(
+                  hintText: 'Search by store name, address, or city',
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: searchController.text.isEmpty
+                      ? null
+                      : IconButton(
+                          onPressed: clearSearch,
+                          icon: const Icon(Icons.clear),
+                          tooltip: 'Clear search',
+                        ),
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+            ),
+            Expanded(
+              child: filteredStores.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No stores found.',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    )
+                  : ListView.separated(
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      itemCount: filteredStores.length,
+                      separatorBuilder: (context, index) =>
+                          const Divider(height: 1),
+                      itemBuilder: (context, index) {
+                        final store = filteredStores[index];
+
+                        return ListTile(
+                          leading: const Icon(Icons.store),
+                          title: Text(store.displayName),
+                          subtitle: store.locationLabel.isEmpty
+                              ? null
+                              : Text(store.locationLabel),
+                          onTap: () {
+                            Navigator.pop(context, store);
+                          },
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
