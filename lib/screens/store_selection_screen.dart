@@ -79,11 +79,15 @@ class _StoreSelectionScreenState extends State<StoreSelectionScreen> {
 
   void filterStores(String value) {
     final query = value.toLowerCase().trim();
+    final queryTerms = query
+        .split(RegExp(r'\s+'))
+        .where((term) => term.isNotEmpty)
+        .toList();
 
     setState(() {
       searchText = query;
 
-      if (query.isEmpty) {
+      if (queryTerms.isEmpty) {
         filteredStores = stores;
         return;
       }
@@ -91,10 +95,11 @@ class _StoreSelectionScreenState extends State<StoreSelectionScreen> {
       filteredStores = stores.where((store) {
         final searchableText =
             '${store.name} ${store.storeName} ${store.chainName} '
-                    '${store.address} ${store.city} ${store.province}'
+                    '${store.address} ${store.city} '
+                    '${store.province} ${store.postalCode}'
                 .toLowerCase();
 
-        return searchableText.contains(query);
+        return queryTerms.every(searchableText.contains);
       }).toList();
     });
   }
