@@ -6,6 +6,7 @@ import '../../providers/cart_provider.dart';
 
 class CartItemCard extends StatelessWidget {
   static const Color primaryRed = Color(0xFFD6001C);
+
   final CartItem item;
   final VoidCallback onIncrease;
   final VoidCallback onDecrease;
@@ -34,52 +35,24 @@ class CartItemCard extends StatelessWidget {
   }
 
   Future<void> _editPrice(BuildContext context) async {
-    final controller = TextEditingController(
-      text: item.price.toStringAsFixed(2),
+    final result = await Navigator.push<_PriceEditResult>(
+      context,
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => _EditCartItemPriceScreen(
+          initialPrice: item.price,
+          initialTaxable: item.taxable,
+        ),
+      ),
     );
 
-    final newPrice = await showDialog<double>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Edit Price'),
-          content: TextField(
-            controller: controller,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(
-              labelText: 'Price',
-              prefixText: '\$',
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-              },
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () {
-                final price = double.tryParse(controller.text.trim());
+    if (!context.mounted || result == null) return;
 
-                if (price != null && price >= 0) {
-                  Navigator.pop(dialogContext, price);
-                }
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
+    context.read<CartProvider>().updatePrice(
+      item,
+      result.price,
+      taxable: result.taxable,
     );
-
-    controller.dispose();
-
-    if (!context.mounted) return;
-
-    if (newPrice != null) {
-      context.read<CartProvider>().updatePrice(item, newPrice);
-    }
   }
 
   Future<void> _editQuantity(BuildContext context) async {
@@ -169,7 +142,7 @@ class CartItemCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    item.product.taxable ? 'HST applies' : 'No HST',
+                    item.taxable ? 'HST applies' : 'No HST',
                     style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                   ),
                   const SizedBox(height: 12),
@@ -256,7 +229,7 @@ class _ProductImage extends StatelessWidget {
           : Image.network(
               imageUrl,
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) {
+              errorBuilder: (context, error, stackTrace) {
                 return Icon(
                   Icons.inventory_2_outlined,
                   color: Colors.grey.shade500,
@@ -289,6 +262,141 @@ class _QuantityButton extends StatelessWidget {
         padding: EdgeInsets.zero,
         onPressed: onPressed,
         icon: Icon(icon, size: 19),
+      ),
+    );
+  }
+}
+
+class _PriceEditResult {
+  final double price;
+  final bool taxable;
+
+  const _PriceEditResult({required this.price, required this.taxable});
+}
+
+class _EditCartItemPriceScreen extends StatefulWidget {
+  final double initialPrice;
+  final bool initialTaxable;
+
+  const _EditCartItemPriceScreen({
+    required this.initialPrice,
+    required this.initialTaxable,
+  });
+
+  @override
+  State<_EditCartItemPriceScreen> createState() =>
+      _EditCartItemPriceScreenState();
+}
+
+class _EditCartItemPriceScreenState extends State<_EditCartItemPriceScreen> {
+  static const Color primaryRed = Color(0xFFD6001C);
+
+  late final TextEditingController priceController;
+  late bool taxApplies;
+
+  @override
+  void initState() {
+    super.initState();
+
+    priceController = TextEditingController(
+      text: widget.initialPrice.toStringAsFixed(2),
+    );
+    taxApplies = widget.initialTaxable;
+  }
+
+  @override
+  void dispose() {
+    priceController.dispose();
+    super.dispose();
+  }
+
+  void save() {
+    final price = double.tryParse(priceController.text.trim());
+
+    if (price == null || price < 0) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Enter a valid price.')));
+      return;
+    }
+
+    FocusScope.of(context).unfocus();
+
+    Navigator.pop(context, _PriceEditResult(price: price, taxable: taxApplies));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Edit Price'),
+        backgroundColor: primaryRed,
+        foregroundColor: Colors.white,
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                controller: priceController,
+                autofocus: true,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                textInputAction: TextInputAction.done,
+                onSubmitted: (_) {
+                  save();
+                },
+                onTapOutside: (_) {
+                  FocusScope.of(context).unfocus();
+                },
+                decoration: InputDecoration(
+                  labelText: 'Price',
+                  prefixText: '\$',
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      FocusScope.of(context).unfocus();
+                    },
+                    icon: const Icon(Icons.keyboard_hide),
+                    tooltip: 'Hide keyboard',
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Card(
+                child: SwitchListTile.adaptive(
+                  title: const Text('Tax applies'),
+                  subtitle: Text(
+                    taxApplies
+                        ? 'Ontario HST will be added'
+                        : 'No HST will be added',
+                  ),
+                  value: taxApplies,
+                  onChanged: (value) {
+                    setState(() {
+                      taxApplies = value;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(height: 30),
+              FilledButton.icon(
+                onPressed: save,
+                style: FilledButton.styleFrom(
+                  backgroundColor: primaryRed,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                icon: const Icon(Icons.save),
+                label: const Text('Save Changes'),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

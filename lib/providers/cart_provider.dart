@@ -81,8 +81,13 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  void updatePrice(CartItem item, double newPrice) {
+  void updatePrice(CartItem item, double newPrice, {bool? taxable}) {
     item.price = newPrice;
+
+    if (taxable != null) {
+      item.taxable = taxable;
+    }
+
     notifyListeners();
   }
 
