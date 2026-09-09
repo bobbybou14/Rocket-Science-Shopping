@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/constants/product_categories.dart';
 import '../models/cart_item.dart';
 import '../models/product.dart';
 import '../providers/cart_provider.dart';
@@ -76,24 +77,24 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
   }
 
   List<String> get categories {
-    final values = products
-        .map((product) => product.category.trim())
-        .where((category) => category.isNotEmpty)
-        .toSet()
+    final usedCategories = products
+        .map((product) => ProductCategories.normalize(product.category))
+        .toSet();
+
+    final visibleCategories = ProductCategories.all
+        .where(usedCategories.contains)
         .toList();
 
-    values.sort();
-
-    return ['All', ...values];
+    return ['All', ...visibleCategories];
   }
 
   List<Product> get filteredProducts {
     final query = searchText.trim().toLowerCase();
 
     return products.where((product) {
+      final normalizedCategory = ProductCategories.normalize(product.category);
       final matchesCategory =
-          selectedCategory == 'All' ||
-          product.category.trim() == selectedCategory;
+          selectedCategory == 'All' || normalizedCategory == selectedCategory;
 
       if (!matchesCategory) {
         return false;
@@ -107,6 +108,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
         product.name,
         product.brand,
         product.category,
+        ProductCategories.normalize(product.category),
         product.size,
         product.barcode,
       ].join(' ').toLowerCase();
@@ -375,7 +377,7 @@ class _ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final category = product.category.trim();
+    final category = ProductCategories.normalize(product.category);
     final imageUrl = product.imageUrl.trim();
 
     return Card(
