@@ -7,6 +7,7 @@ import '../models/store.dart';
 import '../service/price_service.dart';
 import '../service/store_service.dart';
 import '../service/supabase_product_service.dart';
+import 'admin_price_store_search_screen.dart';
 
 class AdminPricesScreen extends StatefulWidget {
   const AdminPricesScreen({super.key});
@@ -127,6 +128,23 @@ class _AdminPricesScreenState extends State<AdminPricesScreen> {
       selectedPriceUnit = MeasurementUnit.each;
       productSearchController.clear();
       productSearchText = '';
+    });
+  }
+
+  Future<void> selectStore() async {
+    FocusScope.of(context).unfocus();
+
+    final result = await Navigator.push<Store>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AdminPriceStoreSearchScreen(stores: stores),
+      ),
+    );
+
+    if (result == null || !mounted) return;
+
+    setState(() {
+      selectedStore = result;
     });
   }
 
@@ -347,37 +365,25 @@ class _AdminPricesScreenState extends State<AdminPricesScreen> {
 
                   const SizedBox(height: 16),
 
-                  DropdownButtonFormField<Store>(
-                    initialValue: selectedStore,
-                    isExpanded: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Store',
-                      border: OutlineInputBorder(),
-                    ),
-                    items: stores.map((store) {
-                      return DropdownMenuItem<Store>(
-                        value: store,
-                        child: Text(
-                          [
-                            store.name,
-                            if (store.address.trim().isNotEmpty) store.address,
-                            if (store.city.trim().isNotEmpty) store.city,
-                          ].join(' - '),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: saving
-                        ? null
-                        : (value) {
-                            setState(() {
-                              selectedStore = value;
-                            });
-                          },
-                  ),
-
                   const SizedBox(height: 16),
-
+                  InkWell(
+                    onTap: saving ? null : selectStore,
+                    borderRadius: BorderRadius.circular(4),
+                    child: InputDecorator(
+                      decoration: const InputDecoration(
+                        labelText: 'Store',
+                        prefixIcon: Icon(Icons.search),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size: 18),
+                        border: OutlineInputBorder(),
+                      ),
+                      isEmpty: false,
+                      child: Text(
+                        selectedStore?.toString() ??
+                            'Search by name, address, or city',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   TextField(
                     controller: priceController,
                     enabled: !saving,

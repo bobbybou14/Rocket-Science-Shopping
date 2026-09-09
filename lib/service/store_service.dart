@@ -7,22 +7,39 @@ class StoreService {
   static final SupabaseClient _client = Supabase.instance.client;
 
   static Future<List<Store>> getStores({bool includeInactive = false}) async {
-    try {
-      var query = _client.from('stores').select();
+    const pageSize = 1000;
+    final stores = <Store>[];
+    var start = 0;
 
-      if (!includeInactive) {
-        query = query.eq('is_active', true);
+    try {
+      while (true) {
+        var query = _client.from('stores').select();
+
+        if (!includeInactive) {
+          query = query.eq('is_active', true);
+        }
+
+        final response = await query
+            .order('province')
+            .order('city')
+            .order('chain_name')
+            .order('store_name')
+            .range(start, start + pageSize - 1);
+
+        final page = response
+            .map<Store>((row) => Store.fromMap(Map<String, dynamic>.from(row)))
+            .toList();
+
+        stores.addAll(page);
+
+        if (page.length < pageSize) {
+          break;
+        }
+
+        start += pageSize;
       }
 
-      final response = await query
-          .order('province')
-          .order('city')
-          .order('chain_name')
-          .order('store_name');
-
-      return response
-          .map<Store>((row) => Store.fromMap(Map<String, dynamic>.from(row)))
-          .toList();
+      return stores;
     } catch (error, stackTrace) {
       debugPrint('Unable to load stores: $error');
       debugPrintStack(stackTrace: stackTrace);
