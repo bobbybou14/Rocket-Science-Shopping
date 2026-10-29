@@ -19,6 +19,11 @@ class ProductMatchResult {
 }
 
 class ProductMatcherService {
+  static String buildCandidateSearch(String receiptText) {
+    final cleaned = ReceiptCleanupService.clean(receiptText);
+    return _tokens(cleaned).join(' ');
+  }
+
   static List<ProductMatchResult> matchItems({
     required List<ParsedReceiptItem> receiptItems,
     required List<Product> products,

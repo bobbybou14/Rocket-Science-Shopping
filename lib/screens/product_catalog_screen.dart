@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,11 +23,19 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
   final TextEditingController searchController = TextEditingController();
 
   List<Product> products = [];
+  int totalProductCount = 0;
   bool isLoading = true;
   String? errorMessage;
   String searchText = '';
   String selectedCategory = 'All';
+  static const int _pageSize = 50;
 
+  Timer? _searchDebounce;
+  int _requestId = 0;
+  int _nextOffset = 0;
+  bool _hasMore = false;
+  bool _isLoadingMore = false;
+  String? _loadMoreError;
   @override
   void initState() {
     super.initState();
@@ -34,26 +43,45 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
   }
 
   Future<void> loadProducts() async {
+    _searchDebounce?.cancel();
+    if (!mounted) return;
+
+    final requestId = ++_requestId;
+    final query = searchText;
+    final category = selectedCategory;
+
     setState(() {
       isLoading = true;
       errorMessage = null;
+      _isLoadingMore = false;
+      _loadMoreError = null;
+      _hasMore = false;
     });
 
     try {
-      final loadedProducts = await ProductService.getProducts();
-
-      loadedProducts.sort(
-        (a, b) => productDisplayName(a).compareTo(productDisplayName(b)),
+      final loadedProducts = await ProductService.searchProducts(
+        search: query,
+        category: category,
+        pageSize: _pageSize,
       );
 
-      if (!mounted) return;
+      if (!mounted || requestId != _requestId) return;
+
+      final count = await ProductService.getProductCount();
+
+      if (!mounted || requestId != _requestId) return;
+
+      final firstPage = loadedProducts.take(_pageSize).toList();
 
       setState(() {
-        products = loadedProducts;
+        products = firstPage;
+        totalProductCount = count;
+        _nextOffset = firstPage.length;
+        _hasMore = loadedProducts.length > _pageSize;
         isLoading = false;
       });
     } catch (error) {
-      if (!mounted) return;
+      if (!mounted || requestId != _requestId) return;
 
       setState(() {
         isLoading = false;
@@ -76,45 +104,76 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
     return parts.join(' ');
   }
 
-  List<String> get categories {
-    final usedCategories = products
-        .map((product) => ProductCategories.normalize(product.category))
-        .toSet();
+  List<String> get categories => ['All', ...ProductCategories.all];
 
-    final visibleCategories = ProductCategories.all
-        .where(usedCategories.contains)
-        .toList();
+  List<Product> get filteredProducts => products;
 
-    return ['All', ...visibleCategories];
+  void _onSearchChanged(String value) {
+    _searchDebounce?.cancel();
+
+    // Invalidate any request for the previous search immediately.
+    ++_requestId;
+
+    setState(() {
+      searchText = value;
+      isLoading = true;
+      errorMessage = null;
+      _isLoadingMore = false;
+      _loadMoreError = null;
+      _hasMore = false;
+    });
+
+    _searchDebounce = Timer(const Duration(milliseconds: 400), () {
+      loadProducts();
+    });
   }
 
-  List<Product> get filteredProducts {
-    final query = searchText.trim().toLowerCase();
+  Future<void> _loadMoreProducts() async {
+    if (isLoading || _isLoadingMore || !_hasMore) return;
 
-    return products.where((product) {
-      final normalizedCategory = ProductCategories.normalize(product.category);
-      final matchesCategory =
-          selectedCategory == 'All' || normalizedCategory == selectedCategory;
+    final requestId = _requestId;
+    final query = searchText;
+    final category = selectedCategory;
+    final offset = _nextOffset;
 
-      if (!matchesCategory) {
-        return false;
-      }
+    setState(() {
+      _isLoadingMore = true;
+      _loadMoreError = null;
+    });
 
-      if (query.isEmpty) {
-        return true;
-      }
+    try {
+      final loadedProducts = await ProductService.searchProducts(
+        search: query,
+        category: category,
+        offset: offset,
+        pageSize: _pageSize,
+      );
 
-      final searchableText = [
-        product.name,
-        product.brand,
-        product.category,
-        ProductCategories.normalize(product.category),
-        product.size,
-        product.barcode,
-      ].join(' ').toLowerCase();
+      if (!mounted || requestId != _requestId) return;
 
-      return searchableText.contains(query);
-    }).toList();
+      final page = loadedProducts.take(_pageSize).toList();
+      final existingBarcodes = products
+          .map((product) => product.barcode)
+          .toSet();
+
+      final additions = page
+          .where((product) => existingBarcodes.add(product.barcode))
+          .toList();
+
+      setState(() {
+        products = [...products, ...additions];
+        _nextOffset = offset + page.length;
+        _hasMore = loadedProducts.length > _pageSize;
+        _isLoadingMore = false;
+      });
+    } catch (error) {
+      if (!mounted || requestId != _requestId) return;
+
+      setState(() {
+        _isLoadingMore = false;
+        _loadMoreError = 'Unable to load more products: $error';
+      });
+    }
   }
 
   Future<void> openProductDetails(Product product) async {
@@ -159,15 +218,20 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
   }
 
   void clearSearch() {
+    _searchDebounce?.cancel();
     searchController.clear();
 
     setState(() {
       searchText = '';
     });
+
+    loadProducts();
   }
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
+    ++_requestId;
     searchController.dispose();
     super.dispose();
   }
@@ -201,7 +265,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
           slivers: [
             SliverToBoxAdapter(
               child: _CatalogHeader(
-                productCount: products.length,
+                productCount: totalProductCount,
                 cartItemCount: cart.itemCount,
               ),
             ),
@@ -211,9 +275,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                 child: TextField(
                   controller: searchController,
                   onChanged: (value) {
-                    setState(() {
-                      searchText = value;
-                    });
+                    _onSearchChanged(value);
                   },
                   decoration: InputDecoration(
                     labelText: 'Search products',
@@ -252,9 +314,13 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                         label: Text(category),
                         selected: selectedCategory == category,
                         onSelected: (_) {
+                          if (selectedCategory == category) return;
+
                           setState(() {
                             selectedCategory = category;
                           });
+
+                          loadProducts();
                         },
                       );
                     },
@@ -275,14 +341,11 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                 ),
               )
             else if (products.isEmpty)
-              const SliverFillRemaining(
+              SliverFillRemaining(
                 hasScrollBody: false,
-                child: _EmptyCatalog(),
-              )
-            else if (filteredProducts.isEmpty)
-              const SliverFillRemaining(
-                hasScrollBody: false,
-                child: _NoSearchResults(),
+                child: searchText.trim().isNotEmpty || selectedCategory != 'All'
+                    ? const _NoSearchResults()
+                    : const _EmptyCatalog(),
               )
             else
               SliverPadding(
@@ -309,6 +372,35 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                       },
                     );
                   },
+                ),
+              ),
+            if (!isLoading &&
+                errorMessage == null &&
+                products.isNotEmpty &&
+                _hasMore)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                  child: Column(
+                    children: [
+                      if (_loadMoreError != null) ...[
+                        Text(_loadMoreError!, textAlign: TextAlign.center),
+                        const SizedBox(height: 12),
+                      ],
+                      if (_isLoadingMore)
+                        const CircularProgressIndicator()
+                      else
+                        OutlinedButton.icon(
+                          onPressed: _loadMoreProducts,
+                          icon: const Icon(Icons.expand_more),
+                          label: Text(
+                            _loadMoreError == null
+                                ? 'Load more products'
+                                : 'Try loading more again',
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
           ],

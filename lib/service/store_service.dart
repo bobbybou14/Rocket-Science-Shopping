@@ -24,6 +24,7 @@ class StoreService {
             .order('city')
             .order('chain_name')
             .order('store_name')
+            .order('id')
             .range(start, start + pageSize - 1);
 
         final page = response
@@ -32,11 +33,11 @@ class StoreService {
 
         stores.addAll(page);
 
-        if (page.length < pageSize) {
+        if (page.isEmpty) {
           break;
         }
 
-        start += pageSize;
+        start += page.length;
       }
 
       return stores;
@@ -57,35 +58,62 @@ class StoreService {
       return getStores(includeInactive: includeInactive);
     }
 
+    const pageSize = 500;
+    final storesById = <String, Store>{};
+    var start = 0;
+
+    // Quote the PostgREST filter value so punctuation in a store name
+    // does not become part of the filter syntax.
+    final escapedQuery = normalizedQuery
+        .replaceAll('\\', '\\\\')
+        .replaceAll('%', r'\%')
+        .replaceAll('_', r'\_')
+        .replaceAll('*', r'\*')
+        .replaceAll('"', '\\"');
+
+    final searchPattern = '"%$escapedQuery%"';
+
     try {
-      final searchPattern = '%$normalizedQuery%';
+      while (true) {
+        var databaseQuery = _client
+            .from('stores')
+            .select()
+            .or(
+              'name.ilike.$searchPattern,'
+              'chain_name.ilike.$searchPattern,'
+              'store_name.ilike.$searchPattern,'
+              'address.ilike.$searchPattern,'
+              'city.ilike.$searchPattern,'
+              'province.ilike.$searchPattern,'
+              'postal_code.ilike.$searchPattern',
+            );
 
-      var databaseQuery = _client
-          .from('stores')
-          .select()
-          .or(
-            'name.ilike.$searchPattern,'
-            'chain_name.ilike.$searchPattern,'
-            'store_name.ilike.$searchPattern,'
-            'address.ilike.$searchPattern,'
-            'city.ilike.$searchPattern,'
-            'province.ilike.$searchPattern,'
-            'postal_code.ilike.$searchPattern',
-          );
+        if (!includeInactive) {
+          databaseQuery = databaseQuery.eq('is_active', true);
+        }
 
-      if (!includeInactive) {
-        databaseQuery = databaseQuery.eq('is_active', true);
+        final response = await databaseQuery
+            .order('province')
+            .order('city')
+            .order('chain_name')
+            .order('store_name')
+            .order('id')
+            .range(start, start + pageSize - 1);
+
+        final page = response
+            .map<Store>((row) => Store.fromMap(Map<String, dynamic>.from(row)))
+            .toList();
+
+        if (page.isEmpty) break;
+
+        for (final store in page) {
+          storesById[store.id] = store;
+        }
+
+        start += page.length;
       }
 
-      final response = await databaseQuery
-          .order('province')
-          .order('city')
-          .order('chain_name')
-          .order('store_name');
-
-      return response
-          .map<Store>((row) => Store.fromMap(Map<String, dynamic>.from(row)))
-          .toList();
+      return storesById.values.toList();
     } catch (error, stackTrace) {
       debugPrint('Unable to search stores: $error');
       debugPrintStack(stackTrace: stackTrace);

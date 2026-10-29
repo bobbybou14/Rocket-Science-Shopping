@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../models/product_import_candidate.dart';
 import '../../service/product_import_candidate_service.dart';
-import '../../service/product_service.dart';
 import '../../service/product_suggestion_service.dart';
 import '../../widgets/create_product_dialog.dart';
 
@@ -25,15 +24,13 @@ class _ProductImportCandidatesScreenState
   }
 
   Future<void> _openCandidate(ProductImportCandidate candidate) async {
-    final existingProducts = await ProductService.getProducts();
-
     if (!mounted) {
       return;
     }
 
     final suggestionResult = ProductSuggestionService.buildSuggestion(
       receiptItemName: candidate.receiptName,
-      existingProducts: existingProducts,
+      existingProducts: const [],
     );
 
     final suggestion = suggestionResult.suggestion.copyWith(
@@ -87,6 +84,33 @@ class _ProductImportCandidatesScreenState
       body: FutureBuilder<List<ProductImportCandidate>>(
         future: _candidates,
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Unable to load import candidates: ${snapshot.error}',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    FilledButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _candidates =
+                              ProductImportCandidateService.getCandidates();
+                        });
+                      },
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Try Again'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }

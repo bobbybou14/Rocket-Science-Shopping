@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../service/product_service.dart';
+import 'dart:async';
 import '../models/shopping_trip.dart';
 import '../models/product.dart';
 import '../service/product_alias_service.dart';
@@ -110,236 +112,369 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
       minimumScore: 0,
     );
 
-    final productSuggestionResult = ProductSuggestionService.buildSuggestion(
-      receiptItemName: item.rawReceiptName,
-      existingProducts: products,
-    );
-
     final searchController = TextEditingController();
 
+    Timer? debounce;
     Product? selectedProduct;
     var createdNewProduct = false;
+    var dialogActive = true;
+    var creatingProduct = false;
 
-    final result = await showDialog<Product>(
-      context: context,
-      builder: (dialogContext) {
-        var searchQuery = '';
+    var searchQuery = '';
+    var searchResults = <Product>[];
+    var isSearching = false;
+    var isLoadingMore = false;
+    var hasMore = false;
+    var nextOffset = 0;
+    var requestId = 0;
+    String? searchError;
 
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            final normalizedQuery = searchQuery.trim().toLowerCase();
+    const pageSize = 50;
 
-            final filteredProducts = normalizedQuery.isEmpty
-                ? products
-                : products.where((product) {
-                    final searchableText = [
-                      product.name,
-                      product.brand,
-                      product.category,
-                      product.size,
-                      product.barcode,
-                    ].join(' ').toLowerCase();
+    Product? result;
 
-                    return searchableText.contains(normalizedQuery);
-                  }).toList();
+    try {
+      result = await showDialog<Product>(
+        context: context,
+        builder: (dialogContext) {
+          return StatefulBuilder(
+            builder: (context, setDialogState) {
+              bool canUpdate(int id) {
+                return dialogActive && dialogContext.mounted && id == requestId;
+              }
 
-            return AlertDialog(
-              title: const Text('Choose Product'),
-              content: SizedBox(
-                width: 620,
-                height: 600,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.rawReceiptName,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+              Future<void> runSearch({bool append = false}) async {
+                final query = searchQuery.trim();
+
+                if (query.isEmpty || !dialogActive) return;
+                if (append && (isSearching || isLoadingMore || !hasMore)) {
+                  return;
+                }
+
+                final id = requestId;
+                final offset = append ? nextOffset : 0;
+
+                setDialogState(() {
+                  searchError = null;
+
+                  if (append) {
+                    isLoadingMore = true;
+                  } else {
+                    isSearching = true;
+                  }
+                });
+
+                try {
+                  final response = await ProductService.searchProducts(
+                    search: query,
+                    offset: offset,
+                    pageSize: pageSize,
+                  );
+
+                  if (!canUpdate(id)) return;
+
+                  final page = response.take(pageSize).toList();
+
+                  setDialogState(() {
+                    if (append) {
+                      final existingBarcodes = searchResults
+                          .map((product) => product.barcode)
+                          .toSet();
+
+                      final additions = page.where(
+                        (product) => existingBarcodes.add(product.barcode),
+                      );
+
+                      searchResults = [...searchResults, ...additions];
+                    } else {
+                      searchResults = page;
+                    }
+
+                    nextOffset = offset + page.length;
+                    hasMore = response.length > pageSize;
+                    isSearching = false;
+                    isLoadingMore = false;
+                  });
+                } catch (error) {
+                  if (!canUpdate(id)) return;
+
+                  setDialogState(() {
+                    isSearching = false;
+                    isLoadingMore = false;
+                    searchError = 'Unable to search products: $error';
+                  });
+                }
+              }
+
+              void changeSearch(String value) {
+                debounce?.cancel();
+                ++requestId;
+
+                setDialogState(() {
+                  searchQuery = value;
+                  searchResults = [];
+                  selectedProduct = null;
+                  searchError = null;
+                  nextOffset = 0;
+                  hasMore = false;
+                  isLoadingMore = false;
+                  isSearching = value.trim().isNotEmpty;
+                });
+
+                if (value.trim().isNotEmpty) {
+                  debounce = Timer(const Duration(milliseconds: 400), () {
+                    if (dialogActive && dialogContext.mounted) {
+                      runSearch();
+                    }
+                  });
+                }
+              }
+
+              void chooseProduct(Product product) {
+                setDialogState(() {
+                  selectedProduct = product;
+                });
+              }
+
+              final hasQuery = searchQuery.trim().isNotEmpty;
+
+              return AlertDialog(
+                title: const Text('Choose Product'),
+                content: SizedBox(
+                  width: 620,
+                  height: MediaQuery.sizeOf(dialogContext).height * 0.65,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.rawReceiptName,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Select an existing product or create a new catalogue '
-                      'product for this receipt line.',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: searchController,
-                      autofocus: false,
-                      enabled: products.isNotEmpty,
-                      decoration: InputDecoration(
-                        labelText: 'Search products',
-                        hintText: products.isEmpty
-                            ? 'The product catalogue is currently empty'
-                            : 'Name, brand, category, size, or barcode',
-                        prefixIcon: const Icon(Icons.search),
-                        suffixIcon: searchQuery.isEmpty
-                            ? null
-                            : IconButton(
-                                tooltip: 'Clear search',
-                                onPressed: () {
-                                  searchController.clear();
-
-                                  setDialogState(() {
-                                    searchQuery = '';
-                                  });
-                                },
-                                icon: const Icon(Icons.clear),
-                              ),
-                        border: const OutlineInputBorder(),
-                      ),
-                      onChanged: (value) {
-                        setDialogState(() {
-                          searchQuery = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    Expanded(
-                      child: products.isEmpty
-                          ? _buildNoCatalogueProductsMessage()
-                          : normalizedQuery.isEmpty
-                          ? _buildSuggestedProductList(
-                              suggestions: suggestions,
-                              selectedProduct: selectedProduct,
-                              onSelected: (product) {
-                                setDialogState(() {
-                                  selectedProduct = product;
-                                });
-                              },
-                            )
-                          : _buildProductSearchResults(
-                              products: filteredProducts,
-                              selectedProduct: selectedProduct,
-                              onSelected: (product) {
-                                setDialogState(() {
-                                  selectedProduct = product;
-                                });
-                              },
-                            ),
-                    ),
-                    const SizedBox(height: 12),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primaryContainer.withValues(alpha: 0.55),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.add_business_outlined),
-                          const SizedBox(width: 12),
-                          const Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Didn\'t find the correct product?',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: searchController,
+                        decoration: InputDecoration(
+                          labelText: 'Search the full catalogue',
+                          hintText: 'Name, brand, category, size, or barcode',
+                          prefixIcon: const Icon(Icons.search),
+                          suffixIcon: searchQuery.isEmpty
+                              ? null
+                              : IconButton(
+                                  tooltip: 'Clear search',
+                                  onPressed: () {
+                                    searchController.clear();
+                                    changeSearch('');
+                                  },
+                                  icon: const Icon(Icons.clear),
                                 ),
-                                SizedBox(height: 3),
-                                Text(
-                                  'Create it now and teach Rocket Science Shopping how to '
-                                  'recognize this receipt wording.',
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          FilledButton.tonalIcon(
-                            onPressed: () async {
-                              final createdProduct =
-                                  await CreateProductDialog.show(
-                                    context: dialogContext,
-                                    suggestion:
-                                        productSuggestionResult.suggestion,
-                                    receiptItemName: item.rawReceiptName,
-                                  );
+                          border: const OutlineInputBorder(),
+                        ),
+                        onChanged: changeSearch,
+                        onSubmitted: (_) {
+                          debounce?.cancel();
 
-                              if (createdProduct == null ||
-                                  !dialogContext.mounted) {
-                                return;
-                              }
-
-                              createdNewProduct = true;
-
-                              Navigator.pop(dialogContext, createdProduct);
-                            },
-                            icon: const Icon(Icons.add),
-                            label: const Text('Create New'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(dialogContext);
-                  },
-                  child: const Text('Cancel'),
-                ),
-                FilledButton.icon(
-                  onPressed: selectedProduct == null
-                      ? null
-                      : () {
-                          Navigator.pop(dialogContext, selectedProduct);
+                          if (hasQuery && !isLoadingMore) {
+                            ++requestId;
+                            runSearch();
+                          }
                         },
-                  icon: const Icon(Icons.check),
-                  label: const Text('Use Product'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+                      ),
+                      const SizedBox(height: 12),
+                      Expanded(
+                        child: !hasQuery
+                            ? _buildSuggestedProductList(
+                                suggestions: suggestions,
+                                selectedProduct: selectedProduct,
+                                onSelected: chooseProduct,
+                              )
+                            : isSearching
+                            ? const Center(child: CircularProgressIndicator())
+                            : searchError != null && searchResults.isEmpty
+                            ? Center(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        searchError!,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      TextButton(
+                                        onPressed: () {
+                                          runSearch();
+                                        },
+                                        child: const Text('Try Again'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : _buildProductSearchResults(
+                                products: searchResults,
+                                selectedProduct: selectedProduct,
+                                onSelected: chooseProduct,
+                              ),
+                      ),
+                      if (hasQuery &&
+                          !isSearching &&
+                          searchResults.isNotEmpty) ...[
+                        if (searchError != null)
+                          Text(
+                            searchError!,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        if (isLoadingMore)
+                          const Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        else if (hasMore)
+                          Center(
+                            child: TextButton.icon(
+                              onPressed: () {
+                                runSearch(append: true);
+                              },
+                              icon: const Icon(Icons.expand_more),
+                              label: Text(
+                                searchError == null
+                                    ? 'Load more products'
+                                    : 'Retry loading more',
+                              ),
+                            ),
+                          ),
+                      ],
+                      const Divider(),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton.icon(
+                          onPressed: creatingProduct
+                              ? null
+                              : () async {
+                                  setDialogState(() {
+                                    creatingProduct = true;
+                                  });
 
-    searchController.dispose();
+                                  try {
+                                    final productSuggestionResult =
+                                        ProductSuggestionService.buildSuggestion(
+                                          receiptItemName: item.rawReceiptName,
+                                          existingProducts: [
+                                            ...products,
+                                            ...searchResults,
+                                          ],
+                                        );
+
+                                    final createdProduct =
+                                        await CreateProductDialog.show(
+                                          context: dialogContext,
+                                          suggestion: productSuggestionResult
+                                              .suggestion,
+                                          receiptItemName: item.rawReceiptName,
+                                        );
+
+                                    if (!dialogActive ||
+                                        !dialogContext.mounted) {
+                                      return;
+                                    }
+
+                                    if (createdProduct != null) {
+                                      createdNewProduct = true;
+                                      Navigator.pop(
+                                        dialogContext,
+                                        createdProduct,
+                                      );
+                                    }
+                                  } finally {
+                                    if (dialogActive && dialogContext.mounted) {
+                                      setDialogState(() {
+                                        creatingProduct = false;
+                                      });
+                                    }
+                                  }
+                                },
+                          icon: const Icon(Icons.add),
+                          label: const Text('Create a new product'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(dialogContext);
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  FilledButton.icon(
+                    onPressed: selectedProduct == null || creatingProduct
+                        ? null
+                        : () {
+                            Navigator.pop(dialogContext, selectedProduct);
+                          },
+                    icon: const Icon(Icons.check),
+                    label: const Text('Use Product'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      );
+    } finally {
+      dialogActive = false;
+      ++requestId;
+      debounce?.cancel();
+
+      // Allow the dialog's closing animation to finish before disposal.
+      Future<void>.delayed(const Duration(seconds: 1), () {
+        searchController.dispose();
+      });
+    }
 
     if (result == null || !mounted) return;
+
+    final chosenProduct = result;
 
     _replaceItem(
       index,
       item.copyWith(
-        product: result,
-        barcode: result.barcode,
+        product: chosenProduct,
+        barcode: chosenProduct.barcode,
         confidenceScore: 100,
         requiresReview: false,
       ),
     );
 
     if (createdNewProduct) {
-      final messenger = ScaffoldMessenger.of(context);
-
-      messenger
+      ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
             content: Text(
-              '${result.name} was created and matched to this receipt item.',
+              '${chosenProduct.name} was created and matched '
+              'to this receipt item.',
             ),
           ),
         );
-
       return;
     }
 
     final shouldRemember = await _askToRememberAlias(
       receiptItemName: item.rawReceiptName,
-      product: result,
+      product: chosenProduct,
     );
+
+    if (!mounted) return;
 
     if (shouldRemember == true) {
       final saved = await ProductAliasService.saveAlias(
         alias: item.rawReceiptName,
-        product: result,
+        product: chosenProduct,
       );
 
       if (!mounted) return;
@@ -348,20 +483,18 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
         SnackBar(
           content: Text(
             saved
-                ? '${result.name} selected and correction remembered.'
-                : '${result.name} selected, but the correction could not be saved.',
+                ? '${chosenProduct.name} selected and correction remembered.'
+                : '${chosenProduct.name} selected, but the correction '
+                      'could not be saved.',
           ),
         ),
       );
-
       return;
     }
 
-    if (!mounted) return;
-
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text('${result.name} selected.')));
+    ).showSnackBar(SnackBar(content: Text('${chosenProduct.name} selected.')));
   }
 
   Future<bool?> _askToRememberAlias({
@@ -435,38 +568,6 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
           ],
         );
       },
-    );
-  }
-
-  Widget _buildNoCatalogueProductsMessage() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.inventory_2_outlined,
-              size: 56,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 14),
-            Text(
-              'No catalogue products are available yet.',
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Create a new product below to add it to the Rocket Science Shopping '
-              'catalogue and match it to this receipt item.',
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
     );
   }
 

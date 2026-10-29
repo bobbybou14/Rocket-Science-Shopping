@@ -6,6 +6,7 @@ import '../service/receipt_intelligence_service.dart';
 import '../service/shopping_trip_builder_service.dart';
 import '../service/shopping_trip_service.dart';
 import '../service/store_service.dart';
+import 'admin_price_store_search_screen.dart';
 
 class ReceiptIntelligenceScreen extends StatefulWidget {
   const ReceiptIntelligenceScreen({super.key});
@@ -31,6 +32,25 @@ class _ReceiptIntelligenceScreenState extends State<ReceiptIntelligenceScreen> {
   void initState() {
     super.initState();
     loadStores();
+  }
+
+  Future<void> selectReceiptStore() async {
+    if (isSaving || stores.isEmpty) return;
+
+    FocusScope.of(context).unfocus();
+
+    final store = await Navigator.push<Store>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AdminPriceStoreSearchScreen(stores: stores),
+      ),
+    );
+
+    if (!mounted || store == null) return;
+
+    setState(() {
+      selectedStore = store;
+    });
   }
 
   Future<void> loadStores() async {
@@ -302,34 +322,31 @@ class _ReceiptIntelligenceScreenState extends State<ReceiptIntelligenceScreen> {
       );
     }
 
-    return DropdownButtonFormField<Store>(
-      key: ValueKey(selectedStore?.id ?? 'no-store'),
-      initialValue: selectedStore,
-      decoration: const InputDecoration(
-        labelText: 'Store',
-        border: OutlineInputBorder(),
-        prefixIcon: Icon(Icons.store),
+    return InkWell(
+      onTap: isSaving || isLoading ? null : selectReceiptStore,
+      borderRadius: BorderRadius.circular(4),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: 'Store',
+          enabled: !isSaving && !isLoading,
+          prefixIcon: const Icon(Icons.store),
+          suffixIcon: const Icon(Icons.search),
+          border: const OutlineInputBorder(),
+        ),
+        child: selectedStore == null
+            ? const Text('Search by store name and city')
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    selectedStore!.displayName,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  if (selectedStore!.locationLabel.isNotEmpty)
+                    Text(selectedStore!.locationLabel),
+                ],
+              ),
       ),
-      items: stores.map((store) {
-        final location = [
-          store.city,
-          store.province,
-        ].where((value) => value.trim().isNotEmpty).join(', ');
-
-        return DropdownMenuItem<Store>(
-          value: store,
-          child: Text(
-            location.isEmpty ? store.name : '${store.name} — $location',
-          ),
-        );
-      }).toList(),
-      onChanged: isSaving
-          ? null
-          : (store) {
-              setState(() {
-                selectedStore = store;
-              });
-            },
     );
   }
 

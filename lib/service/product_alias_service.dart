@@ -21,6 +21,39 @@ class ProductAliasService {
     }
   }
 
+  static Future<List<ProductAlias>> getAliasesForReceiptItems(
+    Iterable<String> receiptItemNames,
+  ) async {
+    final normalizedNames = receiptItemNames
+        .map(normalizeAlias)
+        .where((name) => name.isNotEmpty)
+        .toSet()
+        .toList();
+
+    final aliases = <ProductAlias>[];
+    const batchSize = 100;
+
+    for (var start = 0; start < normalizedNames.length; start += batchSize) {
+      final end = start + batchSize > normalizedNames.length
+          ? normalizedNames.length
+          : start + batchSize;
+
+      final batch = normalizedNames.sublist(start, end);
+
+      final response = await _supabase
+          .from('product_aliases')
+          .select()
+          .inFilter('normalized_alias', batch)
+          .order('times_used', ascending: false);
+
+      aliases.addAll(
+        response.map<ProductAlias>((item) => ProductAlias.fromMap(item)),
+      );
+    }
+
+    return aliases;
+  }
+
   static Product? findMatchingProduct({
     required String receiptItemName,
     required List<ProductAlias> aliases,

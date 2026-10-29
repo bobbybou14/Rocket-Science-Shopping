@@ -21,6 +21,8 @@ class _ComparisonResultsState extends State<ComparisonResults> {
 
   bool _loadingAdvisor = true;
   String? _advisorError;
+  static const int _storePageSize = 20;
+  int _visibleStoreCount = _storePageSize;
 
   BasketComparisonResult get result => widget.result;
 
@@ -33,6 +35,9 @@ class _ComparisonResultsState extends State<ComparisonResults> {
   @override
   void didUpdateWidget(covariant ComparisonResults oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.result, widget.result)) {
+      _visibleStoreCount = _storePageSize;
+    }
 
     if (_basketSignature(oldWidget.result) != _basketSignature(widget.result)) {
       _loadBasketIntelligence();
@@ -548,7 +553,7 @@ class _ComparisonResultsState extends State<ComparisonResults> {
               ),
               const SizedBox(height: 10),
               const Text(
-               'Rocket Science Shopping Advisor', 
+                'Rocket Science Shopping Advisor',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
@@ -1053,6 +1058,17 @@ class _ComparisonResultsState extends State<ComparisonResults> {
   Widget build(BuildContext context) {
     final cheapest = result.cheapestCompleteStore;
 
+    // Preserve the service's ranking while excluding empty detail cards.
+    final storesWithPrices = result.stores
+        .where((store) => store.pricedItems > 0)
+        .toList();
+
+    final storesWithoutPrices = result.stores.length - storesWithPrices.length;
+
+    final visibleStores = storesWithPrices.take(_visibleStoreCount).toList();
+
+    final remainingStores = storesWithPrices.length - visibleStores.length;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1072,14 +1088,63 @@ class _ComparisonResultsState extends State<ComparisonResults> {
           'Store Details',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 10),
-        ...result.stores.map(
-          (store) => StoreComparisonCard(
-            store: store,
-            isCheapest: cheapest != null && store.storeId == cheapest.storeId,
-            potentialSavings: result.potentialSavings,
-          ),
+        const SizedBox(height: 8),
+        Text(
+          '${storesWithPrices.length} of ${result.stores.length} stores '
+          'have a recorded price for at least one basket item.',
         ),
+        if (storesWithoutPrices > 0) ...[
+          const SizedBox(height: 6),
+          Text(
+            '$storesWithoutPrices stores have no recorded prices '
+            'for these items and are omitted from the details below.',
+            style: const TextStyle(color: Colors.black54, fontSize: 13),
+          ),
+        ],
+        const SizedBox(height: 10),
+        if (storesWithPrices.isEmpty)
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Text(
+                'No store-linked prices were found for these basket items. '
+                'Record prices during a shopping trip to make comparisons '
+                'available.',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          )
+        else ...[
+          ...visibleStores.map(
+            (store) => StoreComparisonCard(
+              store: store,
+              isCheapest: cheapest != null && store.storeId == cheapest.storeId,
+              potentialSavings: result.potentialSavings,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Showing ${visibleStores.length} of '
+            '${storesWithPrices.length} stores with prices.',
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.black54),
+          ),
+          if (remainingStores > 0) ...[
+            const SizedBox(height: 10),
+            OutlinedButton.icon(
+              onPressed: () {
+                setState(() {
+                  _visibleStoreCount += _storePageSize;
+                });
+              },
+              icon: const Icon(Icons.expand_more),
+              label: Text(
+                'Show ${remainingStores < _storePageSize ? remainingStores : _storePageSize} '
+                'more stores',
+              ),
+            ),
+          ],
+        ],
       ],
     );
   }

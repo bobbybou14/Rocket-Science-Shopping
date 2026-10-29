@@ -324,10 +324,6 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
                       const SizedBox(height: 20),
                       _buildErrorMessage(theme),
                     ],
-                    if (_errorMessage != null) ...[
-                      const SizedBox(height: 20),
-                      _buildErrorMessage(theme),
-                    ],
                     const SizedBox(height: 16),
                   ],
                 ),
@@ -491,10 +487,12 @@ class _CreateProductDialogState extends State<CreateProductDialog> {
             children: [
               const Icon(Icons.auto_awesome_outlined, size: 20),
               const SizedBox(width: 8),
-              Text(
-                'Why Rocket Science Shopping suggested this',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: Text(
+                  'Why Rocket Science Shopping suggested this',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],

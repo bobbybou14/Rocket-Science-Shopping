@@ -186,7 +186,7 @@ class _ScanScreenState extends State<ScanScreen> {
     final storePrice = storeId.isEmpty
         ? null
         : await PriceService.getLatestPriceForStore(
-            barcode: cleanBarcode,
+            barcode: product.product.barcode,
             storeId: storeId,
           );
 

@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/product.dart';
+import 'package:flutter/foundation.dart';
 
 class BasketItemRequest {
   final Product product;
@@ -13,29 +14,13 @@ class BasketStoreItemResult {
   final String barcode;
   final String productName;
   final double quantity;
-
-  /// Actual package or shelf price.
   final double? unitPrice;
-
-  /// Actual shelf-price total multiplied by the requested basket quantity.
   final double? lineTotal;
-
   final bool hasPrice;
-
-  /// Quantity used when calculating the normalized unit price.
   final double? measurementQuantity;
-
-  /// Unit printed or advertised for the product, such as g, kg, mL, or L.
   final String? advertisedUnit;
-
-  /// Standard comparison unit, such as kg, L, or each.
   final String? normalizedUnit;
-
-  /// Comparable price per normalized unit.
   final double? normalizedUnitPrice;
-
-  /// True when this store has the lowest comparable normalized price for
-  /// this product among the stores included in the comparison.
   final bool isBestUnitValue;
 
   const BasketStoreItemResult({
@@ -135,6 +120,12 @@ class BasketComparisonResult {
 class BasketComparisonService {
   static final SupabaseClient _supabase = Supabase.instance.client;
 
+  static const BasketComparisonResult _emptyResult = BasketComparisonResult(
+    stores: [],
+    cheapestCompleteStore: null,
+    potentialSavings: 0,
+  );
+
   static Future<BasketComparisonResult> compareBasket(
     List<BasketItemRequest> basketItems,
   ) async {
@@ -144,14 +135,7 @@ class BasketComparisonService {
       return _emptyResult;
     }
 
-    final storeResponse = await _supabase
-        .from('stores')
-        .select('id, name, city, province')
-        .order('name');
-
-    final stores = List<Map<String, dynamic>>.from(
-      storeResponse,
-    ).where((store) => _stringValue(store['id']).isNotEmpty).toList();
+    final stores = await _loadStores();
 
     if (stores.isEmpty) {
       return _emptyResult;
@@ -180,13 +164,10 @@ class BasketComparisonService {
       );
     }).toList();
 
-    final comparisonsWithValueRanking = _markBestNormalizedUnitValues(
-      comparisons,
-    );
+    final rankedComparisons = _markBestNormalizedUnitValues(comparisons);
+    rankedComparisons.sort(_compareStores);
 
-    comparisonsWithValueRanking.sort(_compareStores);
-
-    final completeStores = comparisonsWithValueRanking
+    final completeStores = rankedComparisons
         .where((comparison) => comparison.isComplete)
         .toList();
 
@@ -207,22 +188,12 @@ class BasketComparisonService {
     }
 
     return BasketComparisonResult(
-      stores: comparisonsWithValueRanking,
+      stores: rankedComparisons,
       cheapestCompleteStore: cheapestCompleteStore,
       potentialSavings: potentialSavings,
     );
   }
 
-  static const BasketComparisonResult _emptyResult = BasketComparisonResult(
-    stores: [],
-    cheapestCompleteStore: null,
-    potentialSavings: 0,
-  );
-
-  /// Removes invalid basket entries and combines duplicate barcodes.
-  ///
-  /// Combining duplicates ensures a product appearing more than once in the
-  /// basket is represented by one request with the total requested quantity.
   static List<BasketItemRequest> _prepareBasketItems(
     List<BasketItemRequest> basketItems,
   ) {
@@ -232,9 +203,7 @@ class BasketComparisonService {
     for (final basketItem in basketItems) {
       final barcode = basketItem.product.barcode.trim();
 
-      if (barcode.isEmpty) {
-        continue;
-      }
+      if (barcode.isEmpty) continue;
 
       final quantity = basketItem.quantity.isFinite && basketItem.quantity > 0
           ? basketItem.quantity
@@ -257,8 +226,62 @@ class BasketComparisonService {
     }).toList();
   }
 
-  /// Loads all relevant price records in one request and retains only the
-  /// newest record for each barcode and store combination.
+  static Future<List<Map<String, dynamic>>> _loadStores() async {
+    const pageSize = 500;
+    final storesById = <String, Map<String, dynamic>>{};
+    String? afterId;
+
+    while (true) {
+      var query = _supabase.from('stores').select('id, name, city, province');
+
+      if (afterId != null) {
+        query = query.gt('id', afterId);
+      }
+
+      final response = await query.order('id', ascending: true).limit(pageSize);
+      final rows = List<Map<String, dynamic>>.from(response);
+      debugPrint(
+        'Basket store page: ${rows.length} rows; '
+        'afterId=$afterId; '
+        'lastId=${rows.isEmpty ? "none" : rows.last["id"]}',
+      );
+
+      if (rows.isEmpty) break;
+
+      for (final row in rows) {
+        final id = _stringValue(row['id']);
+
+        if (id.isEmpty) {
+          throw StateError('A store was returned without an ID.');
+        }
+
+        storesById[id] = row;
+      }
+
+      final lastId = _stringValue(rows.last['id']);
+
+      if (lastId == afterId) {
+        throw StateError('Store loading did not advance to the next page.');
+      }
+
+      afterId = lastId;
+    }
+
+    final stores = storesById.values.toList();
+    debugPrint('Basket stores loaded: ${stores.length}');
+    stores.sort((first, second) {
+      final nameComparison = _stringValue(
+        first['name'],
+      ).toLowerCase().compareTo(_stringValue(second['name']).toLowerCase());
+
+      if (nameComparison != 0) return nameComparison;
+
+      return _stringValue(first['id']).compareTo(_stringValue(second['id']));
+    });
+
+    return stores;
+  }
+
   static Future<Map<String, Map<String, dynamic>>> _loadLatestPrices({
     required List<String> barcodes,
     required List<String> storeIds,
@@ -267,38 +290,78 @@ class BasketComparisonService {
       return {};
     }
 
-    final response = await _supabase
-        .from('prices')
-        .select(
-          'barcode, '
-          'store_id, '
-          'price, '
-          'measurement_quantity, '
-          'advertised_unit, '
-          'normalized_unit, '
-          'normalized_unit_price, '
-          'created_at',
-        )
-        .inFilter('barcode', barcodes)
-        .inFilter('store_id', storeIds)
-        .order('created_at', ascending: false);
+    final uniqueBarcodes = barcodes
+        .map((barcode) => barcode.trim())
+        .where((barcode) => barcode.isNotEmpty)
+        .toSet()
+        .toList();
 
-    final priceRows = List<Map<String, dynamic>>.from(response);
+    final allowedStoreIds = storeIds.toSet();
     final latestPrices = <String, Map<String, dynamic>>{};
 
-    for (final priceRow in priceRows) {
-      final barcode = _stringValue(priceRow['barcode']);
-      final storeId = _stringValue(priceRow['store_id']);
+    const barcodeBatchSize = 100;
+    const pageSize = 500;
 
-      if (barcode.isEmpty || storeId.isEmpty) {
-        continue;
+    for (
+      var start = 0;
+      start < uniqueBarcodes.length;
+      start += barcodeBatchSize
+    ) {
+      final end = start + barcodeBatchSize > uniqueBarcodes.length
+          ? uniqueBarcodes.length
+          : start + barcodeBatchSize;
+
+      final batch = uniqueBarcodes.sublist(start, end);
+      final batchBarcodes = batch.toSet();
+
+      String? afterBarcode;
+      String? afterStoreId;
+
+      while (true) {
+        final response = await _supabase.rpc(
+          'get_basket_latest_prices',
+          params: {
+            'p_barcodes': batch,
+            'p_after_barcode': afterBarcode,
+            'p_after_store_id': afterStoreId,
+            'p_limit': pageSize,
+          },
+        );
+
+        final rows = List<Map<String, dynamic>>.from(response);
+
+        if (rows.isEmpty) break;
+
+        for (final row in rows) {
+          final barcode = _stringValue(row['barcode']);
+          final storeId = _stringValue(row['store_id']);
+
+          if (barcode.isEmpty || storeId.isEmpty) {
+            throw StateError(
+              'A basket price was returned without a barcode or store ID.',
+            );
+          }
+
+          if (!batchBarcodes.contains(barcode) ||
+              !allowedStoreIds.contains(storeId)) {
+            continue;
+          }
+
+          final key = _priceKey(barcode: barcode, storeId: storeId);
+
+          latestPrices[key] = row;
+        }
+
+        final lastBarcode = _stringValue(rows.last['barcode']);
+        final lastStoreId = _stringValue(rows.last['store_id']);
+
+        if (lastBarcode == afterBarcode && lastStoreId == afterStoreId) {
+          throw StateError('Price loading did not advance to the next page.');
+        }
+
+        afterBarcode = lastBarcode;
+        afterStoreId = lastStoreId;
       }
-
-      final key = _priceKey(barcode: barcode, storeId: storeId);
-
-      // Rows are ordered newest first, so the first matching row is the
-      // current price for that barcode and store.
-      latestPrices.putIfAbsent(key, () => priceRow);
     }
 
     return latestPrices;
@@ -310,12 +373,8 @@ class BasketComparisonService {
     required Map<String, Map<String, dynamic>> latestPrices,
   }) {
     final storeId = _stringValue(store['id']);
-    final storeName = _stringValue(store['name']).isEmpty
-        ? 'Unknown Store'
-        : _stringValue(store['name']);
-
-    final city = _stringValue(store['city']);
-    final province = _stringValue(store['province']);
+    final storedName = _stringValue(store['name']);
+    final storeName = storedName.isEmpty ? 'Unknown Store' : storedName;
 
     double total = 0;
     int pricedItems = 0;
@@ -325,7 +384,6 @@ class BasketComparisonService {
 
     for (final basketItem in basketItems) {
       final barcode = basketItem.product.barcode.trim();
-
       final quantity = basketItem.quantity.isFinite && basketItem.quantity > 0
           ? basketItem.quantity
           : 1.0;
@@ -353,7 +411,6 @@ class BasketComparisonService {
       }
 
       final lineTotal = shelfPrice * quantity;
-
       total += lineTotal;
       pricedItems++;
 
@@ -380,8 +437,8 @@ class BasketComparisonService {
     return BasketStoreComparison(
       storeId: storeId,
       storeName: storeName,
-      city: city,
-      province: province,
+      city: _stringValue(store['city']),
+      province: _stringValue(store['province']),
       total: total,
       pricedItems: pricedItems,
       missingItems: missingItems,
@@ -389,11 +446,6 @@ class BasketComparisonService {
     );
   }
 
-  /// Marks the lowest normalized unit price for each barcode and unit.
-  ///
-  /// Prices are only compared when both the barcode and normalized unit match.
-  /// This prevents dollars per kilogram from being compared with dollars per
-  /// litre or dollars per item.
   static List<BasketStoreComparison> _markBestNormalizedUnitValues(
     List<BasketStoreComparison> comparisons,
   ) {
@@ -401,9 +453,7 @@ class BasketComparisonService {
 
     for (final comparison in comparisons) {
       for (final item in comparison.items) {
-        if (!item.hasNormalizedUnitPrice) {
-          continue;
-        }
+        if (!item.hasNormalizedUnitPrice) continue;
 
         final key = _unitComparisonKey(
           barcode: item.barcode,
@@ -452,13 +502,8 @@ class BasketComparisonService {
     BasketStoreComparison first,
     BasketStoreComparison second,
   ) {
-    if (first.isComplete && !second.isComplete) {
-      return -1;
-    }
-
-    if (!first.isComplete && second.isComplete) {
-      return 1;
-    }
+    if (first.isComplete && !second.isComplete) return -1;
+    if (!first.isComplete && second.isComplete) return 1;
 
     if (first.isComplete && second.isComplete) {
       return first.total.compareTo(second.total);
@@ -466,15 +511,11 @@ class BasketComparisonService {
 
     final missingComparison = first.missingItems.compareTo(second.missingItems);
 
-    if (missingComparison != 0) {
-      return missingComparison;
-    }
+    if (missingComparison != 0) return missingComparison;
 
     final pricedComparison = second.pricedItems.compareTo(first.pricedItems);
 
-    if (pricedComparison != 0) {
-      return pricedComparison;
-    }
+    if (pricedComparison != 0) return pricedComparison;
 
     return first.total.compareTo(second.total);
   }
@@ -492,7 +533,6 @@ class BasketComparisonService {
 
   static bool _approximatelyEqual(double first, double second) {
     const tolerance = 0.000001;
-
     return (first - second).abs() <= tolerance;
   }
 
@@ -507,10 +547,7 @@ class BasketComparisonService {
   }
 
   static double? _toDouble(dynamic value) {
-    if (value is num) {
-      return value.toDouble();
-    }
-
+    if (value is num) return value.toDouble();
     return double.tryParse(value?.toString() ?? '');
   }
 
@@ -520,12 +557,7 @@ class BasketComparisonService {
 
   static String? _nullableString(dynamic value) {
     final parsed = _stringValue(value);
-
-    if (parsed.isEmpty) {
-      return null;
-    }
-
-    return parsed;
+    return parsed.isEmpty ? null : parsed;
   }
 
   static String _productDisplayName(Product product) {
@@ -535,10 +567,6 @@ class BasketComparisonService {
       product.size,
     ].where((value) => value.trim().isNotEmpty).toList();
 
-    if (parts.isEmpty) {
-      return product.barcode;
-    }
-
-    return parts.join(' ');
+    return parts.isEmpty ? product.barcode : parts.join(' ');
   }
 }

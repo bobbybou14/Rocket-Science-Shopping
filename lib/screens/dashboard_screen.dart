@@ -23,6 +23,7 @@ import '../widgets/dashboard/spending_analytics_card.dart';
 import '../widgets/dashboard/stats_grid.dart';
 import 'basket_comparison_screen.dart';
 import 'favorites_screen.dart';
+import 'grocery_list_screen.dart';
 import 'product_catalog_screen.dart';
 import 'receipt_upload_screen.dart';
 import 'settings_screen.dart';
@@ -685,12 +686,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
           const SizedBox(height: 18),
 
           buildStartShoppingButton(),
-
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                openScreen(const FavoritesScreen());
+              },
+              icon: const Icon(Icons.favorite_outline),
+              label: const Text('My Favourites'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                openScreen(const GroceryListScreen());
+              },
+              icon: const Icon(Icons.checklist),
+              label: const Text('My Grocery List'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(height: 28),
 
           buildSectionHeader(
             title: 'Savings Opportunities',
-            subtitle: 'See where Rocket Science Shopping can help you save more.',
+            subtitle:
+                'See where Rocket Science Shopping can help you save more.',
           ),
 
           const SizedBox(height: 12),

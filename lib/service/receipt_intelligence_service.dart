@@ -1,4 +1,3 @@
-import 'receipt_cleanup_service.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/product.dart';
@@ -6,6 +5,7 @@ import 'product_alias_service.dart';
 import 'product_matcher_service.dart';
 import 'product_service.dart';
 import 'product_suggestion_service.dart';
+import 'receipt_cleanup_service.dart';
 import 'receipt_line_interpreter_service.dart';
 import 'receipt_parser_service.dart';
 
@@ -35,15 +35,104 @@ class ReceiptIntelligenceService {
   ) async {
     final parsedReceipt = ReceiptParserService.parse(rawText);
 
-    final products = await ProductService.getProducts();
-    final aliases = await ProductAliasService.getAliases();
+    final aliases = await ProductAliasService.getAliasesForReceiptItems(
+      parsedReceipt.items.map((item) => item.name),
+    );
+
+    final resolvedBarcodes = <String, Product?>{};
+
+    Future<Product?> resolveBarcode(String barcode) async {
+      final value = barcode.trim();
+
+      if (value.isEmpty) return null;
+
+      if (resolvedBarcodes.containsKey(value)) {
+        return resolvedBarcodes[value];
+      }
+
+      final product = await ProductService.getProductByBarcode(value);
+      resolvedBarcodes[value] = product;
+
+      return product;
+    }
+
+    final aliasProductsByName = <String, Product>{};
+    final productsByBarcode = <String, Product>{};
+
+    for (final alias in aliases) {
+      if (aliasProductsByName.containsKey(alias.normalizedAlias)) {
+        continue;
+      }
+
+      final product = await resolveBarcode(alias.productBarcode);
+
+      if (product != null) {
+        aliasProductsByName[alias.normalizedAlias] = product;
+        productsByBarcode[product.barcode] = product;
+      }
+    }
+
+    final candidatesByItemName = <String, List<Product>>{};
+    final candidatesByQuery = <String, List<Product>>{};
+    final barcodeProductsByItemName = <String, Product>{};
+
+    for (final item in parsedReceipt.items) {
+      if (candidatesByItemName.containsKey(item.name)) {
+        continue;
+      }
+
+      final itemCandidates = <String, Product>{};
+      final normalizedName = ProductAliasService.normalizeAlias(item.name);
+      final aliasProduct = aliasProductsByName[normalizedName];
+
+      if (aliasProduct != null) {
+        itemCandidates[aliasProduct.barcode] = aliasProduct;
+      }
+
+      final interpreted = ReceiptLineInterpreterService.interpret(item.name);
+      final extractedBarcode = RegExp(
+        r'\b\d{8,14}\b',
+      ).firstMatch(item.name)?.group(0);
+
+      final barcode = interpreted.barcode.trim().isNotEmpty
+          ? interpreted.barcode.trim()
+          : extractedBarcode ?? '';
+
+      if (barcode.isNotEmpty) {
+        final product = await resolveBarcode(barcode);
+
+        if (product != null) {
+          barcodeProductsByItemName[item.name] = product;
+          itemCandidates[product.barcode] = product;
+        }
+      }
+
+      final query = ProductMatcherService.buildCandidateSearch(item.name);
+
+      if (query.isNotEmpty) {
+        List<Product> candidates;
+
+        if (candidatesByQuery.containsKey(query)) {
+          candidates = candidatesByQuery[query]!;
+        } else {
+          candidates = await ProductService.findReceiptCandidates(query);
+          candidatesByQuery[query] = candidates;
+        }
+
+        for (final product in candidates) {
+          itemCandidates[product.barcode] = product;
+        }
+      }
+
+      candidatesByItemName[item.name] = itemCandidates.values.toList();
+      productsByBarcode.addAll(itemCandidates);
+    }
+
+    final products = productsByBarcode.values.toList();
 
     final matches = parsedReceipt.items.map((item) {
-      final aliasProduct = ProductAliasService.findMatchingProduct(
-        receiptItemName: item.name,
-        aliases: aliases,
-        products: products,
-      );
+      final normalizedName = ProductAliasService.normalizeAlias(item.name);
+      final aliasProduct = aliasProductsByName[normalizedName];
 
       if (aliasProduct != null) {
         return ProductMatchResult(
@@ -54,17 +143,28 @@ class ReceiptIntelligenceService {
         );
       }
 
+      final barcodeProduct = barcodeProductsByItemName[item.name];
+
+      if (barcodeProduct != null) {
+        return ProductMatchResult(
+          receiptItem: item,
+          product: barcodeProduct,
+          confidenceScore: 100,
+          reason: 'Matched using the product barcode.',
+        );
+      }
+
       return ProductMatcherService.matchItem(
         receiptItem: item,
-        products: products,
+        products: candidatesByItemName[item.name] ?? const <Product>[],
       );
     }).toList();
 
     assert(() {
       debugPrint('----- PRODUCT MATCHES START -----');
       debugPrint('Parsed receipt item count: ${parsedReceipt.items.length}');
-      debugPrint('Available product count: ${products.length}');
-      debugPrint('Available alias count: ${aliases.length}');
+      debugPrint('Loaded candidate product count: ${products.length}');
+      debugPrint('Relevant alias count: ${aliases.length}');
 
       if (matches.isEmpty) {
         debugPrint('No parsed receipt items were available for matching.');
@@ -83,7 +183,6 @@ class ReceiptIntelligenceService {
               ].where((part) => part.trim().isNotEmpty).join(' ');
 
         final cleaned = ReceiptCleanupService.clean(result.receiptItem.name);
-
         final interpreted = ReceiptLineInterpreterService.interpret(
           result.receiptItem.name,
         );
@@ -118,7 +217,9 @@ class ReceiptIntelligenceService {
         .map(
           (match) => ProductSuggestionService.buildSuggestion(
             receiptItemName: match.receiptItem.name,
-            existingProducts: products,
+            existingProducts:
+                candidatesByItemName[match.receiptItem.name] ??
+                const <Product>[],
           ),
         )
         .toList();

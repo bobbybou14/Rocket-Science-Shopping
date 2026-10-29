@@ -12,6 +12,7 @@ import '../service/store_service.dart';
 import 'add_store_screen.dart';
 import 'receipt_history_screen.dart';
 import 'receipt_review_screen.dart';
+import 'admin_price_store_search_screen.dart';
 
 class ReceiptUploadScreen extends StatefulWidget {
   const ReceiptUploadScreen({super.key});
@@ -38,6 +39,25 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
   void initState() {
     super.initState();
     loadStores();
+  }
+
+  Future<void> selectReceiptStore() async {
+    if (isSaving || stores.isEmpty) return;
+
+    FocusScope.of(context).unfocus();
+
+    final store = await Navigator.push<Store>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AdminPriceStoreSearchScreen(stores: stores),
+      ),
+    );
+
+    if (!mounted || store == null) return;
+
+    setState(() {
+      selectedStore = store;
+    });
   }
 
   Future<void> loadStores() async {
@@ -407,30 +427,33 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
                   style: TextStyle(fontSize: 18),
                 ),
                 const SizedBox(height: 25),
-                DropdownButtonFormField<Store>(
-                  initialValue: selectedStore,
-                  isExpanded: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Store',
-                    prefixIcon: Icon(Icons.store_outlined),
-                    border: OutlineInputBorder(),
+                InkWell(
+                  onTap: isSaving || stores.isEmpty ? null : selectReceiptStore,
+                  borderRadius: BorderRadius.circular(4),
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: 'Store',
+                      enabled: !isSaving && stores.isNotEmpty,
+                      prefixIcon: const Icon(Icons.store_outlined),
+                      suffixIcon: const Icon(Icons.search),
+                      border: const OutlineInputBorder(),
+                    ),
+                    child: selectedStore == null
+                        ? const Text('Search by store name and city')
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                selectedStore!.displayName,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              if (selectedStore!.locationLabel.isNotEmpty)
+                                Text(selectedStore!.locationLabel),
+                            ],
+                          ),
                   ),
-                  items: stores.map((store) {
-                    return DropdownMenuItem<Store>(
-                      value: store,
-                      child: Text(
-                        '${store.name} - ${store.city}, ${store.province}',
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: isSaving
-                      ? null
-                      : (value) {
-                          setState(() {
-                            selectedStore = value;
-                          });
-                        },
                 ),
                 const SizedBox(height: 10),
                 OutlinedButton.icon(
