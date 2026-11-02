@@ -64,7 +64,9 @@ class _ScanScreenState extends State<ScanScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text('Enter Package Weight'),
+              title: Text(
+                unit.isWeight ? 'Enter Package Weight' : 'Enter Item Volume',
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +85,9 @@ class _ScanScreenState extends State<ScanScreen> {
                       decimal: true,
                     ),
                     decoration: InputDecoration(
-                      labelText: 'Package weight',
+                      labelText: unit.isWeight
+                          ? 'Actual package weight'
+                          : 'Actual item volume',
                       suffixText: unit.symbol,
                       errorText: errorText,
                       border: const OutlineInputBorder(),
@@ -91,9 +95,9 @@ class _ScanScreenState extends State<ScanScreen> {
                     onSubmitted: (_) {
                       final value = double.tryParse(controller.text.trim());
 
-                      if (value == null || value <= 0) {
+   if (value == null || !value.isFinite || value <= 0) {
                         setDialogState(() {
-                          errorText = 'Enter a valid weight.';
+         errorText = 'Enter a valid amount greater than zero.';
                         });
                         return;
                       }
@@ -114,9 +118,9 @@ class _ScanScreenState extends State<ScanScreen> {
                   onPressed: () {
                     final value = double.tryParse(controller.text.trim());
 
-                    if (value == null || value <= 0) {
+   if (value == null || !value.isFinite || value <= 0) {
                       setDialogState(() {
-                        errorText = 'Enter a valid weight.';
+       errorText = 'Enter a valid amount greater than zero.';
                       });
                       return;
                     }
@@ -194,17 +198,31 @@ class _ScanScreenState extends State<ScanScreen> {
 
     double finalPrice = storePrice?.price ?? product.price;
 
-    final isVariableWeightProduct =
-        product.product.variableMeasurement &&
-        product.product.isWeight &&
+    final usesMeasuredPrice =
         storePrice != null &&
-        storePrice.advertisedUnit.isWeight;
+        (storePrice.advertisedUnit.isWeight ||
+            storePrice.advertisedUnit.isVolume);
 
-    if (isVariableWeightProduct) {
+    if (usesMeasuredPrice) {
+          if (!storePrice.measurementQuantity.isFinite ||
+          storePrice.measurementQuantity <= 0 ||
+          !storePrice.price.isFinite ||
+          storePrice.price <= 0) {
+        resetScanner();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'This store price has an invalid measurement. '
+              'Please add a corrected price for this product.',
+            ),
+          ),
+        );
+        return;
+      }
       final enteredWeight = await requestVariableMeasurement(
         productName: product.name,
         unit: storePrice.advertisedUnit,
-        unitPrice: storePrice.price,
+        unitPrice: storePrice.price / storePrice.measurementQuantity,
       );
 
       if (!mounted) return;
@@ -220,7 +238,8 @@ class _ScanScreenState extends State<ScanScreen> {
         return;
       }
 
-      finalPrice = storePrice.price * enteredWeight;
+      finalPrice =
+          (storePrice.price / storePrice.measurementQuantity) * enteredWeight;
     }
 
     final pricedProduct = CartItem(

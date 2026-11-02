@@ -5,6 +5,7 @@ import '../models/product.dart';
 import '../models/store.dart';
 import '../service/price_service.dart';
 import '../service/store_service.dart';
+import '../models/measurement_unit.dart';
 
 class AddPriceScreen extends StatefulWidget {
   final Product product;
@@ -21,6 +22,7 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
   List<Store> stores = [];
   Store? selectedStore;
   final priceController = TextEditingController();
+  MeasurementUnit selectedPriceUnit = MeasurementUnit.each;
 
   bool loading = true;
   bool saving = false;
@@ -73,9 +75,11 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
       return;
     }
 
-    final amount = double.tryParse(priceController.text);
+    if (saving) return;
 
-    if (amount == null || amount <= 0) {
+    final amount = double.tryParse(priceController.text.trim());
+
+    if (amount == null || !amount.isFinite || amount <= 0) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Enter a valid price.')));
@@ -97,6 +101,13 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
         province: store.province,
         city: store.city,
         price: amount,
+        advertisedUnit: selectedPriceUnit,
+        measurementQuantity: 1,
+        normalizedUnit: selectedPriceUnit.isWeight
+            ? MeasurementUnit.kilogram
+            : selectedPriceUnit.isVolume
+                ? MeasurementUnit.litre
+                : selectedPriceUnit,
       ),
     );
 
@@ -162,6 +173,36 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
                       prefixText: '\$',
                       border: OutlineInputBorder(),
                     ),
+                  ),
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField<MeasurementUnit>(
+                    initialValue: selectedPriceUnit,
+                    decoration: const InputDecoration(
+                      labelText: 'Price Unit',
+                      helperText:
+                          'Choose the unit shown on the shelf price.',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: MeasurementUnit.values.map((unit) {
+                      return DropdownMenuItem<MeasurementUnit>(
+                        value: unit,
+                        child: Text(
+                          unit == MeasurementUnit.each
+                              ? 'Each'
+                              : unit == MeasurementUnit.package
+                                  ? 'Package'
+                                  : 'Per ${unit.symbol}',
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: saving
+                        ? null
+                        : (value) {
+                            if (value == null) return;
+                            setState(() {
+                              selectedPriceUnit = value;
+                            });
+                          },
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton.icon(

@@ -182,27 +182,17 @@ class _AdminPricesScreenState extends State<AdminPricesScreen> {
     }
   }
 
-  List<MeasurementUnit> get availablePriceUnits {
-    final product = selectedProduct;
-
-    if (product == null) {
-      return const [MeasurementUnit.each];
-    }
-
-    if (product.isWeight) {
-      return const [
-        MeasurementUnit.pound,
-        MeasurementUnit.kilogram,
-        MeasurementUnit.ounce,
-        MeasurementUnit.gram,
-      ];
-    }
-
-    if (product.isVolume) {
-      return const [MeasurementUnit.litre, MeasurementUnit.millilitre];
-    }
-
-    return const [MeasurementUnit.each, MeasurementUnit.package];
+    List<MeasurementUnit> get availablePriceUnits {
+    return const [
+      MeasurementUnit.each,
+      MeasurementUnit.package,
+      MeasurementUnit.kilogram,
+      MeasurementUnit.pound,
+      MeasurementUnit.gram,
+      MeasurementUnit.ounce,
+      MeasurementUnit.litre,
+      MeasurementUnit.millilitre,
+    ];
   }
 
   void selectProduct(Product product) {
@@ -315,7 +305,11 @@ class _AdminPricesScreenState extends State<AdminPricesScreen> {
         price: amount,
         advertisedUnit: selectedPriceUnit,
         measurementQuantity: 1,
-        normalizedUnit: product.baseUnit,
+        normalizedUnit: selectedPriceUnit.isWeight
+            ? MeasurementUnit.kilogram
+            : selectedPriceUnit.isVolume
+                ? MeasurementUnit.litre
+                : selectedPriceUnit,
       );
 
       await PriceService.savePrice(price);

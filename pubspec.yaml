@@ -2,7 +2,7 @@ name: rocket_science_shopping
 description: "Rocket Science Shopping - Privacy-first grocery price intelligence for Canadians."
 publish_to: 'none'
 
-version: 0.9.1+4
+version: 0.9.3+6
 
 environment:
   sdk: ^3.12.2
@@ -18,7 +18,7 @@ dependencies:
   shared_preferences: ^2.5.5
 
   # Barcode Scanner
-  mobile_scanner: ^7.2.0
+  mobile_scanner: ^7.4.3
 
   # HTTP Requests
   http: ^1.6.0

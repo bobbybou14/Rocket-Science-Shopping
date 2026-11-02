@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/measurement_unit.dart';
 import '../../models/cart_item.dart';
 import '../../providers/cart_provider.dart';
 
@@ -292,7 +293,31 @@ class _EditCartItemPriceScreenState extends State<_EditCartItemPriceScreen> {
   static const Color primaryRed = Color(0xFFD6001C);
 
   late final TextEditingController priceController;
+  final measurementController = TextEditingController();
+
   late bool taxApplies;
+  MeasurementUnit selectedUnit = MeasurementUnit.each;
+
+  bool get usesMeasurement => selectedUnit.isWeight || selectedUnit.isVolume;
+
+  double? get calculatedPrice {
+    final price = double.tryParse(priceController.text.trim());
+
+    if (price == null || !price.isFinite || price < 0) {
+      return null;
+    }
+
+    if (!usesMeasurement) return price;
+
+    final amount = double.tryParse(measurementController.text.trim());
+
+    if (amount == null || !amount.isFinite || amount <= 0) {
+      return null;
+    }
+
+    final total = price * amount;
+    return total.isFinite ? total : null;
+  }
 
   @override
   void initState() {
@@ -307,26 +332,44 @@ class _EditCartItemPriceScreenState extends State<_EditCartItemPriceScreen> {
   @override
   void dispose() {
     priceController.dispose();
+    measurementController.dispose();
     super.dispose();
   }
 
   void save() {
-    final price = double.tryParse(priceController.text.trim());
+    final price = calculatedPrice;
 
-    if (price == null || price < 0) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Enter a valid price.')));
+    if (price == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            usesMeasurement
+                ? 'Enter a valid price and a weight or volume greater than zero.'
+                : 'Enter a valid price.',
+          ),
+        ),
+      );
       return;
     }
 
     FocusScope.of(context).unfocus();
 
-    Navigator.pop(context, _PriceEditResult(price: price, taxable: taxApplies));
+    Navigator.pop(
+      context,
+      _PriceEditResult(price: price, taxable: taxApplies),
+    );
+  }
+
+  String unitLabel(MeasurementUnit unit) {
+    if (unit == MeasurementUnit.each) return 'Each';
+    if (unit == MeasurementUnit.package) return 'Package';
+    return 'Per ${unit.symbol}';
   }
 
   @override
   Widget build(BuildContext context) {
+    final total = calculatedPrice;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Price'),
@@ -340,31 +383,80 @@ class _EditCartItemPriceScreenState extends State<_EditCartItemPriceScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const Text(
+                'Enter the price for one item or package. '
+                'For weight or volume pricing, choose the shelf-price unit '
+                'and enter the actual amount in that same unit.',
+              ),
+              const SizedBox(height: 20),
+              DropdownButtonFormField<MeasurementUnit>(
+                initialValue: selectedUnit,
+                decoration: const InputDecoration(
+                  labelText: 'Price Unit',
+                  border: OutlineInputBorder(),
+                ),
+                items: MeasurementUnit.values.map((unit) {
+                  return DropdownMenuItem<MeasurementUnit>(
+                    value: unit,
+                    child: Text(unitLabel(unit)),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value == null || value == selectedUnit) return;
+
+                  setState(() {
+                    selectedUnit = value;
+                    priceController.clear();
+                    measurementController.clear();
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
               TextField(
                 controller: priceController,
-                autofocus: true,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) {
-                  save();
-                },
-                onTapOutside: (_) {
-                  FocusScope.of(context).unfocus();
-                },
+                onChanged: (_) => setState(() {}),
+                onTapOutside: (_) => FocusScope.of(context).unfocus(),
                 decoration: InputDecoration(
-                  labelText: 'Price',
+                  labelText: usesMeasurement
+                      ? 'Price per ${selectedUnit.symbol}'
+                      : 'Price for one item or package',
                   prefixText: '\$',
                   border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      FocusScope.of(context).unfocus();
-                    },
-                    icon: const Icon(Icons.keyboard_hide),
-                    tooltip: 'Hide keyboard',
+                ),
+              ),
+              if (usesMeasurement) ...[
+                const SizedBox(height: 20),
+                TextField(
+                  controller: measurementController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  onChanged: (_) => setState(() {}),
+                  onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                  decoration: InputDecoration(
+                    labelText: selectedUnit.isWeight
+                        ? 'Actual weight of one package'
+                        : 'Actual volume of one item',
+                    suffixText: selectedUnit.symbol,
+                    helperText: selectedUnit == MeasurementUnit.kilogram
+                        ? 'Example: enter 0.75 for 750 g.'
+                        : selectedUnit == MeasurementUnit.litre
+                            ? 'Example: enter 0.5 for 500 mL.'
+                            : 'Use the same unit as the price above.',
+                    border: const OutlineInputBorder(),
                   ),
                 ),
+              ],
+              const SizedBox(height: 20),
+              Text(
+                total == null
+                    ? 'Enter the values above to calculate the total.'
+                    : 'Price for one item or package before tax: '
+                        '\$${total.toStringAsFixed(2)}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               Card(

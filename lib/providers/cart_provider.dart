@@ -27,7 +27,12 @@ class CartProvider extends ChangeNotifier {
 
     final index = barcode.isEmpty
         ? -1
-        : _items.indexWhere((existing) => existing.barcode.trim() == barcode);
+        : _items.indexWhere(
+            (existing) =>
+                existing.barcode.trim() == barcode &&
+                existing.price == item.price &&
+                existing.taxable == item.taxable,
+          );
 
     if (index >= 0) {
       _items[index].quantity += item.quantity;
@@ -69,13 +74,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   void restoreItem(CartItem item) {
-    final barcode = item.barcode.trim();
-
-    final alreadyExists =
-        barcode.isNotEmpty &&
-        _items.any((existing) => existing.barcode.trim() == barcode);
-
-    if (!alreadyExists) {
+    if (!_items.contains(item)) {
       _items.add(item);
       notifyListeners();
     }
