@@ -56,6 +56,49 @@ class ReceiptIntelligenceService {
       return product;
     }
 
+    Future<Product?> resolveReceiptCode(String barcode) async {
+      final value = barcode.trim();
+
+      // First try the printed value and existing equivalent GTIN forms.
+      final exactProduct = await resolveBarcode(value);
+
+      if (exactProduct != null) {
+        return exactProduct;
+      }
+
+      // Confirmed for our No Frills test receipt:
+      // the printed number contains the 11 UPC data digits.
+      final isNoFrills =
+          parsedReceipt.storeName.trim().toUpperCase() == 'NO FRILLS';
+
+      if (!isNoFrills || !RegExp(r'^\d{11}$').hasMatch(value)) {
+        return null;
+      }
+
+      var sum = 0;
+      var weight = 3;
+
+      for (var index = value.length - 1; index >= 0; index--) {
+        sum += int.parse(value[index]) * weight;
+        weight = weight == 3 ? 1 : 3;
+      }
+
+      final checkDigit = (10 - sum % 10) % 10;
+      final completedUpc = '$value$checkDigit';
+
+      // Existing lookup also checks equivalent 13- and 14-digit forms.
+      final product = await resolveBarcode(completedUpc);
+
+      if (kDebugMode) {
+        debugPrint(
+          'Receipt code lookup: $value -> $completedUpc -> '
+          '${product?.barcode ?? "NO MATCH"}',
+        );
+      }
+
+      return product;
+    }
+
     final aliasProductsByName = <String, Product>{};
     final productsByBarcode = <String, Product>{};
 
@@ -99,7 +142,7 @@ class ReceiptIntelligenceService {
           : extractedBarcode ?? '';
 
       if (barcode.isNotEmpty) {
-        final product = await resolveBarcode(barcode);
+        final product = await resolveReceiptCode(barcode);
 
         if (product != null) {
           barcodeProductsByItemName[item.name] = product;
