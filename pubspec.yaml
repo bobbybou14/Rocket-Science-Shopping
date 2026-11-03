@@ -2,7 +2,7 @@ name: rocket_science_shopping
 description: "Rocket Science Shopping - Privacy-first grocery price intelligence for Canadians."
 publish_to: 'none'
 
-version: 0.9.3+6
+version: 0.9.3+7
 
 environment:
   sdk: ^3.12.2
