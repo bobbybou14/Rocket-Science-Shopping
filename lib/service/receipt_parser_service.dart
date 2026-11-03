@@ -264,6 +264,51 @@ class ReceiptParserService {
         continue;
       }
 
+      // Reduced-price stickers print the original amount and percentage on
+      // a separate line. Apply only an explicit deduction whose base and
+      // rounded percentage independently agree with the preceding product.
+      final percentageDiscount = RegExp(
+        r'^\(\s*(\d+\.\d{2})\s*[@Xx89]?\s*'
+        r'(\d{1,3}(?:\.\d+)?)\s*%\s*\)\s+'
+        r'-\s*\$?\s*\d+\.\d{2}\s*$',
+      ).firstMatch(line);
+      if (percentageDiscount != null) {
+        final base = double.parse(percentageDiscount.group(1)!);
+        final rate = double.parse(percentageDiscount.group(2)!);
+        final deduction = _extractAmount(line)!.abs();
+        final previous = items.isEmpty ? null : items.last;
+        if (previous != null &&
+            !previous.priceNeedsReview &&
+            !previous.isDiscount &&
+            rate > 0 &&
+            rate <= 100 &&
+            _sameMoney(previous.price, base) &&
+            deduction <= base &&
+            _sameMoney(_roundCurrency(base * rate / 100), deduction)) {
+          items[items.length - 1] = ParsedReceiptItem(
+            name: previous.name,
+            price: _roundCurrency(previous.price - deduction),
+            quantity: previous.quantity,
+            confidenceScore: previous.confidenceScore,
+            isWeightedItem: previous.isWeightedItem,
+            sourceLine: '${previous.sourceLine}\n$line',
+          );
+        } else {
+          items.add(
+            ParsedReceiptItem(
+              name: 'Unlinked receipt discount',
+              price: -deduction,
+              confidenceScore: 0,
+              isDiscount: true,
+              sourceLine: line,
+            ),
+          );
+          reviewWarnings.add('A percentage discount needs review: $line.');
+        }
+        pendingItemName = null;
+        continue;
+      }
+
       final amount = _extractAmount(line);
 
       if (amount == null) {
