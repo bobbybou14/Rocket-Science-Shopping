@@ -1,6 +1,3 @@
-import 'receipt_block_builder.dart';
-import 'receipt_layout_block_builder.dart';
-
 class ParsedReceipt {
   final String storeName;
   final DateTime? purchaseDate;
@@ -9,6 +6,9 @@ class ParsedReceipt {
   final double total;
   final List<ParsedReceiptItem> items;
   final List<String> ignoredSensitiveLines;
+  final List<String> reviewWarnings;
+  final bool subtotalWasRecovered;
+  final bool totalWasRecovered;
 
   const ParsedReceipt({
     this.storeName = '',
@@ -18,6 +18,9 @@ class ParsedReceipt {
     this.total = 0,
     this.items = const [],
     this.ignoredSensitiveLines = const [],
+    this.reviewWarnings = const [],
+    this.subtotalWasRecovered = false,
+    this.totalWasRecovered = false,
   });
 }
 
@@ -29,6 +32,10 @@ class ParsedReceiptItem {
   final bool isDiscount;
   final bool isWeightedItem;
 
+  // Draft-only: zero is a placeholder, not an observed free price.
+  final bool priceNeedsReview;
+  final String sourceLine;
+
   const ParsedReceiptItem({
     required this.name,
     required this.price,
@@ -36,6 +43,8 @@ class ParsedReceiptItem {
     this.confidenceScore = 70,
     this.isDiscount = false,
     this.isWeightedItem = false,
+    this.priceNeedsReview = false,
+    this.sourceLine = '',
   });
 }
 
@@ -45,39 +54,68 @@ class ReceiptParserService {
   static ParsedReceipt parse(String rawText) {
     final lines = _cleanLines(rawText);
 
-    assert(() {
-      final blocks = ReceiptBlockBuilder.build(lines);
-      ReceiptBlockBuilder.debugPrintBlocks(blocks);
-
-      final layoutResult = ReceiptLayoutBlockBuilder.build(lines);
-      ReceiptLayoutBlockBuilder.debugPrintResult(layoutResult);
-
-      return true;
-    }());
-
     final ignoredSensitiveLines = <String>[];
     final items = <ParsedReceiptItem>[];
 
-    String storeName = '';
+    String storeName = _detectStoreName(lines.take(6).join(' '));
     DateTime? purchaseDate;
     double subtotal = 0;
     double tax = 0;
     double total = 0;
+    bool hasTaxAmount = false;
+    double? damagedSubtotal;
+    double? damagedTotal;
+    bool subtotalWasRecovered = false;
+    bool totalWasRecovered = false;
+    final paymentAmounts = <double>[];
+    final reviewWarnings = <String>[];
 
     bool totalsSectionStarted = false;
+    bool productSectionClosed = false;
     String? pendingItemName;
 
     for (final line in lines) {
       final upper = line.toUpperCase();
       final normalizedLabel = _normalizeLabel(line);
 
+      // Capture only an explicitly labelled payment amount, never card IDs.
+      if (totalsSectionStarted || productSectionClosed) {
+        final payment = _extractPaymentAmount(line);
+        if (payment != null) paymentAmounts.add(payment);
+      }
+
       if (_isSensitiveLine(upper)) {
         ignoredSensitiveLines.add(line);
         continue;
       }
 
-      if (_isMetadataLine(upper)) {
+      // Tax-registration headers are metadata, not tax charges.
+      final isTaxRegistrationHeader = RegExp(r'\b(?:HST|GST|PST|QST)\s*#')
+          .hasMatch(upper);
+
+      // Summary savings are informational, not purchased items
+      // or additional discounts to subtract.
+      final isSavingsSummary =
+          normalizedLabel.contains('YOURSAVINGSTODAY') ||
+          normalizedLabel.startsWith('PROMOTIONALDISCOUNTS') ||
+          normalizedLabel.startsWith('TOTALOFYOURSAVINGS');
+
+      if (_isMetadataLine(upper) ||
+          isTaxRegistrationHeader ||
+          isSavingsSummary) {
         pendingItemName = null;
+        continue;
+      }
+
+      // A standalone savings annotation is informational.
+      // Do not subtract it again or send it to product matching.
+      // Leave multi-amount lines untouched for separate handling.
+      final isSavingsAnnotation = RegExp(
+        r'^SAVINGS?\s+\$?\s*\d+\.\d{2}\s*$',
+        caseSensitive: false,
+      ).hasMatch(line);
+
+      if (isSavingsAnnotation) {
         continue;
       }
 
@@ -92,10 +130,12 @@ class ReceiptParserService {
 
         if (amount != null) {
           subtotal = amount.abs();
-          totalsSectionStarted = true;
-          pendingItemName = null;
+        } else {
+          damagedSubtotal = _extractDamagedSummaryAmount(line);
         }
 
+        totalsSectionStarted = true;
+        pendingItemName = null;
         continue;
       }
 
@@ -104,6 +144,7 @@ class ReceiptParserService {
 
         if (amount != null) {
           tax += amount.abs();
+          hasTaxAmount = true;
         }
 
         totalsSectionStarted = true;
@@ -112,10 +153,13 @@ class ReceiptParserService {
       }
 
       if (_isTotalLine(upper, normalizedLabel)) {
+        productSectionClosed = true;
         final amount = _extractAmount(line);
 
         if (amount != null) {
           total = amount.abs();
+        } else {
+          damagedTotal = _extractDamagedSummaryAmount(line) ?? damagedTotal;
         }
 
         totalsSectionStarted = true;
@@ -124,6 +168,7 @@ class ReceiptParserService {
       }
 
       if (_isPaymentOrFooterLine(upper)) {
+        productSectionClosed = true;
         totalsSectionStarted = true;
         pendingItemName = null;
         continue;
@@ -142,6 +187,37 @@ class ReceiptParserService {
         continue;
       }
 
+      if (productSectionClosed ||
+          (totalsSectionStarted && !_isDiscountLine(upper))) {
+        pendingItemName = null;
+        continue;
+      }
+
+      // Preserve a product with a visibly incomplete price such as ".98".
+      // Do not invent its dollars or treat it as a valid 0.98 price.
+      final incompletePrice = RegExp(
+        r'^(.*[A-Za-z].*?)\s+\$?\s*(\.\d{2})(?:\s+[A-Z])?$',
+      ).firstMatch(line);
+
+      if (!totalsSectionStarted && incompletePrice != null) {
+        final name = _cleanItemName(incompletePrice.group(1)!);
+        if (_isValidItemName(name)) {
+          items.add(
+            ParsedReceiptItem(
+              name: name,
+              price: 0,
+              quantity: _quantityFromName(name),
+              confidenceScore: 0,
+              priceNeedsReview: true,
+              sourceLine: line,
+            ),
+          );
+          reviewWarnings.add('A price is incomplete: $name.');
+        }
+        pendingItemName = null;
+        continue;
+      }
+
       final amount = _extractAmount(line);
 
       if (amount == null) {
@@ -155,11 +231,6 @@ class ReceiptParserService {
           }
         }
 
-        continue;
-      }
-
-      if (totalsSectionStarted && !_isDiscountLine(upper)) {
-        pendingItemName = null;
         continue;
       }
 
@@ -181,7 +252,11 @@ class ReceiptParserService {
         continue;
       }
 
-      final quantity = _detectQuantity(line);
+      var quantity = _detectQuantity(line);
+
+      if (quantity == 1) {
+        quantity = _quantityFromName(name);
+      }
       final isDiscount = _isDiscountLine(upper);
 
       if (_isLinkedProductDiscountLine(upper) && items.isNotEmpty) {
@@ -196,6 +271,8 @@ class ReceiptParserService {
             confidenceScore: previousItem.confidenceScore,
             isDiscount: false,
             isWeightedItem: previousItem.isWeightedItem,
+            priceNeedsReview: previousItem.priceNeedsReview,
+            sourceLine: previousItem.sourceLine,
           ),
         );
 
@@ -212,32 +289,115 @@ class ReceiptParserService {
               : _confidenceForLine(line, itemName: name),
           isDiscount: isDiscount,
           isWeightedItem: _isWeightedLine(upper),
+          sourceLine: line,
         ),
       );
     }
 
-    final hasValidTotals = subtotal > 0 && total >= subtotal;
+    // Repair damaged summary punctuation only with independent support.
+    // Item amounts are never adjusted to force the receipt to balance.
+    final possibleSubtotal = subtotal > 0 ? subtotal : damagedSubtotal;
+    final possibleTotal = total > 0 ? total : damagedTotal;
 
-    final calculatedTax = hasValidTotals
-        ? _roundCurrency(total - subtotal)
-        : tax;
+    if (hasTaxAmount &&
+        possibleSubtotal != null &&
+        possibleSubtotal > 0 &&
+        possibleTotal != null &&
+        possibleTotal > 0 &&
+        _sameMoney(possibleSubtotal + tax, possibleTotal)) {
+      final corroborated =
+          subtotal > 0 ||
+          total > 0 ||
+          paymentAmounts.any((amount) => _sameMoney(amount, possibleTotal));
+      if (corroborated) {
+        if (subtotal == 0) {
+          subtotal = possibleSubtotal;
+          subtotalWasRecovered = true;
+          reviewWarnings.add(
+            'Subtotal punctuation recovered using total and tax.',
+          );
+        }
+        if (total == 0) {
+          total = possibleTotal;
+          totalWasRecovered = true;
+          reviewWarnings.add(
+            'Total punctuation recovered using subtotal and tax.',
+          );
+        }
+      }
+    }
 
-    final parsedAmountsDoNotBalance =
-        hasValidTotals && (subtotal + tax - total).abs() > 0.02;
+    if (total == 0 && subtotal > 0 && hasTaxAmount) {
+      final expected = _roundCurrency(subtotal + tax);
+      if (paymentAmounts.any((amount) => _sameMoney(amount, expected))) {
+        total = expected;
+        totalWasRecovered = true;
+        reviewWarnings.add('Total recovered from a matching payment amount.');
+      }
+    }
 
-    final reconciledTax = parsedAmountsDoNotBalance
-        ? calculatedTax
-        : _roundCurrency(tax);
+    if (subtotal == 0 && total > 0 && hasTaxAmount && total > tax) {
+      // Use independent receipt figures, not the possibly incomplete item sum.
+      subtotal = _roundCurrency(total - tax);
+      subtotalWasRecovered = true;
+      reviewWarnings.add('Subtotal calculated from receipt total minus tax.');
+    }
+
+    if (!hasTaxAmount && subtotal > 0 && total >= subtotal) {
+      tax = _roundCurrency(total - subtotal);
+      reviewWarnings.add('Tax calculated from receipt total minus subtotal.');
+    }
+
+    if (subtotal > 0 && total > 0 && !_sameMoney(subtotal + tax, total)) {
+      reviewWarnings.add('Receipt subtotal, tax, and total do not reconcile.');
+    }
+
+    final itemSum = items.fold<double>(0, (sum, item) => sum + item.price);
+    if (subtotal > 0 && !_sameMoney(itemSum, subtotal)) {
+      reviewWarnings.add('Item amounts do not match the receipt subtotal.');
+    }
 
     return ParsedReceipt(
       storeName: storeName,
       purchaseDate: purchaseDate,
       subtotal: _roundCurrency(subtotal),
-      tax: reconciledTax,
+      tax: _roundCurrency(tax),
       total: _roundCurrency(total),
       items: items,
       ignoredSensitiveLines: ignoredSensitiveLines,
+      reviewWarnings: reviewWarnings,
+      subtotalWasRecovered: subtotalWasRecovered,
+      totalWasRecovered: totalWasRecovered,
     );
+  }
+
+  static bool _sameMoney(double first, double second) {
+    return (first * 100).round() == (second * 100).round();
+  }
+
+  static double _quantityFromName(String name) {
+    final match = RegExp(r'^\s*\(?\s*(\d{1,3})\s*[)>]\s*(?=[A-Za-z])')
+        .firstMatch(name);
+    return match == null ? 1 : _parsePositiveQuantity(match.group(1));
+  }
+
+  static double? _extractDamagedSummaryAmount(String line) {
+    // Called only on subtotal/total labels. Never applied to item prices,
+    // dates, or identifiers. Acceptance also requires corroboration above.
+    final match = RegExp(r'(?:^|\s)(\d+)(?:\s*[.\-]\s*|\s+)([0-9Oo]{2})\s*$')
+        .firstMatch(line);
+    if (match == null) return null;
+    final cents = match.group(2)!.replaceAll(RegExp('[Oo]'), '0');
+    return double.tryParse('${match.group(1)}.$cents');
+  }
+
+  static double? _extractPaymentAmount(String line) {
+    final match = RegExp(
+      r'^(?:CREDIT|DEBIT|CASH|VISA|MASTERCARD|PAYMENT)'
+      r'(?:\s+(?:CR|DR|R))?\s+(?:CAD\s*)?\$?\s*(\d+\.\d{2})$',
+      caseSensitive: false,
+    ).firstMatch(line.trim());
+    return match == null ? null : double.tryParse(match.group(1)!);
   }
 
   static List<String> _cleanLines(String rawText) {
@@ -302,15 +462,15 @@ class ReceiptParserService {
   }
 
   static bool _isTotalLine(String upper, String normalizedLabel) {
-    if (_isSubtotalLine(upper, normalizedLabel)) {
-      return false;
-    }
+    if (_isSubtotalLine(upper, normalizedLabel)) return false;
 
-    return upper == 'TOTAL' ||
-        upper.startsWith('TOTAL ') ||
-        upper.contains('AMOUNT DUE') ||
-        upper.contains('TOTAL DUE') ||
-        upper.contains('GRAND TOTAL') ||
+    // A final-total heading may be followed by an amount, not arbitrary
+    // footer words such as "Total number of items" or "Total savings".
+    return RegExp(
+          r'^(?:GRAND\s+TOTAL|TOTAL(?:\s+DUE)?|AMOUNT\s+DUE)'
+          r'(?:\s*[:=]?\s*\$?\s*[0-9Oo][0-9Oo.,\s-]*)?$',
+          caseSensitive: false,
+        ).hasMatch(upper.trim()) ||
         _approximatelyMatches(normalizedLabel, 'TOTAL');
   }
 
@@ -388,9 +548,8 @@ class ReceiptParserService {
   static bool _looksLikeAddressOrPhone(String line) {
     final upper = line.toUpperCase();
 
-    final hasPhoneNumber = RegExp(
-      r'\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b',
-    ).hasMatch(line);
+    final hasPhoneNumber = RegExp(r'\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b')
+        .hasMatch(line);
 
     final hasPostalCode = RegExp(
       r'\b[A-Z]\d[A-Z]\s?\d[A-Z]\d\b',

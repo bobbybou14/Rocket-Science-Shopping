@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 
 import '../service/product_service.dart';
+
 import 'dart:async';
+
 import '../models/shopping_trip.dart';
 import '../models/product.dart';
 import '../service/product_alias_service.dart';
 import '../service/product_matcher_service.dart';
 import '../service/product_suggestion_service.dart';
 import '../service/receipt_parser_service.dart';
+import '../service/receipt_reconciliation_service.dart';
 import '../service/receipt_processor_service.dart';
 import '../widgets/create_product_dialog.dart';
+import '../models/receipt_line_classifier.dart';
 
 class ReceiptReviewScreen extends StatefulWidget {
   final ReceiptReviewDraft draft;
@@ -33,7 +37,9 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
   }
 
   int get _itemsNeedingReview {
-    return _items.where((item) => item.requiresReview).length;
+    return _items
+        .where((item) => item.requiresReview || item.priceNeedsReview)
+        .length;
   }
 
   double get _calculatedSubtotal {
@@ -43,6 +49,17 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
   double get _calculatedTotal {
     return _calculatedSubtotal + _trip.tax;
   }
+
+  int get _unresolvedPrices =>
+      _items.where((item) => item.priceNeedsReview).length;
+
+  String? get _reconciliationIssue => ReceiptReconciliationService.issue(
+    receiptSubtotal: _trip.subtotal,
+    receiptTotal: _trip.total,
+    tax: _trip.tax,
+    itemSubtotal: _calculatedSubtotal,
+    unresolvedPrices: _unresolvedPrices,
+  );
 
   String _formatMoney(double value) {
     return '\$${value.toStringAsFixed(2)}';
@@ -91,6 +108,10 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
   void _toggleReviewed(int index) {
     final item = _items[index];
 
+    if (item.priceNeedsReview) {
+      _editItem(index);
+      return;
+    }
     _replaceItem(index, item.copyWith(requiresReview: !item.requiresReview));
   }
 
@@ -590,9 +611,8 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
       children: [
         Text(
           'Suggested matches',
-          style: Theme.of(
-            context,
-          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleSmall
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
 
@@ -654,10 +674,10 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
     );
 
     final lineTotalController = TextEditingController(
-      text: item.lineTotal.toStringAsFixed(2),
+      text: item.priceNeedsReview ? '' : item.lineTotal.toStringAsFixed(2),
     );
 
-    final result = await showDialog<ShoppingTripItem>(
+    final dialogRoute = DialogRoute<ShoppingTripItem>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
@@ -692,10 +712,13 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Line total',
                       prefixText: '\$',
-                      border: OutlineInputBorder(),
+                      helperText: item.priceNeedsReview
+                          ? 'Enter the full price shown on the receipt.'
+                          : null,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                 ],
@@ -721,9 +744,12 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
 
                 if (name.isEmpty ||
                     quantity == null ||
+                    !quantity.isFinite ||
                     quantity <= 0 ||
                     lineTotal == null ||
-                    lineTotal < 0) {
+                    !lineTotal.isFinite ||
+                    lineTotal < 0 ||
+                    (item.priceNeedsReview && lineTotal == 0)) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text(
@@ -743,6 +769,7 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                     quantity: quantity,
                     unitPrice: unitPrice,
                     lineTotal: lineTotal,
+                    priceNeedsReview: false,
                     requiresReview: false,
                   ),
                 );
@@ -753,6 +780,14 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
         );
       },
     );
+
+    final result = await Navigator.of(
+      context,
+      rootNavigator: true,
+    ).push<ShoppingTripItem>(dialogRoute);
+
+    // Keep controllers alive until the dialog has fully closed.
+    await dialogRoute.completed;
 
     nameController.dispose();
     quantityController.dispose();
@@ -768,7 +803,7 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
     final quantityController = TextEditingController(text: '1');
     final lineTotalController = TextEditingController();
 
-    final result = await showDialog<ShoppingTripItem>(
+    final dialogRoute = DialogRoute<ShoppingTripItem>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
@@ -853,7 +888,7 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                   return;
                 }
 
-                if (quantity == null || quantity <= 0) {
+                if (quantity == null || !quantity.isFinite || quantity <= 0) {
                   ScaffoldMessenger.of(dialogContext).showSnackBar(
                     const SnackBar(
                       content: Text(
@@ -864,7 +899,7 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                   return;
                 }
 
-                if (lineTotal == null || lineTotal < 0) {
+                if (lineTotal == null || !lineTotal.isFinite || lineTotal < 0) {
                   ScaffoldMessenger.of(dialogContext).showSnackBar(
                     const SnackBar(content: Text('Enter a valid line total.')),
                   );
@@ -894,6 +929,12 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
         );
       },
     );
+
+    final result = await Navigator.of(
+      context,
+      rootNavigator: true,
+    ).push<ShoppingTripItem>(dialogRoute);
+    await dialogRoute.completed;
 
     nameController.dispose();
     quantityController.dispose();
@@ -972,7 +1013,7 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
   void _markAllReviewed() {
     setState(() {
       _items = _items
-          .map((item) => item.copyWith(requiresReview: false))
+          .map((item) => item.copyWith(requiresReview: item.priceNeedsReview))
           .toList();
     });
   }
@@ -998,11 +1039,25 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
       return;
     }
 
+    final issue = _reconciliationIssue;
+    if (issue != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(issue), duration: const Duration(seconds: 8)),
+      );
+      return;
+    }
+
     final reviewedTrip = _trip.copyWith(
       subtotal: _calculatedSubtotal,
       total: _calculatedTotal,
       processingStatus: 'verified',
-      items: _items,
+      items: _items.map((item) {
+        if (ReceiptLineClassifier.isDeposit(item.rawReceiptName)) {
+          return item.copyWith(clearProduct: true, barcode: '');
+        }
+
+        return item;
+      }).toList(),
     );
 
     Navigator.pop(context, reviewedTrip);
@@ -1011,6 +1066,9 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Text inputs live in dialog routes, which handle their own insets.
+      // Keep the underlying summary from collapsing behind the keyboard.
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(title: const Text('Review Receipt')),
       body: Column(
         children: [
@@ -1035,6 +1093,8 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
 
   Widget _buildSummary() {
     final reviewCount = _itemsNeedingReview;
+    final issue = _reconciliationIssue;
+    final parsed = widget.draft.intelligenceResult.parsedReceipt;
 
     return Card(
       margin: const EdgeInsets.all(16),
@@ -1052,24 +1112,48 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
-                Text(
-                  '${_items.length} item${_items.length == 1 ? '' : 's'}',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text('${_items.length} receipt lines'),
               ],
             ),
-            const Divider(height: 28),
+            const Divider(height: 24),
             Row(
               children: [
                 Expanded(
                   child: _SummaryValue(
-                    label: 'Calculated subtotal',
+                    label: parsed.subtotalWasRecovered
+                        ? 'Recovered subtotal'
+                        : 'Receipt subtotal',
+                    value: _trip.subtotal > 0
+                        ? _formatMoney(_trip.subtotal)
+                        : 'Unread',
+                  ),
+                ),
+                Expanded(
+                  child: _SummaryValue(
+                    label: parsed.totalWasRecovered
+                        ? 'Recovered total'
+                        : 'Receipt total',
+                    value: _trip.total > 0
+                        ? _formatMoney(_trip.total)
+                        : 'Unread',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _SummaryValue(
+                    label: _unresolvedPrices > 0
+                        ? 'Known item amounts'
+                        : 'Item subtotal',
                     value: _formatMoney(_calculatedSubtotal),
                   ),
                 ),
                 Expanded(
                   child: _SummaryValue(
-                    label: 'Updated total',
+                    label: 'Items + tax',
                     value: _formatMoney(_calculatedTotal),
                   ),
                 ),
@@ -1081,14 +1165,35 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                 ),
               ],
             ),
+            if (issue != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.errorContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  issue,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onErrorContainer,
+                  ),
+                ),
+              ),
+            ],
             if (reviewCount > 0) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: _markAllReviewed,
                   icon: const Icon(Icons.done_all),
-                  label: const Text('Accept All Items'),
+                  label: Text(
+                    _unresolvedPrices > 0
+                        ? 'Accept Items With Readable Prices'
+                        : 'Accept All Items',
+                  ),
                 ),
               ),
             ],
@@ -1099,7 +1204,73 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
   }
 
   Widget _buildItemCard(int index, ShoppingTripItem item) {
-    final confidenceColor = _confidenceColor(context, item.confidenceScore);
+    if (ReceiptLineClassifier.isDeposit(item.rawReceiptName)) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.receipt_long_outlined),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Container deposit',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  Text(
+                    item.priceNeedsReview
+                        ? 'Price needed'
+                        : _formatMoney(item.lineTotal),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(item.rawReceiptName),
+              const SizedBox(height: 8),
+              const Text(
+                'Included in the receipt total. '
+                'No catalogue product is needed.',
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                children: [
+                  TextButton.icon(
+                    onPressed: () => _editItem(index),
+                    icon: const Icon(Icons.edit_outlined),
+                    label: const Text('Edit'),
+                  ),
+                  TextButton.icon(
+                    onPressed: () => _removeItem(index),
+                    icon: const Icon(Icons.delete_outline),
+                    label: const Text('Remove'),
+                  ),
+                  TextButton.icon(
+                    onPressed: () => _toggleReviewed(index),
+                    icon: Icon(item.requiresReview ? Icons.check : Icons.undo),
+                    label: Text(
+                      item.priceNeedsReview
+                          ? 'Edit Amount'
+                          : item.requiresReview
+                          ? 'Accept Amount'
+                          : 'Review Again',
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    final confidenceColor = item.priceNeedsReview
+        ? Colors.orange
+        : _confidenceColor(context, item.confidenceScore);
 
     return Card(
       child: Padding(
@@ -1118,9 +1289,8 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                 Expanded(
                   child: Text(
                     item.rawReceiptName,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
                 PopupMenuButton<String>(
@@ -1168,6 +1338,14 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                 ),
               ],
             ),
+            if (item.priceNeedsReview) ...[
+              const SizedBox(height: 12),
+              Text(
+                'Price could not be read. Edit the line total.\n'
+                'Original text: ${item.sourceLine}',
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ],
             const SizedBox(height: 12),
             Container(
               width: double.infinity,
@@ -1233,11 +1411,15 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                 ),
                 _InfoChip(
                   icon: Icons.sell_outlined,
-                  label: '${_formatMoney(item.unitPrice)} each',
+                  label: item.priceNeedsReview
+                      ? 'Unit price unread'
+                      : '${_formatMoney(item.unitPrice)} each',
                 ),
                 _InfoChip(
                   icon: Icons.receipt,
-                  label: _formatMoney(item.lineTotal),
+                  label: item.priceNeedsReview
+                      ? 'Price needed'
+                      : _formatMoney(item.lineTotal),
                 ),
               ],
             ),
@@ -1252,8 +1434,10 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    '${_confidenceLabel(item.confidenceScore)} '
-                    '(${item.confidenceScore.toStringAsFixed(0)}%)',
+                    item.priceNeedsReview
+                        ? 'Price needs review'
+                        : '${_confidenceLabel(item.confidenceScore)} '
+                              '(${item.confidenceScore.toStringAsFixed(0)}%)',
                     style: TextStyle(
                       color: confidenceColor,
                       fontWeight: FontWeight.w600,
@@ -1263,7 +1447,13 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                 TextButton.icon(
                   onPressed: () => _toggleReviewed(index),
                   icon: Icon(item.requiresReview ? Icons.check : Icons.undo),
-                  label: Text(item.requiresReview ? 'Accept' : 'Review Again'),
+                  label: Text(
+                    item.priceNeedsReview
+                        ? 'Edit Price'
+                        : item.requiresReview
+                        ? 'Accept'
+                        : 'Review Again',
+                  ),
                 ),
               ],
             ),
@@ -1321,13 +1511,17 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                   Expanded(
                     flex: 2,
                     child: FilledButton.icon(
-                      onPressed: _itemsNeedingReview == 0
+                      onPressed:
+                          _itemsNeedingReview == 0 &&
+                              _reconciliationIssue == null
                           ? _confirmReceipt
                           : null,
                       icon: const Icon(Icons.check_circle_outline),
                       label: Text(
                         _itemsNeedingReview == 0
-                            ? 'Confirm Receipt'
+                            ? (_reconciliationIssue == null
+                                  ? 'Confirm Receipt'
+                                  : 'Check Receipt Amounts')
                             : '$_itemsNeedingReview Item(s) Need Review',
                       ),
                     ),
@@ -1363,9 +1557,8 @@ class _SummaryValue extends StatelessWidget {
       children: [
         Text(
           value,
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleLarge
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 4),
         Text(

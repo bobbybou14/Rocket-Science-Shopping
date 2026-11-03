@@ -5,6 +5,7 @@ import '../models/product.dart';
 import '../models/shopping_trip.dart';
 import 'price_calculation_service.dart';
 import 'price_service.dart';
+import '../models/receipt_line_classifier.dart';
 
 class PriceUpdateResult {
   final int inserted;
@@ -53,6 +54,14 @@ class PriceUpdateService {
       final itemName = item.rawReceiptName.trim().isEmpty
           ? 'Unknown receipt item'
           : item.rawReceiptName.trim();
+
+      if (ReceiptLineClassifier.isDeposit(item.rawReceiptName)) {
+        skipped++;
+        final message = '$itemName: Deposit charge; no product price.';
+        skippedItems.add(message);
+        debugPrint('Price update skipped: $message');
+        continue;
+      }
 
       final barcode = item.barcode.trim();
 

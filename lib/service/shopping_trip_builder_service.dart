@@ -1,5 +1,6 @@
 import '../models/shopping_trip.dart';
 import 'receipt_intelligence_service.dart';
+import '../models/receipt_line_classifier.dart';
 
 class ShoppingTripBuilderService {
   static ShoppingTrip buildFromReceiptIntelligence({
@@ -12,7 +13,8 @@ class ShoppingTripBuilderService {
     final parsedReceipt = intelligenceResult.parsedReceipt;
 
     final items = intelligenceResult.productMatches.map((match) {
-      final matchedProduct = match.product;
+      final isDeposit = ReceiptLineClassifier.isDeposit(match.receiptItem.name);
+      final matchedProduct = isDeposit ? null : match.product;
       final quantity = match.receiptItem.quantity <= 0
           ? 1.0
           : match.receiptItem.quantity;
@@ -30,7 +32,12 @@ class ShoppingTripBuilderService {
         unitPrice: unitPrice,
         lineTotal: lineTotal,
         confidenceScore: match.confidenceScore,
-        requiresReview: !match.hasMatch || match.confidenceScore < 75,
+        priceNeedsReview: match.receiptItem.priceNeedsReview,
+        sourceLine: match.receiptItem.sourceLine,
+        requiresReview:
+            match.receiptItem.priceNeedsReview ||
+            !match.hasMatch ||
+            match.confidenceScore < 75,
       );
     }).toList();
 

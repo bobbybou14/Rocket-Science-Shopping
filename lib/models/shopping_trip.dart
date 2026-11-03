@@ -124,6 +124,11 @@ class ShoppingTripItem {
   final double lineTotal;
   final double confidenceScore;
   final bool requiresReview;
+
+  // Draft-only fields. Unresolved prices cannot be confirmed or persisted.
+  // Existing database columns and saved receipt formats are unchanged.
+  final bool priceNeedsReview;
+  final String sourceLine;
   final DateTime? createdAt;
 
   const ShoppingTripItem({
@@ -137,6 +142,8 @@ class ShoppingTripItem {
     required this.lineTotal,
     this.confidenceScore = 0,
     this.requiresReview = true,
+    this.priceNeedsReview = false,
+    this.sourceLine = '',
     this.createdAt,
   });
   ShoppingTripItem copyWith({
@@ -151,6 +158,8 @@ class ShoppingTripItem {
     double? lineTotal,
     double? confidenceScore,
     bool? requiresReview,
+    bool? priceNeedsReview,
+    String? sourceLine,
     DateTime? createdAt,
   }) {
     final updatedProduct = clearProduct ? null : product ?? this.product;
@@ -165,7 +174,11 @@ class ShoppingTripItem {
       unitPrice: unitPrice ?? this.unitPrice,
       lineTotal: lineTotal ?? this.lineTotal,
       confidenceScore: confidenceScore ?? this.confidenceScore,
-      requiresReview: requiresReview ?? this.requiresReview,
+      requiresReview:
+          (priceNeedsReview ?? this.priceNeedsReview) ||
+          (requiresReview ?? this.requiresReview),
+      priceNeedsReview: priceNeedsReview ?? this.priceNeedsReview,
+      sourceLine: sourceLine ?? this.sourceLine,
       createdAt: createdAt ?? this.createdAt,
     );
   }

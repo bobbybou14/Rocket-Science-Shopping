@@ -103,6 +103,21 @@ class ProductMatcherService {
       }
     }
 
+    final descriptionTokens = _tokens(
+      ReceiptCleanupService.clean(receiptItem.name),
+    );
+
+    // A single surviving word cannot establish a specific product.
+    // Barcode matches have already been handled above.
+    if (descriptionTokens.length < 2) {
+      return ProductMatchResult(
+        receiptItem: receiptItem,
+        product: null,
+        confidenceScore: 0,
+        reason: 'Insufficient description. Select the product manually.',
+      );
+    }
+
     Product? bestProduct;
     double bestScore = 0;
 
@@ -124,11 +139,19 @@ class ProductMatcherService {
       );
     }
 
+    // Keep the original scores for candidate ranking, but require
+    // review for every match based only on receipt wording.
+    // The receipt pipeline treats scores of 75 or higher as
+    // high confidence, so description-only results stay below that.
+    final reviewScore = bestScore.clamp(0, 74).toDouble();
+
     return ProductMatchResult(
       receiptItem: receiptItem,
       product: bestProduct,
-      confidenceScore: bestScore,
-      reason: _reasonForScore(bestScore),
+      confidenceScore: reviewScore,
+      reason:
+          'Description-based suggestion. Confirm the product, '
+          'variant, and package size.',
     );
   }
 

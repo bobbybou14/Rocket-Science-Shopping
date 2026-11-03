@@ -8,6 +8,7 @@ import 'product_suggestion_service.dart';
 import 'receipt_cleanup_service.dart';
 import 'receipt_line_interpreter_service.dart';
 import 'receipt_parser_service.dart';
+import '../models/receipt_line_classifier.dart';
 
 class ReceiptIntelligenceResult {
   final ParsedReceipt parsedReceipt;
@@ -36,7 +37,9 @@ class ReceiptIntelligenceService {
     final parsedReceipt = ReceiptParserService.parse(rawText);
 
     final aliases = await ProductAliasService.getAliasesForReceiptItems(
-      parsedReceipt.items.map((item) => item.name),
+      parsedReceipt.items
+          .where((item) => !ReceiptLineClassifier.isDeposit(item.name))
+          .map((item) => item.name),
     );
 
     final resolvedBarcodes = <String, Product?>{};
@@ -120,6 +123,9 @@ class ReceiptIntelligenceService {
     final barcodeProductsByItemName = <String, Product>{};
 
     for (final item in parsedReceipt.items) {
+      if (ReceiptLineClassifier.isDeposit(item.name)) {
+        continue;
+      }
       if (candidatesByItemName.containsKey(item.name)) {
         continue;
       }
@@ -133,9 +139,9 @@ class ReceiptIntelligenceService {
       }
 
       final interpreted = ReceiptLineInterpreterService.interpret(item.name);
-      final extractedBarcode = RegExp(
-        r'\b\d{8,14}\b',
-      ).firstMatch(item.name)?.group(0);
+      final extractedBarcode = RegExp(r'\b\d{8,14}\b')
+          .firstMatch(item.name)
+          ?.group(0);
 
       final barcode = interpreted.barcode.trim().isNotEmpty
           ? interpreted.barcode.trim()
@@ -174,6 +180,14 @@ class ReceiptIntelligenceService {
     final products = productsByBarcode.values.toList();
 
     final matches = parsedReceipt.items.map((item) {
+      if (ReceiptLineClassifier.isDeposit(item.name)) {
+        return ProductMatchResult(
+          receiptItem: item,
+          product: null,
+          confidenceScore: 0,
+          reason: 'Deposit charge. Review the amount; no product required.',
+        );
+      }
       final normalizedName = ProductAliasService.normalizeAlias(item.name);
       final aliasProduct = aliasProductsByName[normalizedName];
 
@@ -206,6 +220,30 @@ class ReceiptIntelligenceService {
     assert(() {
       debugPrint('----- PRODUCT MATCHES START -----');
       debugPrint('Parsed receipt item count: ${parsedReceipt.items.length}');
+
+      debugPrint('----- PARSED RECEIPT VALUES START -----');
+      debugPrint('Store: ${parsedReceipt.storeName}');
+      debugPrint('Subtotal: ${parsedReceipt.subtotal.toStringAsFixed(2)}');
+      debugPrint('Tax: ${parsedReceipt.tax.toStringAsFixed(2)}');
+      debugPrint('Total: ${parsedReceipt.total.toStringAsFixed(2)}');
+
+      var itemTotal = 0.0;
+
+      for (final item in parsedReceipt.items) {
+        itemTotal += item.price;
+
+        debugPrint(
+          'ITEM: ${item.name} | '
+          'quantity=${item.quantity} | '
+          'line total=${item.priceNeedsReview ? "UNREAD" : item.price.toStringAsFixed(2)}',
+        );
+      }
+
+      for (final warning in parsedReceipt.reviewWarnings) {
+        debugPrint('REVIEW: $warning');
+      }
+      debugPrint('Sum of parsed line totals: ${itemTotal.toStringAsFixed(2)}');
+      debugPrint('----- PARSED RECEIPT VALUES END -----');
       debugPrint('Loaded candidate product count: ${products.length}');
       debugPrint('Relevant alias count: ${aliases.length}');
 
@@ -256,7 +294,11 @@ class ReceiptIntelligenceService {
     }());
 
     final productSuggestions = matches
-        .where((match) => !match.hasMatch)
+        .where(
+          (match) =>
+              !match.hasMatch &&
+              !ReceiptLineClassifier.isDeposit(match.receiptItem.name),
+        )
         .map(
           (match) => ProductSuggestionService.buildSuggestion(
             receiptItemName: match.receiptItem.name,
@@ -297,7 +339,12 @@ class ReceiptIntelligenceService {
     }());
 
     final highConfidence = matches
-        .where((match) => match.hasMatch && match.confidenceScore >= 75)
+        .where(
+          (match) =>
+              !match.receiptItem.priceNeedsReview &&
+              match.hasMatch &&
+              match.confidenceScore >= 75,
+        )
         .length;
 
     final needsReview = matches.length - highConfidence;
