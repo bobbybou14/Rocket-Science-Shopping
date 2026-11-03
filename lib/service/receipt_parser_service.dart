@@ -73,10 +73,21 @@ class ReceiptParserService {
     bool totalsSectionStarted = false;
     bool productSectionClosed = false;
     String? pendingItemName;
+    bool awaitingTotalAmount = false;
 
     for (final line in lines) {
       final upper = line.toUpperCase();
       final normalizedLabel = _normalizeLabel(line);
+
+      // A separate total value must immediately follow its heading. Do not
+      // search later footer lines where card identifiers may occur.
+      if (awaitingTotalAmount) {
+        awaitingTotalAmount = false;
+        if (RegExp(r'^\$?\s*\d+\.\d{2}$').hasMatch(line.trim())) {
+          total = _extractAmount(line)!.abs();
+          continue;
+        }
+      }
 
       // Capture only an explicitly labelled payment amount, never card IDs.
       if (totalsSectionStarted || productSectionClosed) {
@@ -161,6 +172,10 @@ class ReceiptParserService {
           total = amount.abs();
         } else {
           damagedTotal = _extractDamagedSummaryAmount(line) ?? damagedTotal;
+          awaitingTotalAmount = RegExp(
+            r'^(?:GRAND\s+TOTAL|TOTAL(?:\s+DUE)?|AMOUNT\s+DUE)\s*[:=]?$',
+            caseSensitive: false,
+          ).hasMatch(line.trim());
         }
 
         totalsSectionStarted = true;
@@ -190,6 +205,36 @@ class ReceiptParserService {
 
       if (productSectionClosed ||
           (totalsSectionStarted && !_isDiscountLine(upper))) {
+        pendingItemName = null;
+        continue;
+      }
+
+      // An advertised alternative price is not a purchased line. Keep the
+      // pending product for its following quantity/actual-price line.
+      if (_isOfferAnnotation(line)) continue;
+
+      // A product-coded line ending in spaced dollars/cents is ambiguous.
+      // Retain the row for review rather than losing it or inventing a price.
+      final spacedPrice = RegExp(
+        r'^(.*[A-Za-z].*?)\s+\d{1,4}\s+\d{2}$',
+      ).firstMatch(line);
+      if (spacedPrice != null &&
+          _extractAmount(line) == null &&
+          RegExp(r'\b\d{7,14}\b').hasMatch(spacedPrice.group(1)!)) {
+        final name = _cleanItemName(spacedPrice.group(1)!);
+        if (_isValidItemName(name)) {
+          items.add(
+            ParsedReceiptItem(
+              name: name,
+              price: 0,
+              quantity: _quantityFromName(name),
+              confidenceScore: 0,
+              priceNeedsReview: true,
+              sourceLine: line,
+            ),
+          );
+          reviewWarnings.add('A price has ambiguous spacing: $name.');
+        }
         pendingItemName = null;
         continue;
       }
@@ -374,6 +419,14 @@ class ReceiptParserService {
 
   static bool _sameMoney(double first, double second) {
     return (first * 100).round() == (second * 100).round();
+  }
+
+  static bool _isOfferAnnotation(String line) {
+    return RegExp(
+      r'^\s*\$?\s*\d+\.\d{2}\s*(?:EA|EACH|EN)\s+OR\s+'
+      r'\d+\s*/\s*[$S]?\s*\d+\.\d{2}(?:\s+.*)?$',
+      caseSensitive: false,
+    ).hasMatch(line);
   }
 
   static double _quantityFromName(String name) {
@@ -744,8 +797,13 @@ class ReceiptParserService {
     if (upper.contains('SOBEYS')) return 'Sobeys';
     if (upper.contains('GIANT TIGER')) return 'Giant Tiger';
 
+    final independentHeader = RegExp(
+      r'\bYOUR\s+([A-Z]+)\s+GROCER\b',
+    ).firstMatch(upper);
     if (upper.contains('INDEPENDENT GROCER') ||
-        upper.contains('YOUR INDEPENDENT')) {
+        upper.contains('YOUR INDEPENDENT') ||
+        (independentHeader != null &&
+            _editDistance(independentHeader.group(1)!, 'INDEPENDENT') <= 2)) {
       return 'Independent Grocers';
     }
 
@@ -945,7 +1003,7 @@ class ReceiptParserService {
     }
 
     final leadingEachMatch = RegExp(
-      r'\b(\d+)\s*EA\b',
+      r'(?<![\d.])(\d+)\s*EA\b',
       caseSensitive: false,
     ).firstMatch(line);
 
@@ -954,7 +1012,7 @@ class ReceiptParserService {
     }
 
     final trailingEachMatch = RegExp(
-      r'\bEA\s*[X@]?\s*(\d+)\b',
+      r'\bEA\s*[X@]?\s*(\d+)(?![\d.])\b',
       caseSensitive: false,
     ).firstMatch(line);
 
