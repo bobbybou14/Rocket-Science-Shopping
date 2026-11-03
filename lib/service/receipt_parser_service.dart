@@ -90,8 +90,9 @@ class ReceiptParserService {
       }
 
       // Tax-registration headers are metadata, not tax charges.
-      final isTaxRegistrationHeader = RegExp(r'\b(?:HST|GST|PST|QST)\s*#')
-          .hasMatch(upper);
+      final isTaxRegistrationHeader = RegExp(
+        r'\b(?:HST|GST|PST|QST)\s*#',
+      ).hasMatch(upper);
 
       // Summary savings are informational, not purchased items
       // or additional discounts to subtract.
@@ -376,16 +377,20 @@ class ReceiptParserService {
   }
 
   static double _quantityFromName(String name) {
-    final match = RegExp(r'^\s*\(?\s*(\d{1,3})\s*[)>]\s*(?=[A-Za-z])')
-        .firstMatch(name);
+    final match = RegExp(
+      r'^\s*\(?\s*(\d{1,3})\s*[)>]\s*'
+      r'(?=(?:\d{8,14}\s+)?[A-Za-z])',
+    ).firstMatch(name);
+
     return match == null ? 1 : _parsePositiveQuantity(match.group(1));
   }
 
   static double? _extractDamagedSummaryAmount(String line) {
     // Called only on subtotal/total labels. Never applied to item prices,
     // dates, or identifiers. Acceptance also requires corroboration above.
-    final match = RegExp(r'(?:^|\s)(\d+)(?:\s*[.\-]\s*|\s+)([0-9Oo]{2})\s*$')
-        .firstMatch(line);
+    final match = RegExp(
+      r'(?:^|\s)(\d+)(?:\s*[.\-]\s*|\s+)([0-9Oo]{2})\s*$',
+    ).firstMatch(line);
     if (match == null) return null;
     final cents = match.group(2)!.replaceAll(RegExp('[Oo]'), '0');
     return double.tryParse('${match.group(1)}.$cents');
@@ -548,8 +553,9 @@ class ReceiptParserService {
   static bool _looksLikeAddressOrPhone(String line) {
     final upper = line.toUpperCase();
 
-    final hasPhoneNumber = RegExp(r'\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b')
-        .hasMatch(line);
+    final hasPhoneNumber = RegExp(
+      r'\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b',
+    ).hasMatch(line);
 
     final hasPostalCode = RegExp(
       r'\b[A-Z]\d[A-Z]\s?\d[A-Z]\d\b',
