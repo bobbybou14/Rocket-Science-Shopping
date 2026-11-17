@@ -77,6 +77,7 @@ class ReceiptParserService {
     bool totalsSectionStarted = false;
     bool productSectionClosed = false;
     String? pendingItemName;
+    int? pendingItemLineIndex;
     bool awaitingTotalAmount = false;
 
     for (var index = 0; index < lines.length; index++) {
@@ -198,7 +199,8 @@ class ReceiptParserService {
 
       // Tax-registration headers are metadata, not tax charges.
       final isTaxRegistrationHeader = RegExp(
-        r'\b(?:HST|GST|PST|QST)\s*#',
+        r'\b(?:HST|GST|PST|QST)\s*#|'
+        r'^(?:HST|GST|PST|QST)\s+\d{9}(?:\s*RT\s*\d{4})?$',
       ).hasMatch(upper);
 
       // Summary savings are informational, not purchased items
@@ -434,6 +436,7 @@ class ReceiptParserService {
 
           if (_isValidItemName(possibleItemName)) {
             pendingItemName = possibleItemName;
+            pendingItemLineIndex = index;
           }
         }
 
@@ -442,14 +445,23 @@ class ReceiptParserService {
 
       var name = _cleanItemName(_removeAmounts(line));
 
+      final barcodePriceLine =
+          pendingItemName != null &&
+          pendingItemLineIndex == index - 1 &&
+          RegExp(
+            r'^\d{8,14}\s+\$?\s*\d+\.\d{2}(?:\s+[A-Z])?$',
+            caseSensitive: false,
+          ).hasMatch(line);
+
       final isPriceContinuationLine =
           pendingItemName != null &&
-          (_looksLikePriceContinuation(line) ||
+          (barcodePriceLine ||
+              _looksLikePriceContinuation(line) ||
               _looksLikeQuantityPriceContinuation(line) ||
               _looksLikeAmountOnlyContinuation(line));
 
       if (isPriceContinuationLine) {
-        name = pendingItemName;
+        name = barcodePriceLine ? '$pendingItemName $name' : pendingItemName;
       }
 
       pendingItemName = null;
@@ -999,6 +1011,7 @@ class ReceiptParserService {
   static String _detectStoreName(String line) {
     final upper = line.toUpperCase();
 
+    if (RegExp(r'\bDOLLARAMA\b').hasMatch(upper)) return 'Dollarama';
     if (upper.contains('WALMART')) return 'Walmart';
     if (upper.contains('COSTCO')) return 'Costco';
     if (upper.contains('CANADIAN TIRE')) return 'Canadian Tire';
