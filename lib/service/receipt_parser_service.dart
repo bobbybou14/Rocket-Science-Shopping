@@ -122,10 +122,13 @@ class ReceiptParserService {
       // A standalone savings annotation is informational.
       // Do not subtract it again or send it to product matching.
       // Leave multi-amount lines untouched for separate handling.
+      final savingsText = line.startsWith('(') && line.endsWith(')')
+          ? line.substring(1, line.length - 1).trim()
+          : line;
       final isSavingsAnnotation = RegExp(
-        r'^SAVINGS?\s+\$?\s*\d+\.\d{2}\s*$',
+        r'^(?:SAVINGS?|SAVED)\s+\$?\s*\d+\.\d{2}\s*$',
         caseSensitive: false,
-      ).hasMatch(line);
+      ).hasMatch(savingsText);
 
       if (isSavingsAnnotation) {
         continue;
@@ -834,6 +837,7 @@ class ReceiptParserService {
 
     if (upper.contains('WALMART')) return 'Walmart';
     if (upper.contains('COSTCO')) return 'Costco';
+    if (upper.contains('CANADIAN TIRE')) return 'Canadian Tire';
     if (upper.contains('NO FRILLS')) return 'No Frills';
     if (upper.contains('FRESHCO')) return 'FreshCo';
     if (upper.contains('FOOD BASICS')) return 'Food Basics';
@@ -1101,7 +1105,10 @@ class ReceiptParserService {
         )
         .replaceAll(RegExp(r'\bBUY\s+\d+\b', caseSensitive: false), '')
         .replaceAll(
-          RegExp(r'\b\d+(?:\.\d+)?\s*[X@]\s*', caseSensitive: false),
+          RegExp(
+            r'(?<![\d.\-])\b\d+(?:\.\d+)?\s*[X@]\s*',
+            caseSensitive: false,
+          ),
           '',
         )
         .replaceAll(RegExp(r'\b\d+\s*EA\b', caseSensitive: false), '')
