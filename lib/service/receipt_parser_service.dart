@@ -75,7 +75,8 @@ class ReceiptParserService {
     String? pendingItemName;
     bool awaitingTotalAmount = false;
 
-    for (final line in lines) {
+    for (var index = 0; index < lines.length; index++) {
+      final line = lines[index];
       final upper = line.toUpperCase();
       final normalizedLabel = _normalizeLabel(line);
 
@@ -93,6 +94,97 @@ class ReceiptParserService {
       if (totalsSectionStarted || productSectionClosed) {
         final payment = _extractPaymentAmount(line);
         if (payment != null) paymentAmounts.add(payment);
+      }
+
+      // These detail lines describe a product whose extended price is already
+      // printed on the preceding line. Handle them before payment filtering.
+      final previous =
+          items.isNotEmpty &&
+              index > 0 &&
+              items.last.sourceLine == lines[index - 1] &&
+              !items.last.isDiscount &&
+              !items.last.priceNeedsReview
+          ? items.last
+          : null;
+      if (!totalsSectionStarted && !productSectionClosed) {
+        final cardSaving = RegExp(
+          r'^CARD\s+\$\s*(\d+\.\d{2})\s+SAVE\s+-\s*\$?\s*(\d+\.\d{2})$',
+          caseSensitive: false,
+        ).firstMatch(line);
+        if (cardSaving != null) {
+          final net = double.parse(cardSaving.group(1)!);
+          final saving = double.parse(cardSaving.group(2)!);
+          if (previous != null && _sameMoney(previous.price, net + saving)) {
+            items[items.length - 1] = ParsedReceiptItem(
+              name: previous.name,
+              price: net,
+              quantity: previous.quantity,
+              confidenceScore: previous.confidenceScore,
+              isWeightedItem: previous.isWeightedItem,
+              sourceLine: '${previous.sourceLine}\n$line',
+            );
+          } else {
+            items.add(
+              ParsedReceiptItem(
+                name: 'Unlinked receipt discount',
+                price: -saving,
+                confidenceScore: 0,
+                isDiscount: true,
+                sourceLine: line,
+              ),
+            );
+            reviewWarnings.add('A card discount needs review: $line.');
+          }
+          pendingItemName = null;
+          continue;
+        }
+
+        final weightRate = RegExp(
+          r'^(\d+(?:\.\d+)?)\s*(kg|lbs?)\s*@?\s*\$?\s*(\d+\.\d{2})\s*/\s*(kg|lb)s?$',
+          caseSensitive: false,
+        ).firstMatch(line);
+        if (weightRate != null) {
+          final weight = double.parse(weightRate.group(1)!);
+          final rate = double.parse(weightRate.group(3)!);
+          final unitsAgree =
+              weightRate
+                  .group(2)!
+                  .toLowerCase()
+                  .replaceFirst(RegExp(r's$'), '') ==
+              weightRate.group(4)!.toLowerCase();
+          if (previous != null &&
+              unitsAgree &&
+              weight > 0 &&
+              _sameMoney(previous.price, _roundCurrency(weight * rate))) {
+            items[items.length - 1] = ParsedReceiptItem(
+              name: previous.name,
+              price: previous.price,
+              quantity: weight,
+              confidenceScore: previous.confidenceScore,
+              isWeightedItem: true,
+              sourceLine: '${previous.sourceLine}\n$line',
+            );
+            pendingItemName = null;
+          } else {
+            reviewWarnings.add('A weight and unit price need review: $line.');
+          }
+          continue;
+        }
+
+        final freeQuantity = RegExp(
+          r'^([1-9]\d*)\s*@\s*\$?\s*0\.00$',
+        ).firstMatch(line);
+        if (freeQuantity != null && previous != null && previous.price == 0) {
+          items[items.length - 1] = ParsedReceiptItem(
+            name: previous.name,
+            price: previous.price,
+            quantity: double.parse(freeQuantity.group(1)!),
+            confidenceScore: previous.confidenceScore,
+            sourceLine: '${previous.sourceLine}\n$line',
+          );
+          pendingItemName = null;
+          continue;
+        }
       }
 
       if (_isSensitiveLine(upper)) {
@@ -838,6 +930,11 @@ class ReceiptParserService {
     if (upper.contains('WALMART')) return 'Walmart';
     if (upper.contains('COSTCO')) return 'Costco';
     if (upper.contains('CANADIAN TIRE')) return 'Canadian Tire';
+    if (RegExp(
+      r'\bSAVE[- ]ON[- ]FOODS\b|\bSAVEONFOODS\.COM\b',
+    ).hasMatch(upper)) {
+      return 'Save-On-Foods';
+    }
     if (upper.contains('NO FRILLS')) return 'No Frills';
     if (upper.contains('FRESHCO')) return 'FreshCo';
     if (upper.contains('FOOD BASICS')) return 'Food Basics';
