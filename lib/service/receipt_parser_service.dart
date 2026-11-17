@@ -65,6 +65,10 @@ class ReceiptParserService {
     bool hasTaxAmount = false;
     double? damagedSubtotal;
     double? damagedTotal;
+    int? totalWholeDollars;
+    double? printedTaxTotal;
+    double? damagedTaxTotal;
+    int? possibleTaxCents;
     bool subtotalWasRecovered = false;
     bool totalWasRecovered = false;
     final paymentAmounts = <double>[];
@@ -218,7 +222,7 @@ class ReceiptParserService {
           ? line.substring(1, line.length - 1).trim()
           : line;
       final isSavingsAnnotation = RegExp(
-        r'^(?:SAVINGS?|SAVED)\s+\$?\s*\d+\.\d{2}\s*$',
+        r'^(?:SAVINGS?|SAVED|YOU\s+SAV[EF]D)\s+\$?\s*\d+\.\d{2}\s*$',
         caseSensitive: false,
       ).hasMatch(savingsText);
 
@@ -246,6 +250,18 @@ class ReceiptParserService {
         continue;
       }
 
+      if (RegExp(r'^TOTAL\s+TAX\b').hasMatch(upper)) {
+        printedTaxTotal = _extractTaxAmount(line) ?? printedTaxTotal;
+        damagedTaxTotal = _extractDamagedSummaryAmount(line) ?? damagedTaxTotal;
+        final taxDigits = RegExp(
+          r'^TOTAL\s+TAX\s*[:=]?\s*\$\s*(\d{2})$',
+        ).firstMatch(upper);
+        possibleTaxCents = int.tryParse(taxDigits?.group(1) ?? '');
+        totalsSectionStarted = true;
+        pendingItemName = null;
+        continue;
+      }
+
       if (_isTaxLine(upper, normalizedLabel)) {
         final amount = _extractTaxAmount(line);
 
@@ -261,6 +277,10 @@ class ReceiptParserService {
 
       if (_isTotalLine(upper, normalizedLabel)) {
         productSectionClosed = true;
+        final partialTotal = RegExp(
+          r'^(?:GRAND\s+TOTAL|TOTAL(?:\s+DUE)?|AMOUNT\s+DUE)\s*[:=]?\s*\$\s*(\d+)$',
+        ).firstMatch(upper);
+        totalWholeDollars = int.tryParse(partialTotal?.group(1) ?? '');
         final amount = _extractAmount(line);
 
         if (amount != null) {
@@ -482,8 +502,22 @@ class ReceiptParserService {
 
     // Repair damaged summary punctuation only with independent support.
     // Item amounts are never adjusted to force the receipt to balance.
+    final itemSum = items.fold<double>(0, (sum, item) => sum + item.price);
     final possibleSubtotal = subtotal > 0 ? subtotal : damagedSubtotal;
     final possibleTotal = total > 0 ? total : damagedTotal;
+
+    if (printedTaxTotal != null) {
+      tax = printedTaxTotal.abs();
+      hasTaxAmount = true;
+    } else if (!hasTaxAmount &&
+        subtotal > 0 &&
+        damagedTaxTotal != null &&
+        possibleTotal != null &&
+        _sameMoney(subtotal + damagedTaxTotal, possibleTotal)) {
+      tax = damagedTaxTotal;
+      hasTaxAmount = true;
+      reviewWarnings.add('Tax punctuation recovered using subtotal and total.');
+    }
 
     if (hasTaxAmount &&
         possibleSubtotal != null &&
@@ -513,6 +547,40 @@ class ReceiptParserService {
       }
     }
 
+    // For a truncated total, verify the intact subtotal against the items
+    // and the calculated amount against the visible dollars and any payment.
+    // A two-digit tax with no decimal can be cents when it fits the
+    // visible total. Treat it as a candidate for this recovery only.
+    final taxCents = possibleTaxCents;
+    final summaryTax = hasTaxAmount
+        ? tax
+        : damagedTaxTotal ?? (taxCents == null ? null : taxCents / 100);
+    if (total == 0 &&
+        damagedTotal == null &&
+        totalWholeDollars != null &&
+        subtotal > 0 &&
+        summaryTax != null &&
+        items.isNotEmpty &&
+        !items.any((item) => item.priceNeedsReview) &&
+        _sameMoney(itemSum, subtotal)) {
+      final expected = _roundCurrency(subtotal + summaryTax);
+      if (expected.floor() == totalWholeDollars &&
+          paymentAmounts.every((amount) => _sameMoney(amount, expected))) {
+        if (!hasTaxAmount) {
+          tax = summaryTax;
+          hasTaxAmount = true;
+          reviewWarnings.add(
+            'Tax punctuation recovered from the printed tax line.',
+          );
+        }
+        total = expected;
+        totalWasRecovered = true;
+        reviewWarnings.add(
+          'Total calculated from subtotal and tax. Verify against the receipt.',
+        );
+      }
+    }
+
     if (total == 0 && subtotal > 0 && hasTaxAmount) {
       final expected = _roundCurrency(subtotal + tax);
       if (paymentAmounts.any((amount) => _sameMoney(amount, expected))) {
@@ -538,7 +606,6 @@ class ReceiptParserService {
       reviewWarnings.add('Receipt subtotal, tax, and total do not reconcile.');
     }
 
-    final itemSum = items.fold<double>(0, (sum, item) => sum + item.price);
     if (subtotal > 0 && !_sameMoney(itemSum, subtotal)) {
       reviewWarnings.add('Item amounts do not match the receipt subtotal.');
     }
@@ -579,14 +646,15 @@ class ReceiptParserService {
   }
 
   static double? _extractDamagedSummaryAmount(String line) {
-    // Called only on subtotal/total labels. Never applied to item prices,
+    // Called only on receipt summary labels. Never applied to item prices,
     // dates, or identifiers. Acceptance also requires corroboration above.
     final match = RegExp(
-      r'(?:^|\s)(\d+)(?:\s*[.\-]\s*|\s+)([0-9Oo]{2})\s*$',
+      r'(?:^|\s)\$?\s*([0-9Oo]+)(?:\s*[.\-]\s*|\s+)([0-9Oo]{2})\s*$',
     ).firstMatch(line);
     if (match == null) return null;
+    final dollars = match.group(1)!.replaceAll(RegExp('[Oo]'), '0');
     final cents = match.group(2)!.replaceAll(RegExp('[Oo]'), '0');
-    return double.tryParse('${match.group(1)}.$cents');
+    return double.tryParse('$dollars.$cents');
   }
 
   static double? _extractPaymentAmount(String line) {
@@ -604,6 +672,12 @@ class ReceiptParserService {
         .replaceAll('\r', '\n')
         .split('\n')
         .map((line) => line.replaceAll(RegExp(r'[ \t]+'), ' ').trim())
+        .map(
+          (line) => line.replaceFirstMapped(
+            RegExp(r'(\$\s*\d+)\.{2,}(\d{2})(?=\s*[A-Z]?\s*$)'),
+            (match) => '${match.group(1)}.${match.group(2)}',
+          ),
+        )
         .where((line) => line.isNotEmpty)
         .toList();
   }
@@ -648,9 +722,7 @@ class ReceiptParserService {
   }
 
   static bool _isTaxLine(String upper, String normalizedLabel) {
-    return upper.contains('HST') ||
-        upper.contains('GST') ||
-        upper.contains('PST') ||
+    return RegExp(r'\b(?:HST|GST|PST)\b').hasMatch(upper) ||
         upper.startsWith('TAX ') ||
         upper == 'TAX' ||
         normalizedLabel == 'HST' ||
@@ -938,7 +1010,7 @@ class ReceiptParserService {
     if (upper.contains('NO FRILLS')) return 'No Frills';
     if (upper.contains('FRESHCO')) return 'FreshCo';
     if (upper.contains('FOOD BASICS')) return 'Food Basics';
-    if (upper.contains('FOODLAND')) return 'Foodland';
+    if (RegExp(r'\bFOODL\s*AND\b').hasMatch(upper)) return 'Foodland';
     if (upper.contains('METRO')) return 'Metro';
     if (upper.contains('SOBEYS')) return 'Sobeys';
     if (upper.contains('GIANT TIGER')) return 'Giant Tiger';
