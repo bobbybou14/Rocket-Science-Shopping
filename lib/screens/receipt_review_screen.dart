@@ -43,11 +43,17 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
   }
 
   double get _calculatedSubtotal {
-    return _items.fold<double>(0, (total, item) => total + item.lineTotal);
+    return _items
+        .where((item) => !item.isPostSubtotalDeposit)
+        .fold<double>(0, (total, item) => total + item.lineTotal);
   }
 
+  double get _postSubtotalDeposits => _items
+      .where((item) => item.isPostSubtotalDeposit)
+      .fold<double>(0, (total, item) => total + item.lineTotal);
+
   double get _calculatedTotal {
-    return _calculatedSubtotal + _trip.tax;
+    return _calculatedSubtotal + _postSubtotalDeposits + _trip.tax;
   }
 
   int get _unresolvedPrices =>
@@ -59,6 +65,7 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
     tax: _trip.tax,
     itemSubtotal: _calculatedSubtotal,
     unresolvedPrices: _unresolvedPrices,
+    postSubtotalDeposits: _postSubtotalDeposits,
   );
 
   String _formatMoney(double value) {
@@ -611,8 +618,9 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
       children: [
         Text(
           'Suggested matches',
-          style: Theme.of(context).textTheme.titleSmall
-              ?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
 
@@ -690,6 +698,7 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                 children: [
                   TextField(
                     controller: nameController,
+                    readOnly: item.isPostSubtotalDeposit,
                     decoration: const InputDecoration(
                       labelText: 'Receipt item name',
                       border: OutlineInputBorder(),
@@ -1052,7 +1061,8 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
       total: _calculatedTotal,
       processingStatus: 'verified',
       items: _items.map((item) {
-        if (ReceiptLineClassifier.isDeposit(item.rawReceiptName)) {
+        if (item.isPostSubtotalDeposit ||
+            ReceiptLineClassifier.isDeposit(item.rawReceiptName)) {
           return item.copyWith(clearProduct: true, barcode: '');
         }
 
@@ -1153,7 +1163,9 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                 ),
                 Expanded(
                   child: _SummaryValue(
-                    label: 'Items + tax',
+                    label: _postSubtotalDeposits == 0
+                        ? 'Items + tax'
+                        : 'Items + deposits + tax',
                     value: _formatMoney(_calculatedTotal),
                   ),
                 ),
@@ -1204,7 +1216,8 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
   }
 
   Widget _buildItemCard(int index, ShoppingTripItem item) {
-    if (ReceiptLineClassifier.isDeposit(item.rawReceiptName)) {
+    if (item.isPostSubtotalDeposit ||
+        ReceiptLineClassifier.isDeposit(item.rawReceiptName)) {
       return Card(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -1289,8 +1302,9 @@ class _ReceiptReviewScreenState extends State<ReceiptReviewScreen> {
                 Expanded(
                   child: Text(
                     item.rawReceiptName,
-                    style: Theme.of(context).textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 PopupMenuButton<String>(
@@ -1557,8 +1571,9 @@ class _SummaryValue extends StatelessWidget {
       children: [
         Text(
           value,
-          style: Theme.of(context).textTheme.titleLarge
-              ?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 4),
         Text(

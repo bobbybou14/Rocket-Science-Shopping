@@ -33,6 +33,7 @@ class ShoppingTripBuilderService {
         lineTotal: lineTotal,
         confidenceScore: match.confidenceScore,
         priceNeedsReview: match.receiptItem.priceNeedsReview,
+        isPostSubtotalDeposit: match.receiptItem.isPostSubtotalDeposit,
         sourceLine: match.receiptItem.sourceLine,
         requiresReview:
             match.receiptItem.priceNeedsReview ||

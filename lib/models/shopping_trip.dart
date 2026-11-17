@@ -128,6 +128,7 @@ class ShoppingTripItem {
   // Draft-only fields. Unresolved prices cannot be confirmed or persisted.
   // Existing database columns and saved receipt formats are unchanged.
   final bool priceNeedsReview;
+  final bool isPostSubtotalDeposit;
   final String sourceLine;
   final DateTime? createdAt;
 
@@ -143,6 +144,7 @@ class ShoppingTripItem {
     this.confidenceScore = 0,
     this.requiresReview = true,
     this.priceNeedsReview = false,
+    this.isPostSubtotalDeposit = false,
     this.sourceLine = '',
     this.createdAt,
   });
@@ -178,6 +180,7 @@ class ShoppingTripItem {
           (priceNeedsReview ?? this.priceNeedsReview) ||
           (requiresReview ?? this.requiresReview),
       priceNeedsReview: priceNeedsReview ?? this.priceNeedsReview,
+      isPostSubtotalDeposit: isPostSubtotalDeposit,
       sourceLine: sourceLine ?? this.sourceLine,
       createdAt: createdAt ?? this.createdAt,
     );

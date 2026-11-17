@@ -31,6 +31,7 @@ class ParsedReceiptItem {
   final double confidenceScore;
   final bool isDiscount;
   final bool isWeightedItem;
+  final bool isPostSubtotalDeposit;
 
   // Draft-only: zero is a placeholder, not an observed free price.
   final bool priceNeedsReview;
@@ -43,6 +44,7 @@ class ParsedReceiptItem {
     this.confidenceScore = 70,
     this.isDiscount = false,
     this.isWeightedItem = false,
+    this.isPostSubtotalDeposit = false,
     this.priceNeedsReview = false,
     this.sourceLine = '',
   });
@@ -75,6 +77,7 @@ class ReceiptParserService {
     final reviewWarnings = <String>[];
 
     bool totalsSectionStarted = false;
+    bool sawSubtotal = false;
     bool productSectionClosed = false;
     String? pendingItemName;
     int? pendingItemLineIndex;
@@ -247,9 +250,19 @@ class ReceiptParserService {
           damagedSubtotal = _extractDamagedSummaryAmount(line);
         }
 
+        sawSubtotal = true;
         totalsSectionStarted = true;
         pendingItemName = null;
         continue;
+      }
+
+      if (sawSubtotal && !productSectionClosed) {
+        final deposits = _readPostSubtotalDeposits(lines, index);
+        if (deposits.isNotEmpty) {
+          items.addAll(deposits);
+          index += deposits.length - 1;
+          continue;
+        }
       }
 
       if (RegExp(r'^TOTAL\s+TAX\b').hasMatch(upper)) {
@@ -514,7 +527,17 @@ class ReceiptParserService {
 
     // Repair damaged summary punctuation only with independent support.
     // Item amounts are never adjusted to force the receipt to balance.
-    final itemSum = items.fold<double>(0, (sum, item) => sum + item.price);
+    var itemSum = 0.0;
+    var depositSum = 0.0;
+    var hasUnresolvedDeposits = false;
+    for (final item in items) {
+      if (item.isPostSubtotalDeposit) {
+        depositSum += item.price;
+        hasUnresolvedDeposits |= item.priceNeedsReview;
+      } else {
+        itemSum += item.price;
+      }
+    }
     final possibleSubtotal = subtotal > 0 ? subtotal : damagedSubtotal;
     final possibleTotal = total > 0 ? total : damagedTotal;
 
@@ -525,18 +548,20 @@ class ReceiptParserService {
         subtotal > 0 &&
         damagedTaxTotal != null &&
         possibleTotal != null &&
-        _sameMoney(subtotal + damagedTaxTotal, possibleTotal)) {
+        !hasUnresolvedDeposits &&
+        _sameMoney(subtotal + damagedTaxTotal + depositSum, possibleTotal)) {
       tax = damagedTaxTotal;
       hasTaxAmount = true;
       reviewWarnings.add('Tax punctuation recovered using subtotal and total.');
     }
 
     if (hasTaxAmount &&
+        !hasUnresolvedDeposits &&
         possibleSubtotal != null &&
         possibleSubtotal > 0 &&
         possibleTotal != null &&
         possibleTotal > 0 &&
-        _sameMoney(possibleSubtotal + tax, possibleTotal)) {
+        _sameMoney(possibleSubtotal + tax + depositSum, possibleTotal)) {
       final corroborated =
           subtotal > 0 ||
           total > 0 ||
@@ -575,7 +600,7 @@ class ReceiptParserService {
         items.isNotEmpty &&
         !items.any((item) => item.priceNeedsReview) &&
         _sameMoney(itemSum, subtotal)) {
-      final expected = _roundCurrency(subtotal + summaryTax);
+      final expected = _roundCurrency(subtotal + summaryTax + depositSum);
       if (expected.floor() == totalWholeDollars &&
           paymentAmounts.every((amount) => _sameMoney(amount, expected))) {
         if (!hasTaxAmount) {
@@ -593,8 +618,8 @@ class ReceiptParserService {
       }
     }
 
-    if (total == 0 && subtotal > 0 && hasTaxAmount) {
-      final expected = _roundCurrency(subtotal + tax);
+    if (total == 0 && subtotal > 0 && hasTaxAmount && !hasUnresolvedDeposits) {
+      final expected = _roundCurrency(subtotal + tax + depositSum);
       if (paymentAmounts.any((amount) => _sameMoney(amount, expected))) {
         total = expected;
         totalWasRecovered = true;
@@ -602,20 +627,34 @@ class ReceiptParserService {
       }
     }
 
-    if (subtotal == 0 && total > 0 && hasTaxAmount && total > tax) {
+    if (subtotal == 0 &&
+        hasTaxAmount &&
+        !hasUnresolvedDeposits &&
+        total > tax + depositSum) {
       // Use independent receipt figures, not the possibly incomplete item sum.
-      subtotal = _roundCurrency(total - tax);
+      subtotal = _roundCurrency(total - tax - depositSum);
       subtotalWasRecovered = true;
       reviewWarnings.add('Subtotal calculated from receipt total minus tax.');
     }
 
-    if (!hasTaxAmount && subtotal > 0 && total >= subtotal) {
-      tax = _roundCurrency(total - subtotal);
+    if (!hasTaxAmount &&
+        !hasUnresolvedDeposits &&
+        subtotal > 0 &&
+        total >= subtotal + depositSum) {
+      tax = _roundCurrency(total - subtotal - depositSum);
       reviewWarnings.add('Tax calculated from receipt total minus subtotal.');
     }
 
-    if (subtotal > 0 && total > 0 && !_sameMoney(subtotal + tax, total)) {
-      reviewWarnings.add('Receipt subtotal, tax, and total do not reconcile.');
+    if (hasUnresolvedDeposits) {
+      reviewWarnings.add('Check the conflicting deposit amounts.');
+    } else if (subtotal > 0 &&
+        total > 0 &&
+        !_sameMoney(subtotal + tax + depositSum, total)) {
+      reviewWarnings.add(
+        depositSum == 0
+            ? 'Receipt subtotal, tax, and total do not reconcile.'
+            : 'Receipt subtotal, tax, deposits, and total do not reconcile.',
+      );
     }
 
     if (subtotal > 0 && !_sameMoney(itemSum, subtotal)) {
@@ -633,6 +672,79 @@ class ReceiptParserService {
       reviewWarnings: reviewWarnings,
       subtotalWasRecovered: subtotalWasRecovered,
       totalWasRecovered: totalWasRecovered,
+    );
+  }
+
+  static final _postSubtotalDepositPattern = RegExp(
+    r'^(\d+\.\d{2})\s+DEPOSIT(?:\s+\$?\s*(\d+\.\d{2}))?$',
+    caseSensitive: false,
+  );
+
+  static List<ParsedReceiptItem> _readPostSubtotalDeposits(
+    List<String> lines,
+    int index,
+  ) {
+    final first = _postSubtotalDepositPattern.firstMatch(lines[index]);
+    if (first == null) return const [];
+
+    final inlineAmount = first.group(2);
+    if (inlineAmount != null) {
+      return [_postSubtotalDeposit(first, inlineAmount, lines[index])];
+    }
+
+    // OCR can emit a run of deposit labels, followed by their amount column.
+    // The exact amount in each label is usable alone. When the corresponding
+    // amount column is present, require agreement before accepting the charge.
+    final labels = [first];
+    var nextIndex = index + 1;
+    while (nextIndex < lines.length) {
+      final next = _postSubtotalDepositPattern.firstMatch(lines[nextIndex]);
+      if (next == null || next.group(2) != null) break;
+      labels.add(next);
+      nextIndex++;
+    }
+
+    final detachedAmounts = <RegExpMatch>[];
+    final amountOnly = RegExp(r'^\$\s*(\d+\.\d{2})$');
+    while (nextIndex < lines.length && detachedAmounts.length < labels.length) {
+      final next = amountOnly.firstMatch(lines[nextIndex]);
+      if (next == null) break;
+      detachedAmounts.add(next);
+      nextIndex++;
+    }
+
+    return List.generate(labels.length, (offset) {
+      final amount = detachedAmounts.length == labels.length
+          ? detachedAmounts[offset]
+          : null;
+      final source = lines[index + offset];
+      return _postSubtotalDeposit(
+        labels[offset],
+        amount?.group(1),
+        amount == null ? source : '$source\n${amount.input}',
+        incompleteColumn: detachedAmounts.isNotEmpty && amount == null,
+      );
+    });
+  }
+
+  static ParsedReceiptItem _postSubtotalDeposit(
+    RegExpMatch label,
+    String? printedAmount,
+    String source, {
+    bool incompleteColumn = false,
+  }) {
+    final labelAmount = double.parse(label.group(1)!);
+    final needsReview =
+        incompleteColumn ||
+        (printedAmount != null &&
+            !_sameMoney(labelAmount, double.parse(printedAmount)));
+    return ParsedReceiptItem(
+      name: 'Deposit',
+      price: needsReview ? 0 : labelAmount,
+      confidenceScore: needsReview ? 35 : 90,
+      priceNeedsReview: needsReview,
+      isPostSubtotalDeposit: true,
+      sourceLine: source,
     );
   }
 
@@ -1011,6 +1123,9 @@ class ReceiptParserService {
   static String _detectStoreName(String line) {
     final upper = line.toUpperCase();
 
+    if (RegExp(r"\bHAYTER'?S\s+TURKEY\s+PRODUCTS\b").hasMatch(upper)) {
+      return 'Hayters Turkey Products Inc.';
+    }
     if (RegExp(r'\bDOLLARAMA\b').hasMatch(upper)) return 'Dollarama';
     if (upper.contains('WALMART')) return 'Walmart';
     if (upper.contains('COSTCO')) return 'Costco';

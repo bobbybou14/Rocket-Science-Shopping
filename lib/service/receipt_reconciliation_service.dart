@@ -13,12 +13,14 @@ class ReceiptReconciliationService {
     required double tax,
     required double itemSubtotal,
     required int unresolvedPrices,
+    double postSubtotalDeposits = 0,
   }) {
     if (![
       receiptSubtotal,
       receiptTotal,
       tax,
       itemSubtotal,
+      postSubtotalDeposits,
     ].every((value) => value.isFinite)) {
       return 'An amount is invalid. Check receipt details.';
     }
@@ -32,8 +34,13 @@ class ReceiptReconciliationService {
       return 'Item amounts are ${money(difference)} $direction of the receipt '
           'subtotal. Check missing items and prices.';
     }
-    if (receiptTotal > 0 && cents(itemSubtotal + tax) != cents(receiptTotal)) {
-      return 'Item amounts plus tax do not match the receipt total '
+    if (receiptTotal > 0 &&
+        cents(itemSubtotal + postSubtotalDeposits + tax) !=
+            cents(receiptTotal)) {
+      final amounts = postSubtotalDeposits == 0
+          ? 'Item amounts plus tax'
+          : 'Item amounts plus deposits and tax';
+      return '$amounts do not match the receipt total '
           '${money(receiptTotal)}.';
     }
     if (receiptSubtotal <= 0 && receiptTotal <= 0) {
