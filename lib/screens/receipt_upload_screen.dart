@@ -8,6 +8,7 @@ import '../models/receipt.dart';
 import '../models/store.dart';
 import '../service/receipt_processor_service.dart';
 import '../service/receipt_service.dart';
+import '../service/shopping_trip_service.dart';
 import '../service/store_service.dart';
 import 'add_store_screen.dart';
 import 'receipt_history_screen.dart';
@@ -219,12 +220,32 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
         'Calling completeReviewedReceipt...',
       );
 
+      final candidates = await ShoppingTripService.findReceiptMergeCandidates(
+        reviewedTrip,
+      );
+      if (!mounted) return;
+      final mergeChoice = candidates.isEmpty
+          ? ''
+          : await _chooseReceiptTrip(candidates);
+      if (!mounted) return;
+      if (mergeChoice == null) {
+        await ReceiptService.deleteReceipt(savedReceipt.id);
+        if (!mounted) return;
+        setState(() {
+          isSaving = false;
+          processingMessage = 'Receipt save was cancelled.';
+        });
+        return;
+      }
+      final mergeTripId = mergeChoice.isEmpty ? null : mergeChoice;
       ReceiptProcessingResult result;
 
       try {
         result = await ReceiptProcessorService.completeReviewedReceipt(
           receipt: savedReceipt,
           reviewedTrip: reviewedTrip,
+          mergeTripId: mergeTripId,
+          allowDuplicate: candidates.isNotEmpty && mergeTripId == null,
         );
       } on DuplicateReceiptException catch (duplicate) {
         if (!mounted) return;
@@ -243,6 +264,7 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
         result = await ReceiptProcessorService.completeReviewedReceipt(
           receipt: savedReceipt,
           reviewedTrip: reviewedTrip,
+          mergeTripId: mergeTripId,
           allowDuplicate: true,
         );
       }
@@ -280,6 +302,64 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
         ),
       );
     }
+  }
+
+  Future<String?> _chooseReceiptTrip(List<ShoppingTrip> candidates) {
+    return showDialog<String>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Attach receipt to a saved trip?'),
+        children: [
+          const Padding(
+            padding: EdgeInsets.fromLTRB(24, 0, 24, 12),
+            child: Text(
+              'Choose the visit shown on this receipt. Its items, prices and '
+              'totals will be updated with your reviewed receipt. '
+              'Choose a separate trip for a different visit.',
+            ),
+          ),
+          ...candidates.map((trip) {
+            final time = TimeOfDay.fromDateTime(
+              trip.source == 'live_shopping' && trip.storeId.isEmpty
+                  ? trip.purchaseDate
+                  : trip.purchaseDate.toLocal(),
+            ).format(dialogContext);
+            final preview = trip.items
+                .take(3)
+                .map((item) => item.product?.name ?? item.rawReceiptName)
+                .join(', ');
+            return SimpleDialogOption(
+              onPressed: () => Navigator.pop(dialogContext, trip.id),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${trip.storeName} · $time',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    '${trip.items.length} lines · \$${trip.total.toStringAsFixed(2)}',
+                  ),
+                  if (preview.isNotEmpty) Text(preview),
+                  if (trip.storeId.isEmpty)
+                    const Text(
+                      'Branch was not recorded. Check this visit carefully.',
+                    ),
+                ],
+              ),
+            );
+          }),
+          SimpleDialogOption(
+            onPressed: () => Navigator.pop(dialogContext, ''),
+            child: const Text('Save as a separate trip'),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<bool> _showDuplicateReceiptDialog(

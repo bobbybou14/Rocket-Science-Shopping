@@ -4,11 +4,11 @@ import 'ocr_normalization_service.dart';
 import 'ocr_repair_service.dart';
 import 'ocr_service.dart';
 import 'price_update_service.dart';
-import 'receipt_builder_service.dart';
 import 'receipt_intelligence_service.dart';
 import 'receipt_service.dart';
 import 'shopping_trip_builder_service.dart';
 import 'shopping_trip_service.dart';
+import 'receipt_trip_save_service.dart';
 
 class ReceiptProcessorService {
   static Future<ReceiptReviewDraft> prepareReceipt({
@@ -47,14 +47,20 @@ class ReceiptProcessorService {
       final intelligenceResult =
           await ReceiptIntelligenceService.processRawText(repairedText);
 
-      final shoppingTrip =
-          ShoppingTripBuilderService.buildFromReceiptIntelligence(
-            intelligenceResult: intelligenceResult,
-            storeId: storeId,
-            storeName: storeName,
-            city: city,
-            province: province,
-          );
+      final builtTrip = ShoppingTripBuilderService.buildFromReceiptIntelligence(
+        intelligenceResult: intelligenceResult,
+        storeId: storeId,
+        storeName: storeName,
+        city: city,
+        province: province,
+      );
+
+      final shoppingTrip = builtTrip.copyWith(
+        purchaseDate:
+            intelligenceResult.parsedReceipt.purchaseDate ??
+            receipt.purchaseDate ??
+            builtTrip.purchaseDate,
+      );
 
       await ReceiptService.updateReceipt(
         _copyReceiptWithProcessingResult(
@@ -99,6 +105,7 @@ class ReceiptProcessorService {
     required Receipt receipt,
     required ShoppingTrip reviewedTrip,
     bool allowDuplicate = false,
+    String? mergeTripId,
   }) async {
     if (reviewedTrip.items.isEmpty) {
       throw const ReceiptProcessingException(
@@ -106,7 +113,9 @@ class ReceiptProcessorService {
       );
     }
 
-    if (reviewedTrip.items.any((item) => item.requiresReview)) {
+    if (reviewedTrip.items.any(
+      (item) => item.requiresReview || item.priceNeedsReview,
+    )) {
       throw const ReceiptProcessingException(
         'All receipt items must be reviewed before confirmation.',
       );
@@ -115,30 +124,31 @@ class ReceiptProcessorService {
     try {
       final verifiedTrip = reviewedTrip.copyWith(processingStatus: 'verified');
 
-      final possibleDuplicates =
-          await ShoppingTripService.findPossibleDuplicates(verifiedTrip);
-
-      if (possibleDuplicates.isNotEmpty && !allowDuplicate) {
-        throw DuplicateReceiptException(possibleDuplicates: possibleDuplicates);
+      final alreadySaved = await ReceiptTripSaveService.isSaved(receipt.id);
+      if (!alreadySaved && mergeTripId == null && !allowDuplicate) {
+        final candidates = await ShoppingTripService.findReceiptMergeCandidates(
+          verifiedTrip,
+        );
+        if (candidates.isNotEmpty) {
+          throw DuplicateReceiptException(possibleDuplicates: candidates);
+        }
       }
 
-      // 1. Save the reviewed shopping trip and its normalized items.
-      final savedTrip = await ShoppingTripService.saveShoppingTrip(
-        verifiedTrip,
+      // Trip, trip items, receipt snapshot and receipt link commit together.
+      final saved = await ReceiptTripSaveService.save(
+        receipt: receipt,
+        trip: verifiedTrip,
+        mergeTripId: mergeTripId,
       );
-
-      // 2. Build and save the permanent receipt-item snapshot.
-      final receiptItems = ReceiptBuilderService.buildItemsFromReviewedTrip(
-        receiptId: receipt.id,
-        reviewedTrip: savedTrip,
-      );
-
-      await ReceiptService.saveReceiptItems(receiptItems);
-
-      // 3. Save the confirmed price observations.
-      final priceResult = await PriceUpdateService.updatePricesFromShoppingTrip(
-        savedTrip,
-      );
+      final savedTrip = saved.trip;
+      final priceResult = saved.alreadySaved
+          ? const PriceUpdateResult(
+              inserted: 0,
+              skipped: 0,
+              skippedItems: [],
+              errors: [],
+            )
+          : await PriceUpdateService.updatePricesFromShoppingTrip(savedTrip);
 
       final productsFound = savedTrip.items.length;
 
@@ -261,32 +271,41 @@ class ReceiptProcessorService {
           await ReceiptIntelligenceService.processRawText(repairedText);
 
       // 3. Build a shopping trip from the receipt results.
-      final shoppingTrip =
-          ShoppingTripBuilderService.buildFromReceiptIntelligence(
-            intelligenceResult: intelligenceResult,
-            storeId: storeId,
-            storeName: storeName,
-            city: city,
-            province: province,
-          );
-
-      // 4. Save the shopping trip and its normalized items.
-      final savedTrip = await ShoppingTripService.saveShoppingTrip(
-        shoppingTrip,
-      );
-
-      // 5. Build and save the permanent receipt-item snapshot.
-      final receiptItems = ReceiptBuilderService.buildItemsFromIntelligence(
-        receiptId: receipt.id,
+      final builtTrip = ShoppingTripBuilderService.buildFromReceiptIntelligence(
         intelligenceResult: intelligenceResult,
+        storeId: storeId,
+        storeName: storeName,
+        city: city,
+        province: province,
       );
 
-      await ReceiptService.saveReceiptItems(receiptItems);
-
-      // 6. Save high-confidence price observations.
-      final priceResult = await PriceUpdateService.updatePricesFromShoppingTrip(
-        savedTrip,
+      final shoppingTrip = builtTrip.copyWith(
+        purchaseDate:
+            intelligenceResult.parsedReceipt.purchaseDate ??
+            receipt.purchaseDate ??
+            builtTrip.purchaseDate,
       );
+
+      final alreadySaved = await ReceiptTripSaveService.isSaved(receipt.id);
+      final candidates = alreadySaved
+          ? <ShoppingTrip>[]
+          : await ShoppingTripService.findReceiptMergeCandidates(shoppingTrip);
+      if (candidates.isNotEmpty) {
+        throw DuplicateReceiptException(possibleDuplicates: candidates);
+      }
+      final saved = await ReceiptTripSaveService.save(
+        receipt: receipt,
+        trip: shoppingTrip,
+      );
+      final savedTrip = saved.trip;
+      final priceResult = saved.alreadySaved
+          ? const PriceUpdateResult(
+              inserted: 0,
+              skipped: 0,
+              skippedItems: [],
+              errors: [],
+            )
+          : await PriceUpdateService.updatePricesFromShoppingTrip(savedTrip);
 
       final parsedReceipt = intelligenceResult.parsedReceipt;
 

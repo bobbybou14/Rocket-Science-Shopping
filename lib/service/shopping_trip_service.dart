@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/product.dart';
 import '../models/shopping_trip.dart';
+import 'receipt_trip_match_service.dart';
 
 class ShoppingTripService {
   static final SupabaseClient _supabase = Supabase.instance.client;
@@ -24,9 +25,26 @@ class ShoppingTripService {
   ) async {
     final userId = _requireUserId();
 
+    var trip = shoppingTrip;
+    if (trip.source == 'live_shopping' && trip.storeId.trim().isNotEmpty) {
+      final store = await _supabase
+          .from('stores')
+          .select('city,province')
+          .eq('id', trip.storeId)
+          .single();
+      trip = trip.copyWith(
+        city: store['city']?.toString() ?? trip.city,
+        province: store['province']?.toString() ?? trip.province,
+      );
+    }
+
     final tripResponse = await _supabase
         .from('shopping_trips')
-        .insert({...shoppingTrip.toMap(), 'user_id': userId})
+        .insert({
+          ...trip.toMap(),
+          'purchase_date': trip.purchaseDate.toUtc().toIso8601String(),
+          'user_id': userId,
+        })
         .select()
         .single();
 
@@ -128,6 +146,37 @@ class ShoppingTripService {
     );
   }
 
+  static Future<List<ShoppingTrip>> findReceiptMergeCandidates(
+    ShoppingTrip receipt,
+  ) async {
+    final userId = _requireUserId();
+    final day = ReceiptTripMatchService.startOfDay(receipt.purchaseDate);
+    final nextDay = DateTime(day.year, day.month, day.day + 1);
+    // Older live saves sent a local timestamp without an offset. Include
+    // that UTC calendar day too, then filter according to the saved format.
+    final utcDay = DateTime.utc(day.year, day.month, day.day);
+    final utcNextDay = DateTime.utc(day.year, day.month, day.day + 1);
+    final start = day.toUtc().isBefore(utcDay) ? day.toUtc() : utcDay;
+    final end = nextDay.toUtc().isAfter(utcNextDay)
+        ? nextDay.toUtc()
+        : utcNextDay;
+    final rows = await _supabase
+        .from('shopping_trips')
+        .select()
+        .eq('user_id', userId)
+        .gte('purchase_date', start.toIso8601String())
+        .lt('purchase_date', end.toIso8601String())
+        .order('purchase_date', ascending: false);
+    final candidates = <ShoppingTrip>[];
+    for (final row in rows) {
+      final trip = ShoppingTrip.fromMap(Map<String, dynamic>.from(row));
+      if (ReceiptTripMatchService.isCandidate(receipt, trip)) {
+        candidates.add(await getShoppingTrip(trip.id));
+      }
+    }
+    return candidates;
+  }
+
   static Future<List<ShoppingTrip>> findPossibleDuplicates(
     ShoppingTrip shoppingTrip,
   ) async {
@@ -220,18 +269,6 @@ class ShoppingTripService {
 
 extension ShoppingTripItemCopy on ShoppingTripItem {
   ShoppingTripItem copyWithShoppingTripId(String shoppingTripId) {
-    return ShoppingTripItem(
-      id: id,
-      shoppingTripId: shoppingTripId,
-      rawReceiptName: rawReceiptName,
-      product: product,
-      barcode: barcode,
-      quantity: quantity,
-      unitPrice: unitPrice,
-      lineTotal: lineTotal,
-      confidenceScore: confidenceScore,
-      requiresReview: requiresReview,
-      createdAt: createdAt,
-    );
+    return copyWith(shoppingTripId: shoppingTripId);
   }
 }

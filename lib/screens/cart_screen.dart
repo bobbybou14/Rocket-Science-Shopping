@@ -150,7 +150,7 @@ class _CartScreenState extends State<CartScreen> {
 
     final shoppingTrip = ShoppingTrip(
       id: '',
-      storeId: '',
+      storeId: ShoppingSessionService.currentStoreId,
       storeName: storeName.isEmpty ? 'Current Store' : storeName,
       city: '',
       province: 'Ontario',
